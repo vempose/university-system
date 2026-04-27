@@ -90,28 +90,8 @@ public class Complaint {
 
     @Override
     public String toString() {
-        return (
-            "Complaint{" +
-            "id='" +
-            id +
-            '\'' +
-            ", sender='" +
-            sender.getName() +
-            '\'' +
-            ", targets=" +
-            targetStudents.size() +
-            " student(s)" +
-            ", urgency=" +
-            urgency +
-            ", receiver='" +
-            receiver.getName() +
-            '\'' +
-            ", createdDate=" +
-            createdDate +
-            ", text='" +
-            text +
-            '\'' +
-            '}'
+        return "Complaint{id='%s', sender='%s', targets=%d student(s), urgency=%s, receiver='%s', createdDate=%s, text='%s'}".formatted(
+                id, sender.getName(), targetStudents.size(), urgency, receiver.getName(), createdDate, text
         );
     }
 }

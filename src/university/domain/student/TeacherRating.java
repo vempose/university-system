@@ -53,19 +53,8 @@ public class TeacherRating {
 
     @Override
     public String toString() {
-        return (
-            "TeacherRating{student=" +
-            student +
-            ", teacher=" +
-            teacher +
-            ", score=" +
-            score +
-            ", comment='" +
-            comment +
-            '\'' +
-            ", createdDate=" +
-            createdDate +
-            '}'
+        return "TeacherRating{student=%s, teacher=%s, score=%d, comment='%s', createdDate=%s}".formatted(
+                student, teacher, score, comment, createdDate
         );
     }
 }

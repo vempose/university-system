@@ -36,16 +36,8 @@ public class JournalSubscription {
 
     @Override
     public String toString() {
-        return (
-            "JournalSubscription{" +
-            "subscriber=" +
-            subscriber.getName() +
-            ", journal='" +
-            journal.getName() +
-            '\'' +
-            ", subscribeDate=" +
-            subscribeDate +
-            '}'
+        return "JournalSubscription{subscriber=%s, journal='%s', subscribeDate=%s}".formatted(
+                subscriber.getName(), journal.getName(), subscribeDate
         );
     }
 }

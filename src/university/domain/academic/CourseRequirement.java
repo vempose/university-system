@@ -51,18 +51,8 @@ public class CourseRequirement {
 
     @Override
     public String toString() {
-        return (
-            "CourseRequirement{" +
-            "course=" +
-            course.getCourseCode() +
-            ", major='" +
-            major.getName() +
-            '\'' +
-            ", yearOfStudy=" +
-            yearOfStudy +
-            ", category=" +
-            category +
-            '}'
+        return "CourseRequirement{course=%s, major='%s', yearOfStudy=%d, category=%s}".formatted(
+                course.getCourseCode(), major.getName(), yearOfStudy, category
         );
     }
 }

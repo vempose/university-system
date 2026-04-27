@@ -148,16 +148,6 @@ public class AcademicReport {
 
         @Override
     public String toString() {
-        return (
-            "AcademicReport{" +
-            "id='" +
-            id +
-            '\'' +
-            ", createdDate=" +
-            createdDate +
-            ", entryCount=" +
-            entries.size() +
-            '}'
-        );
+        return "AcademicReport{id='%s', createdDate=%s, entryCount=%d}".formatted(id, createdDate, entries.size());
     }
 }

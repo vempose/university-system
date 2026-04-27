@@ -73,25 +73,8 @@ public class GraduateStudent extends Student {
 
     @Override
     public String toString() {
-        return (
-            "GraduateStudent{" +
-            "id='" +
-            getId() +
-            '\'' +
-            ", name='" +
-            getName() +
-            '\'' +
-            ", degree=" +
-            getDegreeType() +
-            ", major=" +
-            getMajor() +
-            ", supervisor=" +
-            (supervisor != null
-                ? supervisor.getClass().getSimpleName()
-                : "none") +
-            ", papers=" +
-            diplomaPapers.size() +
-            '}'
+        return "GraduateStudent{id='%s', name='%s', degree=%s, major=%s, supervisor=%s, papers=%d}".formatted(
+                getId(), getName(), getDegreeType(), getMajor(), (supervisor != null ? supervisor.getClass().getSimpleName() : "none"), diplomaPapers.size()
         );
     }
 }

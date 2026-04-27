@@ -43,20 +43,8 @@ public class NewsComment {
 
     @Override
     public String toString() {
-        return (
-            "NewsComment{" +
-            "id='" +
-            id +
-            '\'' +
-            ", author='" +
-            author.getName() +
-            '\'' +
-            ", createdDate=" +
-            createdDate +
-            ", text='" +
-            text +
-            '\'' +
-            '}'
+        return "NewsComment{id='%s', author='%s', createdDate=%s, text='%s'}".formatted(
+                id, author.getName(), createdDate, text
         );
     }
 }

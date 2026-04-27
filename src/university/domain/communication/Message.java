@@ -62,23 +62,8 @@ public class Message {
 
     @Override
     public String toString() {
-        return (
-            "Message{" +
-            "id='" +
-            id +
-            '\'' +
-            ", sender=" +
-            sender.getName() +
-            ", receiver=" +
-            receiver.getName() +
-            ", sentDate=" +
-            sentDate +
-            ", isRead=" +
-            isRead +
-            ", text='" +
-            text +
-            '\'' +
-            '}'
+        return "Message{id='%s', sender=%s, receiver=%s, sentDate=%s, isRead=%b, text='%s'}".formatted(
+                id, sender.getName(), receiver.getName(), sentDate, isRead, text
         );
     }
 }

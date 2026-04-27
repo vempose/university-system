@@ -82,13 +82,8 @@ public class Mark {
 
     @Override
     public String toString() {
-        return String.format(
-            "Mark{first=%.1f, second=%.1f, final=%.1f, total=%.1f, passed=%b}",
-            firstAttestation,
-            secondAttestation,
-            finalExam,
-            getTotal(),
-            isPassed()
+        return "Mark{first=%.1f, second=%.1f, final=%.1f, total=%.1f, passed=%b}".formatted(
+                firstAttestation, secondAttestation, finalExam, getTotal(), isPassed()
         );
     }
 

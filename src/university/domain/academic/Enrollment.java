@@ -121,21 +121,8 @@ public class Enrollment {
 
     @Override
     public String toString() {
-        return (
-            "Enrollment{student=" +
-            student.getName() +
-            ", course=" +
-            course.getCourseCode() +
-            ", semester='" +
-            semesterLabel +
-            '\'' +
-            ", attempt=" +
-            attemptNo +
-            ", status=" +
-            status +
-            ", mark=" +
-            (mark != null ? mark.getTotal() : "N/A") +
-            '}'
+        return "Enrollment{student=%s, course=%s, semester='%s', attempt=%d, status=%s, mark=%s}".formatted(
+                student.getName(), course.getCourseCode(), semesterLabel, attemptNo, status, mark != null ? mark.getTotal() : "N/A"
         );
     }
 }

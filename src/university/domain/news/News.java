@@ -92,23 +92,8 @@ public class News {
 
     @Override
     public String toString() {
-        return (
-            "News{" +
-            "id='" +
-            id +
-            '\'' +
-            ", topic=" +
-            topic +
-            ", pinned=" +
-            pinned +
-            ", title='" +
-            title +
-            '\'' +
-            ", createdDate=" +
-            createdDate +
-            ", comments=" +
-            comments.size() +
-            '}'
+        return "News{id='%s', topic=%s, pinned=%b, title='%s', createdDate=%s, comments=%d}".formatted(
+                id, topic, pinned, title, createdDate, comments.size()
         );
     }
 }

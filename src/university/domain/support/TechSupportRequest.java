@@ -97,30 +97,8 @@ public final class TechSupportRequest {
 
     @Override
     public String toString() {
-        var specialistName =
-            assignedSpecialist != null
-                ? assignedSpecialist.getName()
-                : "unassigned";
-
-        return (
-            "TechSupportRequest{" +
-            "id='" +
-            id +
-            '\'' +
-            ", status=" +
-            status +
-            ", requester='" +
-            requester.getName() +
-            '\'' +
-            ", assignedSpecialist='" +
-            specialistName +
-            '\'' +
-            ", createdDate=" +
-            createdDate +
-            ", description='" +
-            description +
-            '\'' +
-            '}'
+        return "TechSupportRequest{id='%s', status=%s, requester='%s', assignedSpecialist='%s', createdDate=%s, description='%s'}".formatted(
+                id, status, requester.getName(), assignedSpecialist != null ? assignedSpecialist.getName() : "unassigned", createdDate, description
         );
     }
 }

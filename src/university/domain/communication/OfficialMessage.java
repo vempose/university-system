@@ -27,26 +27,8 @@ public class OfficialMessage extends Message {
 
     @Override
     public String toString() {
-        return (
-            "OfficialMessage{" +
-            "id='" +
-            getId() +
-            '\'' +
-            ", eventType='" +
-            eventType +
-            '\'' +
-            ", sender=" +
-            getSender().getName() +
-            ", receiver=" +
-            getReceiver().getName() +
-            ", text='" +
-            getText() +
-            '\'' +
-            ", sentDate=" +
-            getSentDate() +
-            ", isRead=" +
-            isRead() +
-            '}'
+        return "OfficialMessage{id='%s', eventType='%s', sender=%s, receiver=%s, text='%s', sentDate=%s, isRead=%b}".formatted(
+                getId(), eventType, getSender().getName(), getReceiver().getName(), getText(), getSentDate(), isRead()
         );
     }
 }

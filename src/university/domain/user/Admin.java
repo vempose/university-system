@@ -46,17 +46,6 @@ public class Admin extends Employee {
 
         @Override
     public String toString() {
-        return (
-            "Admin{" +
-            "id='" +
-            getId() +
-            '\'' +
-            ", name='" +
-            getName() +
-            '\'' +
-            ", logs=" +
-            viewedLogs.size() +
-            '}'
-        );
+        return "Admin{id='%s', name='%s', logs=%d}".formatted(getId(), getName(), viewedLogs.size());
     }
 }

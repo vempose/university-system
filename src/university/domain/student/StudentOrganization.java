@@ -54,16 +54,6 @@ public class StudentOrganization {
 
     @Override
     public String toString() {
-        return (
-            "StudentOrganization{name='" +
-            name +
-            '\'' +
-            ", description='" +
-            description +
-            '\'' +
-            ", memberCount=" +
-            memberships.size() +
-            '}'
-        );
+        return "StudentOrganization{name='%s', description='%s', memberCount=%d}".formatted(name, description, memberships.size());
     }
 }

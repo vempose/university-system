@@ -110,23 +110,8 @@ public class Teacher extends Employee {
 
         @Override
     public String toString() {
-        return (
-            "Teacher{" +
-            "id='" +
-            getId() +
-            '\'' +
-            ", name='" +
-            getName() +
-            '\'' +
-            ", position=" +
-            position +
-            ", avgRating=" +
-            String.format("%.2f", getAverageRating()) +
-            ", ratings=" +
-            receivedRatings.size() +
-            ", complaints=" +
-            submittedComplaints.size() +
-            '}'
+        return "Teacher{id='%s', name='%s', position=%s, avgRating=%.2f, ratings=%d, complaints=%d}".formatted(
+                getId(), getName(), position, getAverageRating(), receivedRatings.size(), submittedComplaints.size()
         );
     }
 }

@@ -103,24 +103,8 @@ public class EmployeeRequest {
 
     @Override
     public String toString() {
-        var signed = (signedBy != null) ? signedBy.toString() : "unsigned";
-        return (
-            "EmployeeRequest{" +
-            "id='" +
-            id +
-            '\'' +
-            ", sender=" +
-            sender +
-            ", status=" +
-            status +
-            ", signedBy=" +
-            signed +
-            ", createdDate=" +
-            createdDate +
-            ", description='" +
-            description +
-            '\'' +
-            '}'
+        return "EmployeeRequest{id='%s', sender=%s, status=%s, signedBy=%s, createdDate=%s, description='%s'}".formatted(
+                id, sender, status, (signedBy != null) ? signedBy : "unsigned", createdDate, description
         );
     }
 }

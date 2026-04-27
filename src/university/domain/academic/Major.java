@@ -44,6 +44,6 @@ public class Major {
 
     @Override
     public String toString() {
-        return "Major{name='" + name + "', school='" + school.getName() + "'}";
+        return "Major{name='%s', school='%s'}".formatted(name, school.getName());
     }
 }

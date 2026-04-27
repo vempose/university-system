@@ -78,17 +78,7 @@ public class UniversityJournal {
 
     @Override
     public String toString() {
-        return (
-            "UniversityJournal{" +
-            "name='" +
-            name +
-            '\'' +
-            ", subscribers=" +
-            subscriptions.size() +
-            ", publishedPapers=" +
-            publishedPapers.size() +
-            '}'
-        );
+        return "UniversityJournal{name='%s', subscribers=%d, publishedPapers=%d}".formatted(name, subscriptions.size(), publishedPapers.size());
     }
 
     @Override

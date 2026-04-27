@@ -114,21 +114,8 @@ public class Manager extends Employee {
 
         @Override
     public String toString() {
-        return (
-            "Manager{" +
-            "id='" +
-            getId() +
-            '\'' +
-            ", name='" +
-            getName() +
-            '\'' +
-            ", type=" +
-            type +
-            ", reports=" +
-            createdReports.size() +
-            ", news=" +
-            managedNews.size() +
-            '}'
+        return "Manager{id='%s', name='%s', type=%s, reports=%d, news=%d}".formatted(
+                getId(), getName(), type, createdReports.size(), managedNews.size()
         );
     }
 }

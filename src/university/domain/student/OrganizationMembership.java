@@ -48,17 +48,8 @@ public class OrganizationMembership {
 
     @Override
     public String toString() {
-        return (
-            "OrganizationMembership{student=" +
-            student +
-            ", organization='" +
-            organization.getName() +
-            '\'' +
-            ", role=" +
-            role +
-            ", joinDate=" +
-            joinDate +
-            '}'
+        return "OrganizationMembership{student=%s, organization='%s', role=%s, joinDate=%s}".formatted(
+                student, organization.getName(), role, joinDate
         );
     }
 }

@@ -46,22 +46,8 @@ public final class LogEntry {
 
         @Override
     public String toString() {
-        return (
-            "LogEntry[" +
-            "id='" +
-            id +
-            '\'' +
-            ", timestamp=" +
-            timestamp +
-            ", actor=" +
-            actor.getClass().getSimpleName() +
-            "(id=" +
-            actor.getId() +
-            ")" +
-            ", action='" +
-            action +
-            '\'' +
-            ']'
+        return "LogEntry[id='%s', timestamp=%s, actor=%s(id=%s), action='%s']".formatted(
+                id, timestamp, actor.getClass().getSimpleName(), actor.getId(), action
         );
     }
 

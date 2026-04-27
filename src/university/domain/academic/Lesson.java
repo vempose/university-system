@@ -97,13 +97,8 @@ public class Lesson {
 
     @Override
     public String toString() {
-        return String.format(
-            "Lesson[id=%s, type=%s, room=%s, time=%s, instructor=%s]",
-            id,
-            type,
-            room,
-            time.format(DISPLAY_FORMATTER),
-            instructor.getName()
+        return "Lesson[id=%s, type=%s, room=%s, time=%s, instructor=%s]".formatted(
+                id, type, room, time.format(DISPLAY_FORMATTER), instructor.getName()
         );
     }
 }

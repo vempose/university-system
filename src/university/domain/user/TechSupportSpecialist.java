@@ -56,17 +56,8 @@ public class TechSupportSpecialist extends Employee {
 
         @Override
     public String toString() {
-        return (
-            "TechSupportSpecialist{" +
-            "id='" +
-            getId() +
-            '\'' +
-            ", name='" +
-            getName() +
-            '\'' +
-            ", assignedTickets=" +
-            assignedRequests.size() +
-            '}'
+        return "TechSupportSpecialist{id='%s', name='%s', assignedTickets=%d}".formatted(
+                getId(), getName(), assignedRequests.size()
         );
     }
 }

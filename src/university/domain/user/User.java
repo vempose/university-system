@@ -113,15 +113,6 @@ public abstract class User implements Comparable<User> {
 
         @Override
     public String toString() {
-        return (
-            getClass().getSimpleName() +
-            "{id='" +
-            id +
-            '\'' +
-            ", name='" +
-            name +
-            '\'' +
-            '}'
-        );
+        return "%s{id='%s', name='%s'}".formatted(getClass().getSimpleName(), id, name);
     }
 }
