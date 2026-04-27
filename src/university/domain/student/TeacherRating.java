@@ -1,0 +1,71 @@
+package university.domain.student;
+
+import java.time.LocalDate;
+import java.util.Objects;
+import university.domain.user.Student;
+import university.domain.user.Teacher;
+
+public class TeacherRating {
+
+    private final Student student;
+    private final Teacher teacher;
+    private final int score;
+    private final String comment;
+    private final LocalDate createdDate;
+
+    public TeacherRating(
+        Student student,
+        Teacher teacher,
+        int score,
+        String comment
+    ) {
+        Objects.requireNonNull(student, "student must not be null");
+        Objects.requireNonNull(teacher, "teacher must not be null");
+        if (score < 1 || score > 5) throw new IllegalArgumentException(
+            "Score must be between 1 and 5, got: " + score
+        );
+        this.student = student;
+        this.teacher = teacher;
+        this.score = score;
+        this.comment = comment;
+        this.createdDate = LocalDate.now();
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public LocalDate getCreatedDate() {
+        return createdDate;
+    }
+
+    @Override
+    public String toString() {
+        return (
+            "TeacherRating{student=" +
+            student +
+            ", teacher=" +
+            teacher +
+            ", score=" +
+            score +
+            ", comment='" +
+            comment +
+            '\'' +
+            ", createdDate=" +
+            createdDate +
+            '}'
+        );
+    }
+}

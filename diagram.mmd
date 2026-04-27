@@ -1,0 +1,653 @@
+classDiagram
+direction TB
+
+%% =========================================================
+%% RESEARCH-ORIENTED UNIVERSITY SYSTEM
+%% This diagram focuses on the three most important processes:
+%% 1) course registration
+%% 2) putting marks
+%% 3) research
+%% Other modules support those flows.
+%% =========================================================
+
+%% =========================
+%% USER / ROLES
+%% =========================
+%% User is the root abstraction for everyone in the system.
+%% Authentication and language switching are modeled here because
+%% every user must access the system through authentication.
+
+class User {
+  <<abstract>>
+  -id: String
+  -name: String
+  -email: String
+  -passwordHash: String
+  -language: Language
+  +login(email: String, password: String): boolean
+  +logout(): void
+  +changeLanguage(language: Language): void
+}
+
+%% Employee is abstract because common employee behavior
+%% should not be duplicated in Teacher, Manager, Admin, etc.
+class Employee {
+  <<abstract>>
+  -salary: double
+  +sendMessage(receiver: Employee, text: String): Message
+}
+
+%% Student contains academic behavior such as registration,
+%% marks viewing, and transcript access.
+class Student {
+  -gpa: double
+  -yearOfStudy: int
+  -totalCredits: int
+  -failCount: int
+  -degreeType: DegreeType
+  +viewCourses(): List~Course~
+  +registerForCourse(course: Course): Enrollment
+  +viewMarks(): List~Mark~
+  +viewTranscript(): String
+  +getTranscript(): String
+  +rateTeacher(teacher: Teacher, score: int, comment: String): TeacherRating
+}
+
+%% GraduateStudent is a specialized student.
+%% According to the requirements, master and PhD students
+%% must be researchers and must have research supervision.
+class GraduateStudent {
+  +setSupervisor(supervisor: Researcher): void
+  +addDiplomaPaper(paper: ResearchPaper): void
+}
+
+%% Teacher is responsible for course teaching and grading.
+%% Complaint sending is included here because it is explicitly required.
+class Teacher {
+  -position: TeacherPosition
+  +viewCourses(): List~Course~
+  +manageCourse(course: Course): void
+  +putMark(enrollment: Enrollment, mark: Mark): void
+  +viewStudents(course: Course): List~Student~
+  +sendComplaint(targets: List~Student~, urgency: UrgencyLevel, text: String): Complaint
+}
+
+%% Manager handles approvals, course offering rules,
+%% reporting, and academic administration.
+class Manager {
+  -type: ManagerType
+  +assignTeacherToCourse(teacher: Teacher, course: Course): void
+  +approveRegistration(enrollment: Enrollment): void
+  +addCourseForRegistration(course: Course, major: Major, yearOfStudy: int, category: CourseCategory): CourseRequirement
+  +createAcademicReport(): AcademicReport
+  +manageNews(): void
+  +viewStudentsSorted(comparator: UserComparator): List~Student~
+  +viewTeachersSorted(comparator: UserComparator): List~Teacher~
+  +viewEmployeeRequests(): List~EmployeeRequest~
+}
+
+%% Admin is responsible for user lifecycle and log access.
+class Admin {
+  +addUser(user: User): void
+  +removeUser(user: User): void
+  +updateUser(user: User): void
+  +viewLogs(): List~LogEntry~
+}
+
+%% Tech support specialists work with support tickets.
+class TechSupportSpecialist {
+  +viewNewRequests(): List~TechSupportRequest~
+  +acceptRequest(request: TechSupportRequest): void
+  +rejectRequest(request: TechSupportRequest): void
+  +completeRequest(request: TechSupportRequest): void
+}
+
+%% Inheritance tree of the main system roles.
+User <|-- Employee
+User <|-- Student
+Student <|-- GraduateStudent
+Employee <|-- Teacher
+Employee <|-- Manager
+Employee <|-- Admin
+Employee <|-- TechSupportSpecialist
+
+%% =========================
+%% ACADEMIC DOMAIN
+%% =========================
+%% These classes support realistic academic rules such as
+%% school-major structure, course registration, and grading.
+
+class School {
+  -name: String
+}
+
+class Major {
+  -name: String
+}
+
+%% Course stays lean; course classification by program is moved to
+%% CourseRequirement because the same course may be MAJOR for one
+%% program and FREE_ELECTIVE for another.
+class Course {
+  -courseCode: String
+  -title: String
+  -credits: int
+  +viewSyllabus(): String
+}
+
+%% This class resolves the “major/minor/free elective” issue cleanly.
+class CourseRequirement {
+  -yearOfStudy: int
+  -category: CourseCategory
+}
+
+%% Lesson is used to model lecture/practice separately.
+%% This is how the design supports different instructors
+%% for lecture and practice without timetable overengineering.
+class Lesson {
+  -id: String
+  -type: LessonType
+  -room: String
+  -time: DateTime
+}
+
+%% Enrollment is a key support class.
+%% It connects student-course registration with approval state,
+%% attempt number, and later grading.
+class Enrollment {
+  -semesterLabel: String
+  -status: EnrollmentStatus
+  -attemptNo: int
+  +register(): void
+  +approve(): void
+  +reject(): void
+}
+
+%% Mark follows the brief exactly:
+%% 1st attestation, 2nd attestation, and final exam.
+class Mark {
+  -firstAttestation: double
+  -secondAttestation: double
+  -finalExam: double
+  +getTotal(): double
+  +isPassed(): boolean
+}
+
+%% School-major-user relations.
+School "1" <-- "0..*" Major : belongsTo
+School "1" <-- "0..*" User : affiliatedWith
+
+%% Student belongs to a major.
+Major "1" <-- "0..*" Student : has
+
+%% A student can have many enrollments.
+Student "1" *-- "0..*" Enrollment : enrollments
+
+%% A course can appear in many enrollments.
+Course "1" o-- "0..*" Enrollment : registrations
+
+%% Each enrollment may eventually receive one mark.
+Enrollment "1" *-- "0..1" Mark : mark
+
+%% A course consists of one or more lessons.
+Course "1" *-- "1..*" Lesson : lessons
+
+%% Each lesson has one instructor.
+Lesson "1" --> "1" Teacher : instructor
+
+%% Curriculum rules map courses to majors and study years.
+Course "1" -- "0..*" CourseRequirement : curriculumRules
+Major "1" -- "0..*" CourseRequirement : appliesTo
+
+%% =========================
+%% STUDENT SUPPORT
+%% =========================
+%% These classes support teacher evaluation and student organizations.
+
+class TeacherRating {
+  -score: int
+  -comment: String
+  -createdDate: Date
+}
+
+class StudentOrganization {
+  -name: String
+  -description: String
+}
+
+%% Membership is modeled as a separate class so a student can belong
+%% to multiple organizations and hold a role such as MEMBER or HEAD.
+class OrganizationMembership {
+  -role: OrganizationRole
+  -joinDate: Date
+}
+
+Student "1" -- "0..*" TeacherRating : gives
+Teacher "1" -- "0..*" TeacherRating : receives
+Student "1" -- "0..*" OrganizationMembership : memberships
+StudentOrganization "1" -- "0..*" OrganizationMembership : members
+
+%% =========================
+%% RESEARCH
+%% =========================
+%% Researcher is modeled as an interface because teachers,
+%% students, and even some employees can be researchers.
+%% This avoids multiple inheritance problems in Java.
+
+class Researcher {
+  <<interface>>
+  +calculateHIndex(): int
+  +printPapers(comparator: PaperComparator): void
+}
+
+%% ResearchProfile implements Researcher and stores the actual
+%% research-related data for a user.
+class ResearchProfile {
+  -hIndex: int
+  +joinProject(project: ResearchProject): void
+  +publishPaper(paper: ResearchPaper): void
+}
+
+%% ResearchPaper contains the fields explicitly suggested in the brief.
+class ResearchPaper {
+  -title: String
+  -authors: String
+  -journalName: String
+  -pages: String
+  -publishDate: Date
+  -doi: String
+  -citations: int
+  +getCitation(format: CitationFormat): String
+}
+
+%% ResearchProject contains topic, participants, and published papers.
+class ResearchProject {
+  -topic: String
+  +addParticipant(researcher: Researcher): void
+  +addPublishedPaper(paper: ResearchPaper): void
+}
+
+%% ResearchService is a facade for university-wide research functions.
+%% This keeps global research queries out of individual entities.
+class ResearchService {
+  <<facade>>
+  +printAllPapers(comparator: PaperComparator): void
+  +getTopCitedResearcherBySchool(school: School): ResearchProfile
+  +getTopCitedResearcherOfYear(year: int): ResearchProfile
+}
+
+ResearchProfile ..|> Researcher
+
+%% A user may optionally have a research profile.
+%% This satisfies the requirement that some users are researchers
+%% and some are not.
+User "1" --> "0..1" ResearchProfile : researchProfile
+
+%% A profile owns the researcher’s papers.
+ResearchProfile "1" -- "0..*" ResearchPaper : papers
+
+%% A researcher may participate in multiple projects.
+ResearchProfile "0..*" -- "0..*" ResearchProject : projects
+
+%% A project can publish multiple papers.
+ResearchProject "1" -- "0..*" ResearchPaper : publishedPapers
+
+%% Graduate students must have a supervisor who is a Researcher.
+GraduateStudent "1" --> "1" Researcher : supervisor
+
+%% Graduate students can keep diploma-related papers.
+GraduateStudent "1" -- "0..*" ResearchPaper : diplomaPapers
+
+ResearchService ..> ResearchProfile
+ResearchService ..> ResearchPaper
+
+%% =========================
+%% JOURNALS / NEWS
+%% =========================
+%% The university has its own journals.
+%% All users can subscribe, not only researchers.
+
+class UniversityJournal {
+  -name: String
+  +publishPaper(paper: ResearchPaper): void
+  +notifySubscribers(): void
+}
+
+%% Association class for user-journal subscriptions.
+class JournalSubscription {
+  -subscribeDate: Date
+}
+
+class News {
+  -title: String
+  -content: String
+  -topic: NewsTopic
+  -createdDate: Date
+  -pinned: boolean
+}
+
+class NewsComment {
+  -text: String
+  -createdDate: Date
+}
+
+%% NewsService is a facade for automated research news:
+%% paper publication announcements and top-cited researcher news.
+class NewsService {
+  <<facade>>
+  +publishNews(news: News): void
+  +announcePaperPublication(paper: ResearchPaper): News
+  +announceTopCitedResearcher(): News
+  +pinResearchNews(): void
+}
+
+%% Users subscribe to journals via subscription records.
+User "1" -- "0..*" JournalSubscription : subscriptions
+UniversityJournal "1" -- "0..*" JournalSubscription : subscribers
+
+%% A journal publishes papers.
+UniversityJournal "1" -- "0..*" ResearchPaper : publishes
+
+%% News can be commented on by users.
+User "1" -- "0..*" NewsComment : writes
+News "1" -- "0..*" NewsComment : comments
+
+%% Managers manage published news in the system.
+Manager "1" --> "0..*" News : manages
+
+NewsService ..> News
+NewsService ..> ResearchPaper
+NewsService ..> ResearchProfile
+
+%% =========================
+%% COMMUNICATION / REQUESTS
+%% =========================
+%% Employees can message other employees.
+%% Official university messages are modeled as a specialization.
+
+class Message {
+  -text: String
+  -sentDate: Date
+  -isRead: boolean
+}
+
+class OfficialMessage {
+  -eventType: String
+}
+
+%% EmployeeRequest represents formal employee requests
+%% that managers may review/sign.
+class EmployeeRequest {
+  -description: String
+  -status: RequestStatus
+}
+
+%% Complaint is separate from ordinary messages because the brief
+%% explicitly requires urgency-based complaints about students.
+class Complaint {
+  -urgency: UrgencyLevel
+  -text: String
+  -createdDate: Date
+}
+
+Message <|-- OfficialMessage
+
+%% Any employee can send a message to any employee.
+Employee "1" --> "0..*" Message : sends
+Employee "1" <-- "0..*" Message : receives
+
+%% Employee requests are created by employees and reviewed by managers.
+Employee "1" --> "0..*" EmployeeRequest : creates
+Manager "0..1" --> "0..*" EmployeeRequest : signsOrViews
+
+%% Teacher complaint flow toward dean-type manager.
+Teacher "1" --> "0..*" Complaint : submits
+Complaint "1" --> "1..*" Student : targets
+Complaint "1" --> "1" Manager : receiver
+
+%% =========================
+%% TECH SUPPORT / ADMIN
+%% =========================
+%% Tech support requests model the required ticket workflow.
+
+class TechSupportRequest {
+  -description: String
+  -status: RequestStatus
+  -createdDate: Date
+}
+
+%% Reports stay lightweight and focused on marks/statistics.
+class AcademicReport {
+  -createdDate: Date
+  +generateMarksReport(): String
+  +generateStatistics(): String
+}
+
+%% Logs are visible to admins.
+class LogEntry {
+  -action: String
+  -timestamp: Date
+}
+
+User "1" --> "0..*" TechSupportRequest : creates
+TechSupportSpecialist "0..1" --> "0..*" TechSupportRequest : handles
+Manager "1" --> "0..*" AcademicReport : creates
+Admin "1" --> "0..*" LogEntry : views
+
+%% =========================
+%% SYSTEM / PATTERNS
+%% =========================
+%% UniversitySystem acts as central storage/coordination point.
+%% This also supports serialization and singleton-style access.
+
+class UniversitySystem {
+  <<singleton>>
+  +save(): void
+  +load(): void
+  +authenticate(email: String, password: String): User
+}
+
+%% Factory creates users by role.
+class UserFactory {
+  <<factory>>
+  +createUser(role: String): User
+}
+
+%% Comparator strategy interfaces for sorting.
+class PaperComparator {
+  <<interface>>
+  +compare(a: ResearchPaper, b: ResearchPaper): int
+}
+
+class UserComparator {
+  <<interface>>
+  +compare(a: User, b: User): int
+}
+
+class PaperByDateComparator {
+  +compare(a: ResearchPaper, b: ResearchPaper): int
+}
+
+class PaperByCitationsComparator {
+  +compare(a: ResearchPaper, b: ResearchPaper): int
+}
+
+class PaperByPagesComparator {
+  +compare(a: ResearchPaper, b: ResearchPaper): int
+}
+
+class StudentByGpaComparator {
+  +compare(a: User, b: User): int
+}
+
+class UserByNameComparator {
+  +compare(a: User, b: User): int
+}
+
+PaperByDateComparator ..|> PaperComparator
+PaperByCitationsComparator ..|> PaperComparator
+PaperByPagesComparator ..|> PaperComparator
+StudentByGpaComparator ..|> UserComparator
+UserByNameComparator ..|> UserComparator
+
+%% Central system stores major collections.
+UniversitySystem o-- User : stores
+UniversitySystem o-- Course : stores
+UniversitySystem o-- News : stores
+UniversitySystem o-- UniversityJournal : stores
+UniversitySystem o-- LogEntry : stores
+UniversitySystem ..> UserFactory : uses
+
+%% =========================
+%% EXCEPTIONS
+%% =========================
+%% Only the most necessary custom exceptions are included,
+%% matching the project requirements.
+
+class InvalidSupervisorException {
+  <<exception>>
+}
+
+class NonResearcherJoinProjectException {
+  <<exception>>
+}
+
+class CreditLimitExceededException {
+  <<exception>>
+}
+
+class RetakeLimitExceededException {
+  <<exception>>
+}
+
+ResearchProject ..> NonResearcherJoinProjectException : throws
+GraduateStudent ..> InvalidSupervisorException : throws
+Student ..> CreditLimitExceededException : throws
+Student ..> RetakeLimitExceededException : throws
+
+%% =========================
+%% ENUMS
+%% =========================
+%% Enumerations keep values controlled and readable in Java/UML.
+
+class Language {
+  <<enumeration>>
+  KZ
+  EN
+  RU
+}
+
+class LessonType {
+  <<enumeration>>
+  LECTURE
+  PRACTICE
+}
+
+class UrgencyLevel {
+  <<enumeration>>
+  LOW
+  MEDIUM
+  HIGH
+}
+
+class TeacherPosition {
+  <<enumeration>>
+  TUTOR
+  LECTOR
+  SENIOR_LECTOR
+  PROFESSOR
+}
+
+class ManagerType {
+  <<enumeration>>
+  OR
+  DEPARTMENT
+  DEAN
+}
+
+class CourseCategory {
+  <<enumeration>>
+  MAJOR
+  MINOR
+  FREE_ELECTIVE
+}
+
+class DegreeType {
+  <<enumeration>>
+  BACHELOR
+  MASTER
+  PHD
+}
+
+class NewsTopic {
+  <<enumeration>>
+  RESEARCH
+  ACADEMIC
+  GENERAL
+}
+
+class CitationFormat {
+  <<enumeration>>
+  PLAIN_TEXT
+  BIBTEX
+}
+
+class RequestStatus {
+  <<enumeration>>
+  NEW
+  VIEWED
+  ACCEPTED
+  REJECTED
+  DONE
+}
+
+class OrganizationRole {
+  <<enumeration>>
+  MEMBER
+  HEAD
+}
+
+class EnrollmentStatus {
+  <<enumeration>>
+  PENDING
+  APPROVED
+  REJECTED
+  REGISTERED
+}
+
+User --> Language
+Lesson --> LessonType
+Complaint --> UrgencyLevel
+Teacher --> TeacherPosition
+Manager --> ManagerType
+CourseRequirement --> CourseCategory
+Student --> DegreeType
+News --> NewsTopic
+ResearchPaper --> CitationFormat
+TechSupportRequest --> RequestStatus
+EmployeeRequest --> RequestStatus
+OrganizationMembership --> OrganizationRole
+Enrollment --> EnrollmentStatus
+
+%% =========================
+%% UML NOTES / CONSTRAINTS
+%% =========================
+%% These notes capture business rules from the brief.
+
+note for Student "Constraints:\n- totalCredits <= 21\n- failCount <= 3"
+
+note for GraduateStudent "Constraints:\n- must have ResearchProfile\n- supervisor.hIndex >= 3"
+
+note for Teacher "Constraint:\n- PROFESSOR must be a Researcher"
+
+note for ResearchProject "Constraint:\n- only Researcher can join"
+
+note for UniversityJournal "Pattern:\n- Observer for subscriber notification"
+
+note for CourseRequirement "Purpose:\n- allows the same course to be MAJOR for one major\n- and FREE_ELECTIVE for another"
+
+note for Enrollment "Purpose:\n- stores registration state\n- stores attempt number\n- links registration to mark"
+
+note for ResearchProfile "Purpose:\n- allows Student, Teacher, or Employee\n  to become a Researcher without multiple inheritance"
+
+note for NewsService "Automation:\n- announces published papers\n- announces top cited researcher\n- prioritizes research news"
