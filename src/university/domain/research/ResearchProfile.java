@@ -28,7 +28,7 @@ public class ResearchProfile implements Researcher {
 
     @Override
     public int calculateHIndex() {
-        var sorted = papers
+        List<Integer> sorted = papers
             .stream()
             .mapToInt(ResearchPaper::getCitations)
             .boxed()

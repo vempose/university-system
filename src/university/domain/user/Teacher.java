@@ -55,7 +55,7 @@ public class Teacher extends Employee {
         String text,
         Manager receiver
     ) {
-        var complaint = new Complaint(this, targets, urgency, text, receiver);
+        Complaint complaint = new Complaint(this, targets, urgency, text, receiver);
         submittedComplaints.add(complaint);
         return complaint;
     }

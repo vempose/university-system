@@ -88,7 +88,7 @@ public class Student extends User {
         }
 
         int attemptNo = (int) previousAttempts + 1;
-        var enrollment = new Enrollment(
+        Enrollment enrollment = new Enrollment(
             this,
             course,
             "current-semester",
@@ -112,7 +112,7 @@ public class Student extends User {
     }
 
     public String getTranscript() {
-        var sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
         sb.append(
             "╔══════════════════════════════════════════════════════════════════════╗\n"
@@ -151,9 +151,9 @@ public class Student extends User {
         );
         sb.append("─".repeat(72)).append("\n");
 
-        for (var enrollment : enrollments) {
-            var course = enrollment.getCourse();
-            var markText = enrollment
+        for (Enrollment enrollment : enrollments) {
+            Course course = enrollment.getCourse();
+            String markText = enrollment
                 .getMark()
                 .<String>map(m ->
                     String.format(
@@ -187,12 +187,12 @@ public class Student extends User {
         Teacher teacher,
         int score,
         String comment
-    ) {
+    if (score < 1 || score > 5) {
             throw new IllegalArgumentException(
                 "Rating score must be between 1 and 5, got: " + score
             );
         }
-        var rating = new TeacherRating(this, teacher, score, comment);
+        TeacherRating rating = new TeacherRating(this, teacher, score, comment);
         givenRatings.add(rating);
         teacher.addRating(rating);
         return rating;

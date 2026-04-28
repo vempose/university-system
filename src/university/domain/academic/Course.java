@@ -27,7 +27,7 @@ public final class Course implements Comparable<Course> {
     }
 
     public String viewSyllabus() {
-        var sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         String divider = "=".repeat(48);
 
         sb.append(divider).append('\n');

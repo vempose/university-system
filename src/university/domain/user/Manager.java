@@ -58,7 +58,7 @@ public class Manager extends Employee {
     }
 
     public AcademicReport createAcademicReport() {
-        var report = new AcademicReport();
+        AcademicReport report = new AcademicReport();
         createdReports.add(report);
         return report;
     }

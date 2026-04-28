@@ -19,7 +19,7 @@ public final class UserFactory {
     UserFactory() {}
 
     public User createUser(String role) {
-        var id = UUID.randomUUID().toString();
+        String id = UUID.randomUUID().toString();
         return switch (role.toUpperCase().trim()) {
             case "STUDENT" -> new Student(
                 id,

@@ -30,7 +30,7 @@ public abstract class Employee extends User {
     }
 
     public Message sendMessage(Employee receiver, String text) {
-        var message = new Message(this, receiver, text);
+        Message message = new Message(this, receiver, text);
         sentMessages.add(message);
         receiver.receivedMessages.add(message); // direct field access — same package
         return message;

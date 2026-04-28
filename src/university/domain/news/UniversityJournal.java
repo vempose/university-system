@@ -38,8 +38,8 @@ public class UniversityJournal {
     }
 
     public void notifySubscribers(ResearchPaper paper) {
-        for (var subscription : List.copyOf(subscriptions)) {
-            var subscriber = subscription.getSubscriber();
+        for (JournalSubscription subscription : List.copyOf(subscriptions)) {
+            User subscriber = subscription.getSubscriber();
             if (subscriber instanceof JournalObserver observer) {
                 observer.onPaperPublished(paper, this);
             } else {

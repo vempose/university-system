@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.DoubleSummaryStatistics;
 
 public class AcademicReport {
 
@@ -38,7 +39,7 @@ public class AcademicReport {
             return "Academic Report [" + id + "] — No entries recorded.";
         }
 
-        var sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append("=".repeat(60)).append('\n');
         sb.append("  ACADEMIC MARKS REPORT").append('\n');
         sb.append("  Report ID   : ").append(id).append('\n');
@@ -46,7 +47,7 @@ public class AcademicReport {
         sb.append("  Total entries: ").append(entries.size()).append('\n');
         sb.append("=".repeat(60)).append('\n');
 
-        var indexedEntries = new ArrayList<String>();
+        List<String> indexedEntries = new ArrayList<String>();
         for (int i = 0; i < entries.size(); i++) {
             indexedEntries.add(
                 String.format("  [%3d] %s", i + 1, entries.get(i))
@@ -67,14 +68,14 @@ public class AcademicReport {
             );
         }
 
-        var stats = entries
+        DoubleSummaryStatistics stats = entries
             .stream()
             .map(this::extractTrailingScore)
             .flatMap(Optional::stream)
             .mapToDouble(Double::doubleValue)
             .summaryStatistics();
 
-        var sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append("=".repeat(60)).append('\n');
         sb.append("  ACADEMIC REPORT — STATISTICS").append('\n');
         sb.append("  Report ID       : ").append(id).append('\n');
@@ -118,7 +119,7 @@ public class AcademicReport {
     }
 
     private double computePassRate(double threshold) {
-        var scored = entries
+        double[] scored = entries
             .stream()
             .map(this::extractTrailingScore)
             .flatMap(Optional::stream)

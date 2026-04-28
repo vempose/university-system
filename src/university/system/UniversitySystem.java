@@ -95,7 +95,7 @@ public final class UniversitySystem implements Serializable {
 
     public void save() {
         try (
-            var oos = new ObjectOutputStream(
+            ObjectOutputStream oos = new ObjectOutputStream(
                 new FileOutputStream("university_system.ser")
             )
         ) {
@@ -107,11 +107,11 @@ public final class UniversitySystem implements Serializable {
 
     public void load() {
         try (
-            var ois = new ObjectInputStream(
+            ObjectInputStream ois = new ObjectInputStream(
                 new FileInputStream("university_system.ser")
             )
         ) {
-            var loaded = (UniversitySystem) ois.readObject();
+            UniversitySystem loaded = (UniversitySystem) ois.readObject();
             users.clear();
             users.addAll(loaded.users);
             courses.clear();

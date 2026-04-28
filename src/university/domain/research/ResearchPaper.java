@@ -54,7 +54,7 @@ public final class ResearchPaper {
     }
 
     private String buildBibtexCitation() {
-        var citationKey = doi.replaceAll("[^A-Za-z0-9]", "_");
+        String citationKey = doi.replaceAll("[^A-Za-z0-9]", "_");
         return """
         @article{%s,
           author  = {%s},
