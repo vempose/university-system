@@ -9,6 +9,7 @@ import university.domain.academic.Enrollment;
 import university.domain.academic.Major;
 import university.domain.academic.Mark;
 import university.domain.academic.School;
+import university.domain.student.OrganizationMembership;
 import university.domain.student.TeacherRating;
 import university.enums.DegreeType;
 import university.enums.Language;
@@ -29,6 +30,7 @@ public class Student extends User {
     private School school;
     private final List<Enrollment> enrollments = new ArrayList<>();
     private final List<TeacherRating> givenRatings = new ArrayList<>();
+    private final List<OrganizationMembership> memberships = new ArrayList<>();
 
     public Student(
         String id,
@@ -276,5 +278,13 @@ public class Student extends User {
 
     public List<TeacherRating> getGivenRatings() {
         return List.copyOf(givenRatings);
+    }
+
+    public List<OrganizationMembership> getMemberships() {
+        return List.copyOf(memberships);
+    }
+
+    public void addMembership(OrganizationMembership membership) {
+        memberships.add(membership);
     }
 }
