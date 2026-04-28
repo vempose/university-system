@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public final class Course implements Comparable<Course>, Serializable {
 
@@ -32,24 +33,23 @@ public final class Course implements Comparable<Course>, Serializable {
     }
 
     public String viewSyllabus() {
-        StringBuilder sb = new StringBuilder();
         String divider = "=".repeat(48);
+        String lessonSection = lessons.isEmpty()
+            ? "  (no lessons scheduled)\n"
+            : lessons
+                  .stream()
+                  .map(lesson -> "  " + lesson + "\n")
+                  .collect(Collectors.joining());
 
-        sb.append(divider).append('\n');
-        sb.append(String.format("Course : %s — %s%n", courseCode, title));
-        sb.append(String.format("Credits: %d%n", credits));
-        sb.append(String.format("Lessons (%d):%n", lessons.size()));
-
-        if (lessons.isEmpty()) {
-            sb.append("  (no lessons scheduled)\n");
-        } else {
-            lessons.forEach(lesson ->
-                sb.append("  ").append(lesson).append('\n')
-            );
-        }
-
-        sb.append(divider);
-        return sb.toString();
+        return "%s\nCourse : %s - %s\nCredits: %d\nLessons (%d):\n%s%s".formatted(
+            divider,
+            courseCode,
+            title,
+            credits,
+            lessons.size(),
+            lessonSection,
+            divider
+        );
     }
 
     public void addLesson(Lesson lesson) {

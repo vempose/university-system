@@ -109,46 +109,37 @@ public class Student extends User {
     }
 
     public String getTranscript() {
-        StringBuilder sb = new StringBuilder();
-        sb
-            .append("Transcript for ")
-            .append(getName())
-            .append(" (")
-            .append(getId())
-            .append(")\n");
-        sb
-            .append("Degree: ")
-            .append(degreeType)
-            .append(", Major: ")
-            .append(major.getName())
-            .append("\n");
-        sb
-            .append("GPA: ")
-            .append(gpa)
-            .append(", Total Credits: ")
-            .append(totalCredits)
-            .append("\n");
-        sb.append("-".repeat(50)).append("\n");
+        String divider = "-".repeat(50);
+        List<String> lines = new ArrayList<>();
         for (Enrollment e : enrollments) {
-            sb
-                .append(e.getCourse().getCourseCode())
-                .append(" | ")
-                .append(e.getCourse().getTitle())
-                .append(" | Attempt: ")
-                .append(e.getAttemptNo())
-                .append(" | Status: ")
-                .append(e.getStatus())
-                .append(" | Mark: ")
-                .append(
+            lines.add(
+                "%s | %s | Attempt: %s | Status: %s | Mark: %s".formatted(
+                    e.getCourse().getCourseCode(),
+                    e.getCourse().getTitle(),
+                    e.getAttemptNo(),
+                    e.getStatus(),
                     e
                         .getMark()
                         .map(m -> String.valueOf(m.getTotal()))
                         .orElse("N/A")
                 )
-                .append("\n");
+            );
         }
-        sb.append("-".repeat(50));
-        return sb.toString();
+        String enrollmentSection = lines.isEmpty()
+            ? ""
+            : String.join("\n", lines) + "\n";
+
+        return "Transcript for %s (%s)\nDegree: %s, Major: %s\nGPA: %s, Total Credits: %d\n%s\n%s%s".formatted(
+            getName(),
+            getId(),
+            degreeType,
+            major.getName(),
+            gpa,
+            totalCredits,
+            divider,
+            enrollmentSection,
+            divider
+        );
     }
 
     void addEnrollment(Enrollment enrollment) {

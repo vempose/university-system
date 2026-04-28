@@ -41,35 +41,31 @@ public class AcademicReport implements Serializable {
 
     public String generateMarksReport() {
         if (entries.isEmpty()) {
-            return "Academic Report [" + id + "] — No entries recorded.";
+            return "Academic Report [%s] — No entries recorded.".formatted(id);
         }
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("=".repeat(60)).append('\n');
-        sb.append("  ACADEMIC MARKS REPORT").append('\n');
-        sb.append("  Report ID   : ").append(id).append('\n');
-        sb.append("  Generated   : ").append(createdDate).append('\n');
-        sb.append("  Total entries: ").append(entries.size()).append('\n');
-        sb.append("=".repeat(60)).append('\n');
-
-        List<String> indexedEntries = new ArrayList<String>();
+        String divider = "=".repeat(60);
+        List<String> indexedEntries = new ArrayList<>();
         for (int i = 0; i < entries.size(); i++) {
-            indexedEntries.add(
-                String.format("  [%3d] %s", i + 1, entries.get(i))
-            );
+            indexedEntries.add("  [%3d] %s".formatted(i + 1, entries.get(i)));
         }
-        sb.append(String.join("\n", indexedEntries));
-        sb.append('\n').append("=".repeat(60));
+        String body = String.join("\n", indexedEntries);
 
-        return sb.toString();
+        return "%s\n  ACADEMIC MARKS REPORT\n  Report ID   : %s\n  Generated   : %s\n  Total entries: %d\n%s\n%s\n%s".formatted(
+            divider,
+            id,
+            createdDate,
+            entries.size(),
+            divider,
+            body,
+            divider
+        );
     }
 
     public String generateStatistics() {
         if (entries.isEmpty()) {
-            return (
-                "Academic Report [" +
-                id +
-                "] — Statistics unavailable: no entries."
+            return "Academic Report [%s] — Statistics unavailable: no entries.".formatted(
+                id
             );
         }
 
@@ -80,37 +76,26 @@ public class AcademicReport implements Serializable {
             .mapToDouble(Double::doubleValue)
             .summaryStatistics();
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("=".repeat(60)).append('\n');
-        sb.append("  ACADEMIC REPORT — STATISTICS").append('\n');
-        sb.append("  Report ID       : ").append(id).append('\n');
-        sb.append("  Generated       : ").append(createdDate).append('\n');
-        sb.append("-".repeat(60)).append('\n');
-        sb.append(String.format("  Total entries   : %d%n", entries.size()));
-        sb.append(String.format("  Scored entries  : %d%n", stats.getCount()));
+        String scoreDetails =
+            stats.getCount() > 0
+                ? "  Minimum score   : %.2f\n  Maximum score   : %.2f\n  Average score   : %.2f\n  Pass rate (>=50): %.1f%%\n".formatted(
+                      stats.getMin(),
+                      stats.getMax(),
+                      stats.getAverage(),
+                      computePassRate(50.0)
+                  )
+                : "  No numeric scores found in entries.\n";
 
-        if (stats.getCount() > 0) {
-            sb.append(
-                String.format("  Minimum score   : %.2f%n", stats.getMin())
-            );
-            sb.append(
-                String.format("  Maximum score   : %.2f%n", stats.getMax())
-            );
-            sb.append(
-                String.format("  Average score   : %.2f%n", stats.getAverage())
-            );
-            sb.append(
-                String.format(
-                    "  Pass rate (>=50): %.1f%%%n",
-                    computePassRate(50.0)
-                )
-            );
-        } else {
-            sb.append("  No numeric scores found in entries.\n");
-        }
-        sb.append("=".repeat(60));
-
-        return sb.toString();
+        return "%s\n  ACADEMIC REPORT — STATISTICS\n  Report ID       : %s\n  Generated       : %s\n%s\n  Total entries   : %d\n  Scored entries  : %d\n%s%s".formatted(
+            "=".repeat(60),
+            id,
+            createdDate,
+            "-".repeat(60),
+            entries.size(),
+            stats.getCount(),
+            scoreDetails,
+            "=".repeat(60)
+        );
     }
 
     private Optional<Double> extractTrailingScore(String entry) {
