@@ -1,10 +1,11 @@
 package university.domain.news;
 
+import university.domain.user.User;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import university.domain.user.User;
 
 public class NewsComment implements Serializable {
 
@@ -18,10 +19,10 @@ public class NewsComment implements Serializable {
 
     public NewsComment(String text, User author) {
         if (text == null || text.isBlank()) throw new IllegalArgumentException(
-            "Comment text must not be null or blank."
+                "Comment text must not be null or blank."
         );
         if (author == null) throw new IllegalArgumentException(
-            "Comment author must not be null."
+                "Comment author must not be null."
         );
 
         this.id = UUID.randomUUID().toString();
@@ -49,10 +50,10 @@ public class NewsComment implements Serializable {
     @Override
     public String toString() {
         return "NewsComment{id='%s', author='%s', createdDate=%s, text='%s'}".formatted(
-            id,
-            author.getName(),
-            createdDate,
-            text
+                id,
+                author.getName(),
+                createdDate,
+                text
         );
     }
 }

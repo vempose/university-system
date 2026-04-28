@@ -1,12 +1,12 @@
 package university.domain.user;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import university.domain.support.LogEntry;
 import university.enums.Language;
 import university.system.UniversitySystem;
+
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Admin extends Employee {
 
@@ -16,12 +16,12 @@ public class Admin extends Employee {
     private final List<LogEntry> viewedLogs = new ArrayList<>();
 
     public Admin(
-        String id,
-        String name,
-        String email,
-        String passwordHash,
-        Language language,
-        double salary
+            String id,
+            String name,
+            String email,
+            String passwordHash,
+            Language language,
+            double salary
     ) {
         super(id, name, email, passwordHash, language, salary);
     }

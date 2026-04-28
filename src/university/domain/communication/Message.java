@@ -1,10 +1,11 @@
 package university.domain.communication;
 
+import university.domain.user.Employee;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import university.domain.user.Employee;
 
 public class Message implements Serializable {
 
@@ -20,13 +21,13 @@ public class Message implements Serializable {
 
     public Message(Employee sender, Employee receiver, String text) {
         if (sender == null) throw new IllegalArgumentException(
-            "Sender must not be null."
+                "Sender must not be null."
         );
         if (receiver == null) throw new IllegalArgumentException(
-            "Receiver must not be null."
+                "Receiver must not be null."
         );
         if (text == null) throw new IllegalArgumentException(
-            "Message text must not be null."
+                "Message text must not be null."
         );
 
         this.id = UUID.randomUUID().toString();
@@ -68,12 +69,12 @@ public class Message implements Serializable {
     @Override
     public String toString() {
         return "Message{id='%s', sender=%s, receiver=%s, sentDate=%s, isRead=%b, text='%s'}".formatted(
-            id,
-            sender.getName(),
-            receiver.getName(),
-            sentDate,
-            isRead,
-            text
+                id,
+                sender.getName(),
+                receiver.getName(),
+                sentDate,
+                isRead,
+                text
         );
     }
 }

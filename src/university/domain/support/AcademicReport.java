@@ -3,12 +3,7 @@ package university.domain.support;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.DoubleSummaryStatistics;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,7 +13,7 @@ public class AcademicReport implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final Pattern TRAILING_NUMBER_PATTERN = Pattern.compile(
-        "(\\d+(?:\\.\\d+)?)\\s*$"
+            "(\\d+(?:\\.\\d+)?)\\s*$"
     );
 
     private final String id;
@@ -33,7 +28,7 @@ public class AcademicReport implements Serializable {
     public void addEntry(String entry) {
         if (entry == null || entry.isBlank()) {
             throw new IllegalArgumentException(
-                "Report entry must not be null or blank."
+                    "Report entry must not be null or blank."
             );
         }
         entries.add(entry);
@@ -52,49 +47,49 @@ public class AcademicReport implements Serializable {
         String body = String.join("\n", indexedEntries);
 
         return "%s\n  ACADEMIC MARKS REPORT\n  Report ID   : %s\n  Generated   : %s\n  Total entries: %d\n%s\n%s\n%s".formatted(
-            divider,
-            id,
-            createdDate,
-            entries.size(),
-            divider,
-            body,
-            divider
+                divider,
+                id,
+                createdDate,
+                entries.size(),
+                divider,
+                body,
+                divider
         );
     }
 
     public String generateStatistics() {
         if (entries.isEmpty()) {
             return "Academic Report [%s] — Statistics unavailable: no entries.".formatted(
-                id
+                    id
             );
         }
 
         DoubleSummaryStatistics stats = entries
-            .stream()
-            .map(this::extractTrailingScore)
-            .flatMap(Optional::stream)
-            .mapToDouble(Double::doubleValue)
-            .summaryStatistics();
+                .stream()
+                .map(this::extractTrailingScore)
+                .flatMap(Optional::stream)
+                .mapToDouble(Double::doubleValue)
+                .summaryStatistics();
 
         String scoreDetails =
-            stats.getCount() > 0
-                ? "  Minimum score   : %.2f\n  Maximum score   : %.2f\n  Average score   : %.2f\n  Pass rate (>=50): %.1f%%\n".formatted(
-                      stats.getMin(),
-                      stats.getMax(),
-                      stats.getAverage(),
-                      computePassRate(50.0)
-                  )
-                : "  No numeric scores found in entries.\n";
+                stats.getCount() > 0
+                        ? "  Minimum score   : %.2f\n  Maximum score   : %.2f\n  Average score   : %.2f\n  Pass rate (>=50): %.1f%%\n".formatted(
+                        stats.getMin(),
+                        stats.getMax(),
+                        stats.getAverage(),
+                        computePassRate(50.0)
+                )
+                        : "  No numeric scores found in entries.\n";
 
         return "%s\n  ACADEMIC REPORT — STATISTICS\n  Report ID       : %s\n  Generated       : %s\n%s\n  Total entries   : %d\n  Scored entries  : %d\n%s%s".formatted(
-            "=".repeat(60),
-            id,
-            createdDate,
-            "-".repeat(60),
-            entries.size(),
-            stats.getCount(),
-            scoreDetails,
-            "=".repeat(60)
+                "=".repeat(60),
+                id,
+                createdDate,
+                "-".repeat(60),
+                entries.size(),
+                stats.getCount(),
+                scoreDetails,
+                "=".repeat(60)
         );
     }
 
@@ -103,18 +98,19 @@ public class AcademicReport implements Serializable {
         if (m.find()) {
             try {
                 return Optional.of(Double.parseDouble(m.group(1)));
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
         }
         return Optional.empty();
     }
 
     private double computePassRate(double threshold) {
         double[] scored = entries
-            .stream()
-            .map(this::extractTrailingScore)
-            .flatMap(Optional::stream)
-            .mapToDouble(Double::doubleValue)
-            .toArray();
+                .stream()
+                .map(this::extractTrailingScore)
+                .flatMap(Optional::stream)
+                .mapToDouble(Double::doubleValue)
+                .toArray();
 
         if (scored.length == 0) return 0.0;
 
@@ -140,9 +136,9 @@ public class AcademicReport implements Serializable {
     @Override
     public String toString() {
         return "AcademicReport{id='%s', createdDate=%s, entryCount=%d}".formatted(
-            id,
-            createdDate,
-            entries.size()
+                id,
+                createdDate,
+                entries.size()
         );
     }
 }

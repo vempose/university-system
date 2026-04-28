@@ -1,13 +1,14 @@
 package university.domain.academic;
 
+import university.domain.user.Student;
+import university.domain.user.Teacher;
+import university.enums.AttendanceStatus;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-import university.domain.user.Student;
-import university.domain.user.Teacher;
-import university.enums.AttendanceStatus;
 
 public class AttendanceRecord implements Serializable {
 
@@ -15,31 +16,31 @@ public class AttendanceRecord implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final DateTimeFormatter DISPLAY_FORMATTER =
-        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private final Student student;
     private final Lesson lesson;
-    private AttendanceStatus status;
     private final LocalDateTime recordedAt;
     private final Teacher recordedBy;
+    private AttendanceStatus status;
 
     public AttendanceRecord(
-        Student student,
-        Lesson lesson,
-        AttendanceStatus status,
-        Teacher recordedBy
+            Student student,
+            Lesson lesson,
+            AttendanceStatus status,
+            Teacher recordedBy
     ) {
         if (student == null) throw new IllegalArgumentException(
-            "student must not be null"
+                "student must not be null"
         );
         if (lesson == null) throw new IllegalArgumentException(
-            "lesson must not be null"
+                "lesson must not be null"
         );
         if (status == null) throw new IllegalArgumentException(
-            "status must not be null"
+                "status must not be null"
         );
         if (recordedBy == null) throw new IllegalArgumentException(
-            "recordedBy must not be null"
+                "recordedBy must not be null"
         );
         this.student = student;
         this.lesson = lesson;
@@ -62,7 +63,7 @@ public class AttendanceRecord implements Serializable {
 
     public void setStatus(AttendanceStatus status) {
         if (status == null) throw new IllegalArgumentException(
-            "status must not be null"
+                "status must not be null"
         );
         this.status = status;
     }
@@ -80,8 +81,8 @@ public class AttendanceRecord implements Serializable {
         if (this == o) return true;
         if (!(o instanceof AttendanceRecord other)) return false;
         return (
-            Objects.equals(student, other.student) &&
-            Objects.equals(lesson, other.lesson)
+                Objects.equals(student, other.student) &&
+                        Objects.equals(lesson, other.lesson)
         );
     }
 
@@ -93,11 +94,11 @@ public class AttendanceRecord implements Serializable {
     @Override
     public String toString() {
         return "AttendanceRecord{student='%s', lesson='%s', status=%s, recordedAt=%s, recordedBy='%s'}".formatted(
-            student.getName(),
-            lesson.getId(),
-            status,
-            recordedAt.format(DISPLAY_FORMATTER),
-            recordedBy.getName()
+                student.getName(),
+                lesson.getId(),
+                status,
+                recordedAt.format(DISPLAY_FORMATTER),
+                recordedBy.getName()
         );
     }
 }

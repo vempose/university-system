@@ -1,13 +1,14 @@
 package university.domain.news;
 
+import university.domain.research.ResearchPaper;
+import university.domain.user.User;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import university.domain.research.ResearchPaper;
-import university.domain.user.User;
 
 public class UniversityJournal implements Serializable {
 
@@ -20,7 +21,7 @@ public class UniversityJournal implements Serializable {
 
     public UniversityJournal(String name) {
         if (name == null || name.isBlank()) throw new IllegalArgumentException(
-            "Journal name must not be blank"
+                "Journal name must not be blank"
         );
         this.name = name;
     }
@@ -31,10 +32,10 @@ public class UniversityJournal implements Serializable {
 
     public void unsubscribe(User user) {
         subscriptions
-            .stream()
-            .filter(s -> s.getSubscriber().equals(user))
-            .findFirst()
-            .ifPresent(subscriptions::remove);
+                .stream()
+                .filter(s -> s.getSubscriber().equals(user))
+                .findFirst()
+                .ifPresent(subscriptions::remove);
     }
 
     public void publishPaper(ResearchPaper paper) {
@@ -48,14 +49,9 @@ public class UniversityJournal implements Serializable {
             if (subscriber instanceof JournalObserver observer) {
                 observer.onPaperPublished(paper, this);
             } else {
-                System.out.println(
-                    "[Journal Notification] Dear " +
-                        subscriber.getName() +
-                        ", a new paper has been published in \"" +
-                        name +
-                        "\": \"" +
-                        paper.getTitle() +
-                        "\"."
+                System.out.printf(
+                        "[Journal Notification] Dear %s, a new paper has been published in \"%s\": \"%s\".%n",
+                        subscriber.getName(), name, paper.title()
                 );
             }
         }
@@ -88,9 +84,9 @@ public class UniversityJournal implements Serializable {
     @Override
     public String toString() {
         return "UniversityJournal{name='%s', subscribers=%d, publishedPapers=%d}".formatted(
-            name,
-            subscriptions.size(),
-            publishedPapers.size()
+                name,
+                subscriptions.size(),
+                publishedPapers.size()
         );
     }
 }

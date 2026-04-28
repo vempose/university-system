@@ -1,30 +1,30 @@
 package university.domain.user;
 
+import university.domain.academic.School;
+import university.domain.communication.Message;
+import university.enums.Language;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import university.domain.academic.School;
-import university.domain.communication.Message;
-import university.enums.Language;
 
 public abstract class Employee extends User implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-
-    private double salary;
-    private School school;
     private final List<Message> sentMessages = new ArrayList<>();
     List<Message> receivedMessages = new ArrayList<>();
+    private double salary;
+    private School school;
 
     protected Employee(
-        String id,
-        String name,
-        String email,
-        String passwordHash,
-        Language language,
-        double salary
+            String id,
+            String name,
+            String email,
+            String passwordHash,
+            Language language,
+            double salary
     ) {
         super(id, name, email, passwordHash, language);
         this.salary = salary;
@@ -43,7 +43,7 @@ public abstract class Employee extends User implements Serializable {
 
     public void setSalary(double salary) {
         if (salary < 0) throw new IllegalArgumentException(
-            "Salary must be >= 0, got: " + salary
+                "Salary must be >= 0, got: " + salary
         );
         this.salary = salary;
     }

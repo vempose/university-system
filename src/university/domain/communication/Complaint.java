@@ -1,14 +1,15 @@
 package university.domain.communication;
 
+import university.domain.user.Manager;
+import university.domain.user.Student;
+import university.domain.user.Teacher;
+import university.enums.UrgencyLevel;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import university.domain.user.Manager;
-import university.domain.user.Student;
-import university.domain.user.Teacher;
-import university.enums.UrgencyLevel;
 
 public class Complaint implements Serializable {
 
@@ -24,29 +25,29 @@ public class Complaint implements Serializable {
     private Manager receiver;
 
     public Complaint(
-        Teacher sender,
-        List<Student> targetStudents,
-        UrgencyLevel urgency,
-        String text,
-        Manager receiver
+            Teacher sender,
+            List<Student> targetStudents,
+            UrgencyLevel urgency,
+            String text,
+            Manager receiver
     ) {
         if (sender == null) throw new NullPointerException(
-            "sender must not be null"
+                "sender must not be null"
         );
         if (targetStudents == null) throw new NullPointerException(
-            "targetStudents must not be null"
+                "targetStudents must not be null"
         );
         if (urgency == null) throw new NullPointerException(
-            "urgency must not be null"
+                "urgency must not be null"
         );
         if (text == null) throw new NullPointerException(
-            "text must not be null"
+                "text must not be null"
         );
         if (receiver == null) throw new NullPointerException(
-            "receiver must not be null"
+                "receiver must not be null"
         );
         if (targetStudents.isEmpty()) throw new IllegalArgumentException(
-            "A complaint must target at least one student"
+                "A complaint must target at least one student"
         );
 
         this.id = UUID.randomUUID().toString();
@@ -88,7 +89,7 @@ public class Complaint implements Serializable {
 
     public void setReceiver(Manager receiver) {
         if (receiver == null) throw new NullPointerException(
-            "receiver must not be null"
+                "receiver must not be null"
         );
         this.receiver = receiver;
     }
@@ -96,13 +97,13 @@ public class Complaint implements Serializable {
     @Override
     public String toString() {
         return "Complaint{id='%s', sender='%s', targets=%d student(s), urgency=%s, receiver='%s', createdDate=%s, text='%s'}".formatted(
-            id,
-            sender.getName(),
-            targetStudents.size(),
-            urgency,
-            receiver.getName(),
-            createdDate,
-            text
+                id,
+                sender.getName(),
+                targetStudents.size(),
+                urgency,
+                receiver.getName(),
+                createdDate,
+                text
         );
     }
 }

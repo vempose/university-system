@@ -1,15 +1,6 @@
 package university.domain.user;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import university.domain.academic.Course;
-import university.domain.academic.CourseRequirement;
-import university.domain.academic.Enrollment;
-import university.domain.academic.Lesson;
-import university.domain.academic.Major;
+import university.domain.academic.*;
 import university.domain.communication.EmployeeRequest;
 import university.domain.news.News;
 import university.domain.support.AcademicReport;
@@ -17,33 +8,37 @@ import university.enums.CourseCategory;
 import university.enums.Language;
 import university.enums.ManagerType;
 
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class Manager extends Employee {
 
     @Serial
     private static final long serialVersionUID = 1L;
-
-    private ManagerType type;
     private final List<News> managedNews = new ArrayList<>();
     private final List<EmployeeRequest> viewedRequests = new ArrayList<>();
     private final List<AcademicReport> createdReports = new ArrayList<>();
+    private ManagerType type;
 
     public Manager(
-        String id,
-        String name,
-        String email,
-        String passwordHash,
-        Language language,
-        double salary,
-        ManagerType type
+            String id,
+            String name,
+            String email,
+            String passwordHash,
+            Language language,
+            double salary,
+            ManagerType type
     ) {
         super(id, name, email, passwordHash, language, salary);
         this.type = type;
     }
 
     public void assignTeacherToCourse(
-        Teacher teacher,
-        Course course,
-        Lesson lesson
+            Teacher teacher,
+            Course course,
+            Lesson lesson
     ) {
         lesson.setInstructor(teacher);
         teacher.addAssignedCourse(course);
@@ -54,10 +49,10 @@ public class Manager extends Employee {
     }
 
     public CourseRequirement addCourseForRegistration(
-        Course course,
-        Major major,
-        int yearOfStudy,
-        CourseCategory category
+            Course course,
+            Major major,
+            int yearOfStudy,
+            CourseCategory category
     ) {
         return new CourseRequirement(course, major, yearOfStudy, category);
     }
@@ -73,15 +68,15 @@ public class Manager extends Employee {
     }
 
     public List<Student> viewStudentsSorted(
-        List<Student> students,
-        Comparator<User> comparator
+            List<Student> students,
+            Comparator<User> comparator
     ) {
         return students.stream().sorted(comparator).toList();
     }
 
     public List<Teacher> viewTeachersSorted(
-        List<Teacher> teachers,
-        Comparator<User> comparator
+            List<Teacher> teachers,
+            Comparator<User> comparator
     ) {
         return teachers.stream().sorted(comparator).toList();
     }

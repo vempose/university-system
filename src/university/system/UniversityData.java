@@ -1,13 +1,14 @@
 package university.system;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.List;
 import university.domain.academic.Course;
 import university.domain.news.News;
 import university.domain.news.UniversityJournal;
 import university.domain.support.LogEntry;
 import university.domain.user.User;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.List;
 
 public final class UniversityData implements Serializable {
 

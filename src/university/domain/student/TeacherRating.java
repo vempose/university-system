@@ -1,10 +1,11 @@
 package university.domain.student;
 
+import university.domain.user.Student;
+import university.domain.user.Teacher;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
-import university.domain.user.Student;
-import university.domain.user.Teacher;
 
 public class TeacherRating implements Serializable {
 
@@ -18,13 +19,13 @@ public class TeacherRating implements Serializable {
     private final LocalDate createdDate;
 
     public TeacherRating(
-        Student student,
-        Teacher teacher,
-        int score,
-        String comment
+            Student student,
+            Teacher teacher,
+            int score,
+            String comment
     ) {
         if (score < 1 || score > 5) throw new IllegalArgumentException(
-            "Score must be between 1 and 5, got: " + score
+                "Score must be between 1 and 5, got: " + score
         );
         this.student = student;
         this.teacher = teacher;
@@ -56,11 +57,11 @@ public class TeacherRating implements Serializable {
     @Override
     public String toString() {
         return "TeacherRating{student=%s, teacher=%s, score=%d, comment='%s', createdDate=%s}".formatted(
-            student,
-            teacher,
-            score,
-            comment,
-            createdDate
+                student,
+                teacher,
+                score,
+                comment,
+                createdDate
         );
     }
 }

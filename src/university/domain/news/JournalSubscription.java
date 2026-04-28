@@ -1,9 +1,10 @@
 package university.domain.news;
 
+import university.domain.user.User;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
-import university.domain.user.User;
 
 public class JournalSubscription implements Serializable {
 
@@ -16,10 +17,10 @@ public class JournalSubscription implements Serializable {
 
     public JournalSubscription(User subscriber, UniversityJournal journal) {
         if (subscriber == null) throw new IllegalArgumentException(
-            "Subscriber must not be null."
+                "Subscriber must not be null."
         );
         if (journal == null) throw new IllegalArgumentException(
-            "Journal must not be null."
+                "Journal must not be null."
         );
 
         this.subscriber = subscriber;
@@ -42,9 +43,9 @@ public class JournalSubscription implements Serializable {
     @Override
     public String toString() {
         return "JournalSubscription{subscriber=%s, journal='%s', subscribeDate=%s}".formatted(
-            subscriber.getName(),
-            journal.getName(),
-            subscribeDate
+                subscriber.getName(),
+                journal.getName(),
+                subscribeDate
         );
     }
 }

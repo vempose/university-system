@@ -1,10 +1,11 @@
 package university.domain.student;
 
+import university.domain.user.Student;
+import university.enums.OrganizationRole;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
-import university.domain.user.Student;
-import university.enums.OrganizationRole;
 
 public class OrganizationMembership implements Serializable {
 
@@ -13,13 +14,13 @@ public class OrganizationMembership implements Serializable {
 
     private final Student student;
     private final StudentOrganization organization;
-    private OrganizationRole role;
     private final LocalDate joinDate;
+    private OrganizationRole role;
 
     public OrganizationMembership(
-        Student student,
-        StudentOrganization organization,
-        OrganizationRole role
+            Student student,
+            StudentOrganization organization,
+            OrganizationRole role
     ) {
         this.student = student;
         this.organization = organization;
@@ -39,21 +40,21 @@ public class OrganizationMembership implements Serializable {
         return role;
     }
 
-    public LocalDate getJoinDate() {
-        return joinDate;
-    }
-
     public void setRole(OrganizationRole role) {
         this.role = role;
+    }
+
+    public LocalDate getJoinDate() {
+        return joinDate;
     }
 
     @Override
     public String toString() {
         return "OrganizationMembership{student=%s, organization='%s', role=%s, joinDate=%s}".formatted(
-            student,
-            organization.getName(),
-            role,
-            joinDate
+                student,
+                organization.getName(),
+                role,
+                joinDate
         );
     }
 }

@@ -12,8 +12,8 @@ public class StudentOrganization implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final String name;
-    private String description;
     private final List<OrganizationMembership> memberships = new ArrayList<>();
+    private String description;
 
     public StudentOrganization(String name, String description) {
         this.name = name;
@@ -55,9 +55,9 @@ public class StudentOrganization implements Serializable {
     @Override
     public String toString() {
         return "StudentOrganization{name='%s', description='%s', memberCount=%d}".formatted(
-            name,
-            description,
-            memberships.size()
+                name,
+                description,
+                memberships.size()
         );
     }
 }

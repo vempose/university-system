@@ -16,7 +16,7 @@ public final class School implements Serializable {
 
     public School(String name) {
         if (name == null || name.isBlank()) throw new IllegalArgumentException(
-            "School name must not be blank"
+                "School name must not be blank"
         );
         this.name = name.strip();
     }

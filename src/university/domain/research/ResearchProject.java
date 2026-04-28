@@ -1,12 +1,13 @@
 package university.domain.research;
 
+import university.exception.NonResearcherJoinProjectException;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import university.exception.NonResearcherJoinProjectException;
 
 public final class ResearchProject implements Serializable {
 
@@ -26,10 +27,10 @@ public final class ResearchProject implements Serializable {
     }
 
     public void addParticipant(Researcher researcher)
-        throws NonResearcherJoinProjectException {
+            throws NonResearcherJoinProjectException {
         if (researcher == null) {
             throw new NonResearcherJoinProjectException(
-                "Cannot add a null participant to project '%s'.".formatted(id)
+                    "Cannot add a null participant to project '%s'.".formatted(id)
             );
         }
         participants.add(researcher);
@@ -70,10 +71,10 @@ public final class ResearchProject implements Serializable {
     @Override
     public String toString() {
         return "ResearchProject{id='%s', topic='%s', participants=%d, papers=%d}".formatted(
-            id,
-            topic,
-            participants.size(),
-            publishedPapers.size()
+                id,
+                topic,
+                participants.size(),
+                publishedPapers.size()
         );
     }
 }

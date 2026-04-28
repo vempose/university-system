@@ -1,19 +1,15 @@
 package university.domain.academic;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import university.domain.user.Student;
 import university.domain.user.Teacher;
 import university.enums.AttendanceStatus;
 import university.enums.LessonType;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class Lesson implements Serializable {
 
@@ -21,29 +17,28 @@ public class Lesson implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final DateTimeFormatter DISPLAY_FORMATTER =
-        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private final String id;
     private final LessonType type;
+    private final Map<Student, AttendanceRecord> attendanceRecords =
+            new LinkedHashMap<>();
     private String room;
     private LocalDateTime time;
     private Teacher instructor;
 
-    private final Map<Student, AttendanceRecord> attendanceRecords =
-        new LinkedHashMap<>();
-
     public Lesson(
-        String id,
-        LessonType type,
-        String room,
-        LocalDateTime time,
-        Teacher instructor
+            String id,
+            LessonType type,
+            String room,
+            LocalDateTime time,
+            Teacher instructor
     ) {
         if (id == null || id.isBlank()) throw new IllegalArgumentException(
-            "Lesson id must not be blank"
+                "Lesson id must not be blank"
         );
         if (room == null || room.isBlank()) throw new IllegalArgumentException(
-            "Room must not be blank"
+                "Room must not be blank"
         );
 
         this.id = id;
@@ -65,23 +60,23 @@ public class Lesson implements Serializable {
         return room;
     }
 
-    public LocalDateTime getTime() {
-        return time;
-    }
-
-    public Teacher getInstructor() {
-        return instructor;
-    }
-
     public void setRoom(String room) {
         if (room == null || room.isBlank()) throw new IllegalArgumentException(
-            "Room must not be blank"
+                "Room must not be blank"
         );
         this.room = room;
     }
 
+    public LocalDateTime getTime() {
+        return time;
+    }
+
     public void setTime(LocalDateTime time) {
         this.time = time;
+    }
+
+    public Teacher getInstructor() {
+        return instructor;
     }
 
     public void setInstructor(Teacher instructor) {
@@ -89,26 +84,26 @@ public class Lesson implements Serializable {
     }
 
     public void markAttendance(
-        Student student,
-        AttendanceStatus status,
-        Teacher recordedBy
+            Student student,
+            AttendanceStatus status,
+            Teacher recordedBy
     ) {
         if (student == null) throw new IllegalArgumentException(
-            "student must not be null"
+                "student must not be null"
         );
         if (status == null) throw new IllegalArgumentException(
-            "status must not be null"
+                "status must not be null"
         );
         if (recordedBy == null) throw new IllegalArgumentException(
-            "recordedBy must not be null"
+                "recordedBy must not be null"
         );
         AttendanceRecord existing = attendanceRecords.get(student);
         if (existing != null) {
             existing.setStatus(status);
         } else {
             attendanceRecords.put(
-                student,
-                new AttendanceRecord(student, this, status, recordedBy)
+                    student,
+                    new AttendanceRecord(student, this, status, recordedBy)
             );
         }
     }
@@ -123,11 +118,11 @@ public class Lesson implements Serializable {
 
     public List<Student> getStudentsByStatus(AttendanceStatus status) {
         return attendanceRecords
-            .values()
-            .stream()
-            .filter(r -> r.getStatus() == status)
-            .map(AttendanceRecord::getStudent)
-            .toList();
+                .values()
+                .stream()
+                .filter(r -> r.getStatus() == status)
+                .map(AttendanceRecord::getStudent)
+                .toList();
     }
 
     @Override
@@ -145,11 +140,11 @@ public class Lesson implements Serializable {
     @Override
     public String toString() {
         return "Lesson[id=%s, type=%s, room=%s, time=%s, instructor=%s]".formatted(
-            id,
-            type,
-            room,
-            time.format(DISPLAY_FORMATTER),
-            instructor.getName()
+                id,
+                type,
+                room,
+                time.format(DISPLAY_FORMATTER),
+                instructor.getName()
         );
     }
 }

@@ -1,14 +1,14 @@
 package university.domain.news;
 
+import university.enums.NewsTopic;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
-import university.enums.NewsTopic;
 
 public class News implements Serializable {
 
@@ -16,12 +16,12 @@ public class News implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final String id;
-    private String title;
-    private String content;
     private final NewsTopic topic;
     private final LocalDateTime createdDate;
-    private boolean pinned;
     private final List<NewsComment> comments = new ArrayList<>();
+    private String title;
+    private String content;
+    private boolean pinned;
 
     public News(String title, String content, NewsTopic topic) {
         this.id = UUID.randomUUID().toString();
@@ -48,8 +48,16 @@ public class News implements Serializable {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getContent() {
         return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public NewsTopic getTopic() {
@@ -62,14 +70,6 @@ public class News implements Serializable {
 
     public boolean isPinned() {
         return pinned;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
     }
 
     public List<NewsComment> getComments() {
@@ -91,12 +91,12 @@ public class News implements Serializable {
     @Override
     public String toString() {
         return "News{id='%s', topic=%s, pinned=%b, title='%s', createdDate=%s, comments=%d}".formatted(
-            id,
-            topic,
-            pinned,
-            title,
-            createdDate,
-            comments.size()
+                id,
+                topic,
+                pinned,
+                title,
+                createdDate,
+                comments.size()
         );
     }
 }

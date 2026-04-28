@@ -1,21 +1,21 @@
 package university.domain.research;
 
+import university.enums.CitationFormat;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import university.enums.CitationFormat;
 
 public class ResearchProfile implements Researcher, Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-
-    private int hIndex;
     private final List<ResearchPaper> papers;
     private final List<ResearchProject> projects;
+    private int hIndex;
 
     public ResearchProfile() {
         this.hIndex = 0;
@@ -36,11 +36,11 @@ public class ResearchProfile implements Researcher, Serializable {
     @Override
     public int calculateHIndex() {
         List<Integer> sorted = papers
-            .stream()
-            .mapToInt(ResearchPaper::getCitations)
-            .boxed()
-            .sorted(Comparator.reverseOrder())
-            .toList();
+                .stream()
+                .mapToInt(ResearchPaper::citations)
+                .boxed()
+                .sorted(Comparator.reverseOrder())
+                .toList();
 
         int h = 0;
         for (int i = 0; i < sorted.size(); i++) {
@@ -54,10 +54,10 @@ public class ResearchProfile implements Researcher, Serializable {
     @Override
     public void printPapers(Comparator<ResearchPaper> comparator) {
         papers
-            .stream()
-            .sorted(comparator)
-            .map(p -> p.getCitation(CitationFormat.PLAIN_TEXT))
-            .forEach(System.out::println);
+                .stream()
+                .sorted(comparator)
+                .map(p -> p.getCitation(CitationFormat.PLAIN_TEXT))
+                .forEach(System.out::println);
     }
 
     @Override
@@ -77,9 +77,9 @@ public class ResearchProfile implements Researcher, Serializable {
     @Override
     public String toString() {
         return "ResearchProfile{hIndex=%d, papers=%d, projects=%d}".formatted(
-            hIndex,
-            papers.size(),
-            projects.size()
+                hIndex,
+                papers.size(),
+                projects.size()
         );
     }
 }

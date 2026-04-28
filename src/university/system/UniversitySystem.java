@@ -1,7 +1,5 @@
 package university.system;
 
-import java.io.*;
-import java.util.*;
 import university.domain.academic.Course;
 import university.domain.news.News;
 import university.domain.news.UniversityJournal;
@@ -10,23 +8,22 @@ import university.domain.user.Student;
 import university.domain.user.Teacher;
 import university.domain.user.User;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 public final class UniversitySystem {
 
     private static final String DEFAULT_PATH = "university_system.dat";
-
-    private static final class Holder {
-
-        private static final UniversitySystem INSTANCE = new UniversitySystem();
-    }
-
     private final List<User> users = new ArrayList<>();
     private final List<Course> courses = new ArrayList<>();
     private final List<News> newsList = new ArrayList<>();
     private final List<UniversityJournal> journals = new ArrayList<>();
     private final List<LogEntry> logs = new ArrayList<>();
     private final UserFactory userFactory = new UserFactory();
-
-    private UniversitySystem() {}
+    private UniversitySystem() {
+    }
 
     public static UniversitySystem getInstance() {
         return Holder.INSTANCE;
@@ -34,9 +31,9 @@ public final class UniversitySystem {
 
     public Optional<User> authenticate(String email, String password) {
         return users
-            .stream()
-            .filter(u -> u.login(email, password))
-            .findFirst();
+                .stream()
+                .filter(u -> u.login(email, password))
+                .findFirst();
     }
 
     public void addUser(User user) {
@@ -97,18 +94,18 @@ public final class UniversitySystem {
 
     public List<Student> getAllStudents() {
         return users
-            .stream()
-            .filter(u -> u instanceof Student)
-            .map(u -> (Student) u)
-            .toList();
+                .stream()
+                .filter(u -> u instanceof Student)
+                .map(u -> (Student) u)
+                .toList();
     }
 
     public List<Teacher> getAllTeachers() {
         return users
-            .stream()
-            .filter(u -> u instanceof Teacher)
-            .map(u -> (Teacher) u)
-            .toList();
+                .stream()
+                .filter(u -> u instanceof Teacher)
+                .map(u -> (Teacher) u)
+                .toList();
     }
 
     public void save() {
@@ -117,22 +114,22 @@ public final class UniversitySystem {
 
     public void save(String path) {
         UniversityData data = new UniversityData(
-            users,
-            courses,
-            newsList,
-            journals,
-            logs
+                users,
+                courses,
+                newsList,
+                journals,
+                logs
         );
         try (
-            ObjectOutputStream oos = new ObjectOutputStream(
-                new FileOutputStream(path)
-            )
+                ObjectOutputStream oos = new ObjectOutputStream(
+                        new FileOutputStream(path)
+                )
         ) {
             oos.writeObject(data);
         } catch (IOException e) {
             throw new UncheckedIOException(
-                "Failed to save system state to " + path,
-                e
+                    "Failed to save system state to " + path,
+                    e
             );
         }
     }
@@ -143,9 +140,9 @@ public final class UniversitySystem {
 
     public void load(String path) {
         try (
-            ObjectInputStream ois = new ObjectInputStream(
-                new FileInputStream(path)
-            )
+                ObjectInputStream ois = new ObjectInputStream(
+                        new FileInputStream(path)
+                )
         ) {
             UniversityData data = (UniversityData) ois.readObject();
             users.clear();
@@ -160,8 +157,8 @@ public final class UniversitySystem {
             logs.addAll(data.logs);
         } catch (IOException e) {
             throw new UncheckedIOException(
-                "Failed to load system state from " + path,
-                e
+                    "Failed to load system state from " + path,
+                    e
             );
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Incompatible serialized data", e);
@@ -171,10 +168,15 @@ public final class UniversitySystem {
     @Override
     public String toString() {
         return "UniversitySystem{users=%d, courses=%d, news=%d, journals=%d}".formatted(
-            users.size(),
-            courses.size(),
-            newsList.size(),
-            journals.size()
+                users.size(),
+                courses.size(),
+                newsList.size(),
+                journals.size()
         );
+    }
+
+    private static final class Holder {
+
+        private static final UniversitySystem INSTANCE = new UniversitySystem();
     }
 }

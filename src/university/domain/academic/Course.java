@@ -13,19 +13,19 @@ public final class Course implements Comparable<Course>, Serializable {
     private static final long serialVersionUID = 1L;
 
     private final String courseCode;
+    private final List<Lesson> lessons = new ArrayList<>();
     private String title;
     private int credits;
-    private final List<Lesson> lessons = new ArrayList<>();
 
     public Course(String courseCode, String title, int credits) {
         if (
-            courseCode == null || courseCode.isBlank()
+                courseCode == null || courseCode.isBlank()
         ) throw new IllegalArgumentException("courseCode must not be blank");
         if (
-            title == null || title.isBlank()
+                title == null || title.isBlank()
         ) throw new IllegalArgumentException("title must not be blank");
         if (credits <= 0) throw new IllegalArgumentException(
-            "credits must be greater than zero, got: " + credits
+                "credits must be greater than zero, got: " + credits
         );
         this.courseCode = courseCode;
         this.title = title;
@@ -35,26 +35,26 @@ public final class Course implements Comparable<Course>, Serializable {
     public String viewSyllabus() {
         String divider = "=".repeat(48);
         String lessonSection = lessons.isEmpty()
-            ? "  (no lessons scheduled)\n"
-            : lessons
+                ? "  (no lessons scheduled)\n"
+                : lessons
                   .stream()
                   .map(lesson -> "  " + lesson + "\n")
                   .collect(Collectors.joining());
 
         return "%s\nCourse : %s - %s\nCredits: %d\nLessons (%d):\n%s%s".formatted(
-            divider,
-            courseCode,
-            title,
-            credits,
-            lessons.size(),
-            lessonSection,
-            divider
+                divider,
+                courseCode,
+                title,
+                credits,
+                lessons.size(),
+                lessonSection,
+                divider
         );
     }
 
     public void addLesson(Lesson lesson) {
         if (lesson == null) throw new IllegalArgumentException(
-            "lesson must not be null"
+                "lesson must not be null"
         );
         lessons.add(lesson);
     }
@@ -73,7 +73,7 @@ public final class Course implements Comparable<Course>, Serializable {
 
     public void setTitle(String title) {
         if (
-            title == null || title.isBlank()
+                title == null || title.isBlank()
         ) throw new IllegalArgumentException("title must not be blank");
         this.title = title;
     }
@@ -84,7 +84,7 @@ public final class Course implements Comparable<Course>, Serializable {
 
     public void setCredits(int credits) {
         if (credits <= 0) throw new IllegalArgumentException(
-            "credits must be greater than zero, got: " + credits
+                "credits must be greater than zero, got: " + credits
         );
         this.credits = credits;
     }
@@ -109,11 +109,11 @@ public final class Course implements Comparable<Course>, Serializable {
     @Override
     public String toString() {
         return String.format(
-            "Course{courseCode='%s', title='%s', credits=%d, lessons=%d}",
-            courseCode,
-            title,
-            credits,
-            lessons.size()
+                "Course{courseCode='%s', title='%s', credits=%d, lessons=%d}",
+                courseCode,
+                title,
+                credits,
+                lessons.size()
         );
     }
 }

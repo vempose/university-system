@@ -6,6 +6,6 @@ public final class PaperByDateComparator implements PaperComparator {
 
     @Override
     public int compare(ResearchPaper a, ResearchPaper b) {
-        return a.getPublishDate().compareTo(b.getPublishDate());
+        return a.publishDate().compareTo(b.publishDate());
     }
 }

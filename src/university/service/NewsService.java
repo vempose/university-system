@@ -1,11 +1,12 @@
 package university.service;
 
-import java.time.LocalDate;
 import university.domain.news.News;
 import university.domain.research.ResearchPaper;
 import university.enums.CitationFormat;
 import university.enums.NewsTopic;
 import university.system.UniversitySystem;
+
+import java.time.LocalDate;
 
 public class NewsService {
 
@@ -13,8 +14,8 @@ public class NewsService {
     private final ResearchService researchService;
 
     public NewsService(
-        UniversitySystem system,
-        ResearchService researchService
+            UniversitySystem system,
+            ResearchService researchService
     ) {
         this.system = system;
         this.researchService = researchService;
@@ -29,10 +30,10 @@ public class NewsService {
 
     public News announcePaperPublication(ResearchPaper paper) {
         News news = new News(
-            "New Research Paper: " + paper.getTitle(),
-            "A new paper has been published: " +
-                paper.getCitation(CitationFormat.PLAIN_TEXT),
-            NewsTopic.RESEARCH
+                "New Research Paper: " + paper.title(),
+                "A new paper has been published: " +
+                        paper.getCitation(CitationFormat.PLAIN_TEXT),
+                NewsTopic.RESEARCH
         );
         publishNews(news);
         return news;
@@ -47,10 +48,10 @@ public class NewsService {
 
     public void pinAllResearchNews() {
         system
-            .getNewsList()
-            .stream()
-            .filter(n -> n.getTopic() == NewsTopic.RESEARCH)
-            .forEach(News::pin);
+                .getNewsList()
+                .stream()
+                .filter(n -> n.getTopic() == NewsTopic.RESEARCH)
+                .forEach(News::pin);
     }
 
     public void addOfficialEventNews(String title, String content) {

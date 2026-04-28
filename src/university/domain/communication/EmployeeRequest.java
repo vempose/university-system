@@ -1,12 +1,13 @@
 package university.domain.communication;
 
+import university.domain.user.Employee;
+import university.domain.user.Manager;
+import university.enums.RequestStatus;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.UUID;
-import university.domain.user.Employee;
-import university.domain.user.Manager;
-import university.enums.RequestStatus;
 
 public class EmployeeRequest implements Serializable {
 
@@ -16,16 +17,16 @@ public class EmployeeRequest implements Serializable {
     private final String id;
     private final Employee sender;
     private final String description;
+    private final LocalDate createdDate;
     private RequestStatus status;
     private Manager signedBy;
-    private final LocalDate createdDate;
 
     public EmployeeRequest(Employee sender, String description) {
         if (sender == null) throw new IllegalArgumentException(
-            "sender must not be null"
+                "sender must not be null"
         );
         if (description == null) throw new IllegalArgumentException(
-            "description must not be null"
+                "description must not be null"
         );
 
         this.id = UUID.randomUUID().toString();
@@ -58,20 +59,20 @@ public class EmployeeRequest implements Serializable {
 
     public void sign(Manager manager) {
         if (manager == null) throw new IllegalArgumentException(
-            "signing manager must not be null"
+                "signing manager must not be null"
         );
         if (
-            status != RequestStatus.VIEWED && status != RequestStatus.ACCEPTED
+                status != RequestStatus.VIEWED && status != RequestStatus.ACCEPTED
         ) {
             throw new IllegalStateException(
-                "Cannot sign request in status " +
-                    status +
-                    "; must be VIEWED or ACCEPTED first"
+                    "Cannot sign request in status " +
+                            status +
+                            "; must be VIEWED or ACCEPTED first"
             );
         }
         this.signedBy = manager;
         if (this.status != RequestStatus.ACCEPTED) this.status =
-            RequestStatus.ACCEPTED;
+                RequestStatus.ACCEPTED;
     }
 
     public String getId() {
@@ -101,12 +102,8 @@ public class EmployeeRequest implements Serializable {
     private void requireStatus(RequestStatus expected, String operation) {
         if (this.status != expected) {
             throw new IllegalStateException(
-                "Cannot '" +
-                    operation +
-                    "' request in status " +
-                    this.status +
-                    "; expected " +
-                    expected
+                    "Cannot '%s' request in status %s; expected %s"
+                            .formatted(operation, this.status, expected)
             );
         }
     }
@@ -114,12 +111,12 @@ public class EmployeeRequest implements Serializable {
     @Override
     public String toString() {
         return "EmployeeRequest{id='%s', sender=%s, status=%s, signedBy=%s, createdDate=%s, description='%s'}".formatted(
-            id,
-            sender,
-            status,
-            (signedBy != null) ? signedBy : "unsigned",
-            createdDate,
-            description
+                id,
+                sender,
+                status,
+                (signedBy != null) ? signedBy : "unsigned",
+                createdDate,
+                description
         );
     }
 }

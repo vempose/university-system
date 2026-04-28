@@ -1,10 +1,10 @@
 package university.domain.user;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Objects;
 import university.domain.research.ResearchProfile;
 import university.enums.Language;
+
+import java.io.Serial;
+import java.io.Serializable;
 
 public abstract class User implements Comparable<User>, Serializable {
 
@@ -19,11 +19,11 @@ public abstract class User implements Comparable<User>, Serializable {
     private ResearchProfile researchProfile;
 
     protected User(
-        String id,
-        String name,
-        String email,
-        String passwordHash,
-        Language language
+            String id,
+            String name,
+            String email,
+            String passwordHash,
+            Language language
     ) {
         this.id = id;
         this.name = name;
@@ -36,7 +36,8 @@ public abstract class User implements Comparable<User>, Serializable {
         return this.email.equals(email) && this.passwordHash.equals(password);
     }
 
-    public void logout() {}
+    public void logout() {
+    }
 
     public void changeLanguage(Language language) {
         this.language = language;
@@ -62,9 +63,9 @@ public abstract class User implements Comparable<User>, Serializable {
     @Override
     public String toString() {
         return "%s{id='%s', name='%s'}".formatted(
-            getClass().getSimpleName(),
-            id,
-            name
+                getClass().getSimpleName(),
+                id,
+                name
         );
     }
 

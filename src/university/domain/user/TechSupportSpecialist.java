@@ -1,12 +1,12 @@
 package university.domain.user;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import university.domain.support.TechSupportRequest;
 import university.enums.Language;
 import university.enums.RequestStatus;
+
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TechSupportSpecialist extends Employee {
 
@@ -16,21 +16,21 @@ public class TechSupportSpecialist extends Employee {
     private final List<TechSupportRequest> assignedRequests = new ArrayList<>();
 
     public TechSupportSpecialist(
-        String id,
-        String name,
-        String email,
-        String passwordHash,
-        Language language,
-        double salary
+            String id,
+            String name,
+            String email,
+            String passwordHash,
+            Language language,
+            double salary
     ) {
         super(id, name, email, passwordHash, language, salary);
     }
 
     public List<TechSupportRequest> viewNewRequests() {
         return assignedRequests
-            .stream()
-            .filter(r -> r.getStatus() == RequestStatus.NEW)
-            .toList();
+                .stream()
+                .filter(r -> r.getStatus() == RequestStatus.NEW)
+                .toList();
     }
 
     public void acceptRequest(TechSupportRequest request) {
@@ -58,8 +58,8 @@ public class TechSupportSpecialist extends Employee {
     @Override
     public String toString() {
         return "TechSupportSpecialist{id='%s', name='%s'}".formatted(
-            getId(),
-            getName()
+                getId(),
+                getName()
         );
     }
 }

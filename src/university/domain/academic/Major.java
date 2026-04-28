@@ -14,7 +14,7 @@ public class Major implements Serializable {
 
     public Major(String name, School school) {
         if (name == null || name.isBlank()) throw new IllegalArgumentException(
-            "Major name must not be blank."
+                "Major name must not be blank."
         );
         this.name = name;
         this.school = school;
@@ -47,8 +47,8 @@ public class Major implements Serializable {
     @Override
     public String toString() {
         return "Major{name='%s', school='%s'}".formatted(
-            name,
-            school.getName()
+                name,
+                school.getName()
         );
     }
 }

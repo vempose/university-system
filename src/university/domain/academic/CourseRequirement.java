@@ -1,66 +1,38 @@
 package university.domain.academic;
 
-import java.io.Serial;
-import java.io.Serializable;
 import university.enums.CourseCategory;
 
-public class CourseRequirement implements Serializable {
+import java.io.Serial;
+import java.io.Serializable;
+
+public record CourseRequirement(Course course, Major major, int yearOfStudy,
+                                CourseCategory category) implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private final Course course;
-    private final Major major;
-    private final int yearOfStudy;
-    private final CourseCategory category;
-
-    public CourseRequirement(
-        Course course,
-        Major major,
-        int yearOfStudy,
-        CourseCategory category
-    ) {
+    public CourseRequirement {
         if (course == null) throw new IllegalArgumentException(
-            "Course must not be null."
+                "Course must not be null."
         );
         if (major == null) throw new IllegalArgumentException(
-            "Major must not be null."
+                "Major must not be null."
         );
         if (yearOfStudy < 1) throw new IllegalArgumentException(
-            "Year of study must be >= 1, got: " + yearOfStudy
+                "Year of study must be >= 1, got: " + yearOfStudy
         );
         if (category == null) throw new IllegalArgumentException(
-            "CourseCategory must not be null."
+                "CourseCategory must not be null."
         );
-        this.course = course;
-        this.major = major;
-        this.yearOfStudy = yearOfStudy;
-        this.category = category;
-    }
-
-    public Course getCourse() {
-        return course;
-    }
-
-    public Major getMajor() {
-        return major;
-    }
-
-    public int getYearOfStudy() {
-        return yearOfStudy;
-    }
-
-    public CourseCategory getCategory() {
-        return category;
     }
 
     @Override
     public String toString() {
         return "CourseRequirement{course=%s, major='%s', yearOfStudy=%d, category=%s}".formatted(
-            course.getCourseCode(),
-            major.getName(),
-            yearOfStudy,
-            category
+                course.getCourseCode(),
+                major.getName(),
+                yearOfStudy,
+                category
         );
     }
 }

@@ -1,12 +1,13 @@
 package university.domain.support;
 
+import university.domain.user.TechSupportSpecialist;
+import university.domain.user.User;
+import university.enums.RequestStatus;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import university.domain.user.TechSupportSpecialist;
-import university.domain.user.User;
-import university.enums.RequestStatus;
 
 public final class TechSupportRequest implements Serializable {
 
@@ -15,10 +16,10 @@ public final class TechSupportRequest implements Serializable {
 
     private final String id;
     private final String description;
-    private RequestStatus status;
     private final User requester;
-    private TechSupportSpecialist assignedSpecialist;
     private final LocalDateTime createdDate;
+    private RequestStatus status;
+    private TechSupportSpecialist assignedSpecialist;
 
     public TechSupportRequest(User requester, String description) {
         if (requester == null) {
@@ -26,7 +27,7 @@ public final class TechSupportRequest implements Serializable {
         }
         if (description == null || description.isBlank()) {
             throw new IllegalArgumentException(
-                "Description must not be null or blank."
+                    "Description must not be null or blank."
             );
         }
         this.id = UUID.randomUUID().toString();
@@ -45,7 +46,7 @@ public final class TechSupportRequest implements Serializable {
     public void accept(TechSupportSpecialist specialist) {
         if (specialist == null) {
             throw new IllegalArgumentException(
-                "Assigned specialist must not be null."
+                    "Assigned specialist must not be null."
             );
         }
         requireStatus(RequestStatus.VIEWED, "accept");
@@ -90,12 +91,12 @@ public final class TechSupportRequest implements Serializable {
     private void requireStatus(RequestStatus required, String operation) {
         if (this.status != required) {
             throw new IllegalStateException(
-                "Cannot %s ticket '%s': expected status %s but was %s.".formatted(
-                    operation,
-                    id,
-                    required,
-                    status
-                )
+                    "Cannot %s ticket '%s': expected status %s but was %s.".formatted(
+                            operation,
+                            id,
+                            required,
+                            status
+                    )
             );
         }
     }
@@ -103,14 +104,14 @@ public final class TechSupportRequest implements Serializable {
     @Override
     public String toString() {
         return "TechSupportRequest{id='%s', status=%s, requester='%s', assignedSpecialist='%s', createdDate=%s, description='%s'}".formatted(
-            id,
-            status,
-            requester.getName(),
-            assignedSpecialist != null
-                ? assignedSpecialist.getName()
-                : "unassigned",
-            createdDate,
-            description
+                id,
+                status,
+                requester.getName(),
+                assignedSpecialist != null
+                        ? assignedSpecialist.getName()
+                        : "unassigned",
+                createdDate,
+                description
         );
     }
 }

@@ -1,10 +1,11 @@
 package university.domain.support;
 
+import university.domain.user.User;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import university.domain.user.User;
 
 public final class LogEntry implements Serializable {
 
@@ -19,12 +20,12 @@ public final class LogEntry implements Serializable {
     public LogEntry(User actor, String action) {
         if (actor == null) {
             throw new IllegalArgumentException(
-                "LogEntry actor must not be null."
+                    "LogEntry actor must not be null."
             );
         }
         if (action == null || action.isBlank()) {
             throw new IllegalArgumentException(
-                "LogEntry action must not be null or blank."
+                    "LogEntry action must not be null or blank."
             );
         }
         this.id = UUID.randomUUID().toString();
@@ -64,11 +65,11 @@ public final class LogEntry implements Serializable {
     @Override
     public String toString() {
         return "LogEntry[id='%s', timestamp=%s, actor=%s(id=%s), action='%s']".formatted(
-            id,
-            timestamp,
-            actor.getClass().getSimpleName(),
-            actor.getId(),
-            action
+                id,
+                timestamp,
+                actor.getClass().getSimpleName(),
+                actor.getId(),
+                action
         );
     }
 }
