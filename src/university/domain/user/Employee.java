@@ -30,9 +30,6 @@ public abstract class Employee extends User {
     }
 
     public Message sendMessage(Employee receiver, String text) {
-        Objects.requireNonNull(receiver, "receiver must not be null");
-        Objects.requireNonNull(text, "text must not be null");
-
         var message = new Message(this, receiver, text);
         sentMessages.add(message);
         receiver.receivedMessages.add(message); // direct field access — same package

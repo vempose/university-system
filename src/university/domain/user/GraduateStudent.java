@@ -51,9 +51,7 @@ public class GraduateStudent extends Student {
     }
 
     public void addDiplomaPaper(ResearchPaper paper) {
-        diplomaPapers.add(
-            Objects.requireNonNull(paper, "paper must not be null")
-        );
+        diplomaPapers.add(paper);
     }
 
     public List<ResearchPaper> getDiplomaPapers() {
@@ -63,12 +61,7 @@ public class GraduateStudent extends Student {
     // graduate students must always have an active research profile — null is not allowed here
     @Override
     public void setResearchProfile(ResearchProfile researchProfile) {
-        super.setResearchProfile(
-            Objects.requireNonNull(
-                researchProfile,
-                "GraduateStudent must have an active ResearchProfile"
-            )
-        );
+        super.setResearchProfile(researchProfile);
     }
 
     @Override

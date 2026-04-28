@@ -16,11 +16,10 @@ public class ResearchService {
     private final UniversitySystem system;
 
     public ResearchService(UniversitySystem system) {
-        this.system = Objects.requireNonNull(system, "system must not be null");
+        this.system = system;
     }
 
     public void printAllPapers(Comparator<ResearchPaper> comparator) {
-        Objects.requireNonNull(comparator, "comparator must not be null");
         system
             .getUsers()
             .stream()
@@ -36,7 +35,6 @@ public class ResearchService {
     public Optional<ResearchProfile> getTopCitedResearcherBySchool(
         School school
     ) {
-        Objects.requireNonNull(school, "school must not be null");
         return system
             .getUsers()
             .stream()

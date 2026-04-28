@@ -20,15 +20,9 @@ public class Enrollment {
         String semesterLabel,
         int attemptNo
     ) {
-        this.student = Objects.requireNonNull(
-            student,
-            "student must not be null"
-        );
-        this.course = Objects.requireNonNull(course, "course must not be null");
-        this.semesterLabel = Objects.requireNonNull(
-            semesterLabel,
-            "semesterLabel must not be null"
-        );
+        this.student = student;
+        this.course = course;
+        this.semesterLabel = semesterLabel;
         if (attemptNo < 1) throw new IllegalArgumentException(
             "attemptNo must be >= 1, got: " + attemptNo
         );
@@ -65,7 +59,6 @@ public class Enrollment {
     }
 
     public void setMark(Mark mark) {
-        Objects.requireNonNull(mark, "mark must not be null");
         if (
             status != EnrollmentStatus.REGISTERED
         ) throw new IllegalStateException(
@@ -88,10 +81,7 @@ public class Enrollment {
     }
 
     public void setSemesterLabel(String semesterLabel) {
-        this.semesterLabel = Objects.requireNonNull(
-            semesterLabel,
-            "semesterLabel must not be null"
-        );
+        this.semesterLabel = semesterLabel;
     }
 
     public EnrollmentStatus getStatus() {

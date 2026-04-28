@@ -11,7 +11,6 @@ public class Major {
         if (name == null || name.isBlank()) throw new IllegalArgumentException(
             "Major name must not be blank."
         );
-        Objects.requireNonNull(school, "School must not be null.");
         this.name = name;
         this.school = school;
     }
@@ -26,7 +25,6 @@ public class Major {
 
     // package-private — used by School when re-parenting a major
     void setSchool(School school) {
-        Objects.requireNonNull(school, "School must not be null.");
         this.school = school;
     }
 

@@ -17,19 +17,15 @@ public class NewsService {
         UniversitySystem system,
         ResearchService researchService
     ) {
-        this.system = Objects.requireNonNull(system, "system must not be null");
-        this.researchService = Objects.requireNonNull(
-            researchService,
-            "researchService must not be null"
-        );
+        this.system = system;
+        this.researchService = researchService;
     }
 
     public void publishNews(News news) {
-        system.addNews(Objects.requireNonNull(news, "news must not be null"));
+        system.addNews(news);
     }
 
     public News announcePaperPublication(ResearchPaper paper) {
-        Objects.requireNonNull(paper, "paper must not be null");
         var news = new News(
             "New Research Paper Published: " + paper.getTitle(),
             "A new paper has been published: " +

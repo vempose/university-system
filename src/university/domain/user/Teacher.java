@@ -28,10 +28,7 @@ public class Teacher extends Employee {
         TeacherPosition position
     ) {
         super(id, name, email, passwordHash, language, salary);
-        this.position = Objects.requireNonNull(
-            position,
-            "position must not be null"
-        );
+        this.position = position;
     }
 
     public List<Course> viewCourses() {
@@ -40,13 +37,10 @@ public class Teacher extends Employee {
     }
 
     public void manageCourse(Course course) {
-        Objects.requireNonNull(course, "Course must not be null");
         // management logic delegated to service layer
     }
 
     public void putMark(Enrollment enrollment, Mark mark) {
-        Objects.requireNonNull(enrollment, "enrollment must not be null");
-        Objects.requireNonNull(mark, "mark must not be null");
         enrollment.setMark(mark);
     }
 
@@ -61,20 +55,13 @@ public class Teacher extends Employee {
         String text,
         Manager receiver
     ) {
-        Objects.requireNonNull(targets, "targets must not be null");
-        Objects.requireNonNull(urgency, "urgency must not be null");
-        Objects.requireNonNull(text, "text must not be null");
-        Objects.requireNonNull(receiver, "receiver must not be null");
-
         var complaint = new Complaint(this, targets, urgency, text, receiver);
         submittedComplaints.add(complaint);
         return complaint;
     }
 
     public void addRating(TeacherRating rating) {
-        receivedRatings.add(
-            Objects.requireNonNull(rating, "rating must not be null")
-        );
+        receivedRatings.add(rating);
     }
 
     public double getAverageRating() {
@@ -94,10 +81,7 @@ public class Teacher extends Employee {
 
     // promoting to PROFESSOR requires a ResearchProfile — enforced by service layer
     public void setPosition(TeacherPosition position) {
-        this.position = Objects.requireNonNull(
-            position,
-            "position must not be null"
-        );
+        this.position = position;
     }
 
     public List<TeacherRating> getReceivedRatings() {

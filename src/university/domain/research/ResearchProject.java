@@ -14,8 +14,8 @@ public final class ResearchProject {
     private final List<ResearchPaper> publishedPapers;
 
     public ResearchProject(String id, String topic) {
-        this.id = Objects.requireNonNull(id, "id must not be null");
-        this.topic = Objects.requireNonNull(topic, "topic must not be null");
+        this.id = id;
+        this.topic = topic;
         this.participants = new ArrayList<>();
         this.publishedPapers = new ArrayList<>();
     }

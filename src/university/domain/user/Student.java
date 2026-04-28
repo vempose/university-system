@@ -40,10 +40,7 @@ public class Student extends User {
         Major major
     ) {
         super(id, name, email, passwordHash, language);
-        this.degreeType = Objects.requireNonNull(
-            degreeType,
-            "degreeType must not be null"
-        );
+        this.degreeType = degreeType;
         this.major = major;
     }
 
@@ -57,9 +54,6 @@ public class Student extends User {
 
     public Enrollment registerForCourse(Course course)
         throws CreditLimitExceededException, RetakeLimitExceededException {
-        Objects.requireNonNull(course, "course must not be null");
-
-        if (totalCredits + course.getCredits() > MAX_CREDITS) {
             throw new CreditLimitExceededException(
                 "Registering for \"" +
                     course.getTitle() +
@@ -194,8 +188,6 @@ public class Student extends User {
         int score,
         String comment
     ) {
-        Objects.requireNonNull(teacher, "teacher must not be null");
-        if (score < 1 || score > 5) {
             throw new IllegalArgumentException(
                 "Rating score must be between 1 and 5, got: " + score
             );
@@ -208,9 +200,7 @@ public class Student extends User {
 
     // package-private — for loading persisted data without going through registerForCourse
     void addEnrollment(Enrollment enrollment) {
-        enrollments.add(
-            Objects.requireNonNull(enrollment, "enrollment must not be null")
-        );
+        enrollments.add(enrollment);
     }
 
     public double getGpa() {
@@ -261,10 +251,7 @@ public class Student extends User {
     }
 
     public void setDegreeType(DegreeType degreeType) {
-        this.degreeType = Objects.requireNonNull(
-            degreeType,
-            "degreeType must not be null"
-        );
+        this.degreeType = degreeType;
     }
 
     public Major getMajor() {
@@ -272,7 +259,7 @@ public class Student extends User {
     }
 
     public void setMajor(Major major) {
-        this.major = Objects.requireNonNull(major, "major must not be null");
+        this.major = major;
     }
 
     public School getSchool() {

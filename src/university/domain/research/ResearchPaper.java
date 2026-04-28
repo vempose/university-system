@@ -23,21 +23,12 @@ public final class ResearchPaper {
         String doi,
         int citations
     ) {
-        this.title = Objects.requireNonNull(title, "title must not be null");
-        this.authors = Objects.requireNonNull(
-            authors,
-            "authors must not be null"
-        );
-        this.journalName = Objects.requireNonNull(
-            journalName,
-            "journalName must not be null"
-        );
-        this.pages = Objects.requireNonNull(pages, "pages must not be null");
-        this.publishDate = Objects.requireNonNull(
-            publishDate,
-            "publishDate must not be null"
-        );
-        this.doi = Objects.requireNonNull(doi, "doi must not be null");
+        this.title = title;
+        this.authors = authors;
+        this.journalName = journalName;
+        this.pages = pages;
+        this.publishDate = publishDate;
+        this.doi = doi;
         if (citations < 0) throw new IllegalArgumentException(
             "citations must be non-negative, got: " + citations
         );
@@ -45,7 +36,6 @@ public final class ResearchPaper {
     }
 
     public String getCitation(CitationFormat format) {
-        Objects.requireNonNull(format, "format must not be null");
         return switch (format) {
             case PLAIN_TEXT -> buildPlainTextCitation();
             case BIBTEX -> buildBibtexCitation();

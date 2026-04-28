@@ -14,20 +14,17 @@ public class UniversityJournal {
     private final List<ResearchPaper> publishedPapers = new ArrayList<>();
 
     public UniversityJournal(String name) {
-        Objects.requireNonNull(name, "Journal name must not be null");
-        if (name.isBlank()) throw new IllegalArgumentException(
+        if (name == null || name.isBlank()) throw new IllegalArgumentException(
             "Journal name must not be blank"
         );
         this.name = name;
     }
 
     public void subscribe(User user) {
-        Objects.requireNonNull(user, "Subscriber must not be null");
         subscriptions.add(new JournalSubscription(user, this));
     }
 
     public void unsubscribe(User user) {
-        Objects.requireNonNull(user, "User to unsubscribe must not be null");
         subscriptions
             .stream()
             .filter(s -> s.getSubscriber().equals(user))
@@ -36,16 +33,11 @@ public class UniversityJournal {
     }
 
     public void publishPaper(ResearchPaper paper) {
-        Objects.requireNonNull(paper, "Research paper must not be null");
         publishedPapers.add(paper);
         notifySubscribers(paper);
     }
 
     public void notifySubscribers(ResearchPaper paper) {
-        Objects.requireNonNull(
-            paper,
-            "Paper must not be null for notification"
-        );
         for (var subscription : List.copyOf(subscriptions)) {
             var subscriber = subscription.getSubscriber();
             if (subscriber instanceof JournalObserver observer) {

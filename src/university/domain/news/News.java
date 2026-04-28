@@ -20,12 +20,9 @@ public class News {
 
     public News(String title, String content, NewsTopic topic) {
         this.id = UUID.randomUUID().toString();
-        this.title = Objects.requireNonNull(title, "title must not be null");
-        this.content = Objects.requireNonNull(
-            content,
-            "content must not be null"
-        );
-        this.topic = Objects.requireNonNull(topic, "topic must not be null");
+        this.title = title;
+        this.content = content;
+        this.topic = topic;
         this.createdDate = LocalDateTime.now();
         this.pinned = false;
     }
@@ -35,7 +32,6 @@ public class News {
     }
 
     public void addComment(NewsComment comment) {
-        Objects.requireNonNull(comment, "comment must not be null");
         comments.add(comment);
     }
 
@@ -64,14 +60,11 @@ public class News {
     }
 
     public void setTitle(String title) {
-        this.title = Objects.requireNonNull(title, "title must not be null");
+        this.title = title;
     }
 
     public void setContent(String content) {
-        this.content = Objects.requireNonNull(
-            content,
-            "content must not be null"
-        );
+        this.content = content;
     }
 
     public List<NewsComment> getComments() {

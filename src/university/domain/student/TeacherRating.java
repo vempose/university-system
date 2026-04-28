@@ -19,8 +19,6 @@ public class TeacherRating {
         int score,
         String comment
     ) {
-        Objects.requireNonNull(student, "student must not be null");
-        Objects.requireNonNull(teacher, "teacher must not be null");
         if (score < 1 || score > 5) throw new IllegalArgumentException(
             "Score must be between 1 and 5, got: " + score
         );

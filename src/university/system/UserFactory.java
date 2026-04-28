@@ -19,7 +19,6 @@ public final class UserFactory {
     UserFactory() {}
 
     public User createUser(String role) {
-        Objects.requireNonNull(role, "role must not be null");
         var id = UUID.randomUUID().toString();
         return switch (role.toUpperCase().trim()) {
             case "STUDENT" -> new Student(

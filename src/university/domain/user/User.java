@@ -20,17 +20,11 @@ public abstract class User implements Comparable<User> {
         String passwordHash,
         Language language
     ) {
-        this.id = Objects.requireNonNull(id, "id must not be null");
-        this.name = Objects.requireNonNull(name, "name must not be null");
-        this.email = Objects.requireNonNull(email, "email must not be null");
-        this.passwordHash = Objects.requireNonNull(
-            passwordHash,
-            "passwordHash must not be null"
-        );
-        this.language = Objects.requireNonNull(
-            language,
-            "language must not be null"
-        );
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.language = language;
     }
 
     public boolean login(String email, String password) {
@@ -42,17 +36,12 @@ public abstract class User implements Comparable<User> {
     }
 
     public void changeLanguage(Language language) {
-        this.language = Objects.requireNonNull(
-            language,
-            "language must not be null"
-        );
+        this.language = language;
     }
 
     @Override
     public int compareTo(User other) {
-        return this.id.compareTo(
-            Objects.requireNonNull(other, "other must not be null").id
-        );
+        return this.id.compareTo(other.id);
     }
 
     public String getId() {
@@ -64,7 +53,7 @@ public abstract class User implements Comparable<User> {
     }
 
     public void setName(String name) {
-        this.name = Objects.requireNonNull(name, "name must not be null");
+        this.name = name;
     }
 
     public String getEmail() {
@@ -72,7 +61,7 @@ public abstract class User implements Comparable<User> {
     }
 
     public void setEmail(String email) {
-        this.email = Objects.requireNonNull(email, "email must not be null");
+        this.email = email;
     }
 
     // package-private — not part of the public API
@@ -81,10 +70,7 @@ public abstract class User implements Comparable<User> {
     }
 
     public void setPasswordHash(String passwordHash) {
-        this.passwordHash = Objects.requireNonNull(
-            passwordHash,
-            "passwordHash must not be null"
-        );
+        this.passwordHash = passwordHash;
     }
 
     public Language getLanguage() {

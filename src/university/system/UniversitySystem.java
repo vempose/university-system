@@ -35,7 +35,7 @@ public final class UniversitySystem implements Serializable {
     }
 
     public void addUser(User user) {
-        users.add(Objects.requireNonNull(user, "user must not be null"));
+        users.add(user);
     }
 
     public void removeUser(User user) {
@@ -43,7 +43,7 @@ public final class UniversitySystem implements Serializable {
     }
 
     public void addCourse(Course course) {
-        courses.add(Objects.requireNonNull(course, "course must not be null"));
+        courses.add(course);
     }
 
     public void removeCourse(Course course) {
@@ -51,17 +51,15 @@ public final class UniversitySystem implements Serializable {
     }
 
     public void addNews(News news) {
-        newsList.add(Objects.requireNonNull(news, "news must not be null"));
+        newsList.add(news);
     }
 
     public void addJournal(UniversityJournal journal) {
-        journals.add(
-            Objects.requireNonNull(journal, "journal must not be null")
-        );
+        journals.add(journal);
     }
 
     public void addLog(LogEntry entry) {
-        logs.add(Objects.requireNonNull(entry, "entry must not be null"));
+        logs.add(entry);
     }
 
     public List<User> getUsers() {

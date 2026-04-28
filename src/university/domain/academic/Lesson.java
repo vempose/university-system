@@ -24,16 +24,10 @@ public class Lesson {
         LocalDateTime time,
         Teacher instructor
     ) {
-        Objects.requireNonNull(id, "Lesson id must not be null");
-        Objects.requireNonNull(type, "LessonType must not be null");
-        Objects.requireNonNull(room, "Room must not be null");
-        Objects.requireNonNull(time, "Time must not be null");
-        Objects.requireNonNull(instructor, "Instructor must not be null");
-
-        if (id.isBlank()) throw new IllegalArgumentException(
+        if (id == null || id.isBlank()) throw new IllegalArgumentException(
             "Lesson id must not be blank"
         );
-        if (room.isBlank()) throw new IllegalArgumentException(
+        if (room == null || room.isBlank()) throw new IllegalArgumentException(
             "Room must not be blank"
         );
 
@@ -65,22 +59,18 @@ public class Lesson {
     }
 
     public void setRoom(String room) {
-        Objects.requireNonNull(room, "Room must not be null");
-        if (room.isBlank()) throw new IllegalArgumentException(
+        if (room == null || room.isBlank()) throw new IllegalArgumentException(
             "Room must not be blank"
         );
         this.room = room;
     }
 
     public void setTime(LocalDateTime time) {
-        this.time = Objects.requireNonNull(time, "Time must not be null");
+        this.time = time;
     }
 
     public void setInstructor(Teacher instructor) {
-        this.instructor = Objects.requireNonNull(
-            instructor,
-            "Instructor must not be null"
-        );
+        this.instructor = instructor;
     }
 
     @Override

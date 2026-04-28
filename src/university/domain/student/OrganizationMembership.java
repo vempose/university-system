@@ -17,9 +17,6 @@ public class OrganizationMembership {
         StudentOrganization organization,
         OrganizationRole role
     ) {
-        Objects.requireNonNull(student, "student must not be null");
-        Objects.requireNonNull(organization, "organization must not be null");
-        Objects.requireNonNull(role, "role must not be null");
         this.student = student;
         this.organization = organization;
         this.role = role;
@@ -43,7 +40,7 @@ public class OrganizationMembership {
     }
 
     public void setRole(OrganizationRole role) {
-        this.role = Objects.requireNonNull(role, "role must not be null");
+        this.role = role;
     }
 
     @Override

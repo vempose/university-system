@@ -10,15 +10,13 @@ public final class School {
     private final List<Major> majors = new ArrayList<>();
 
     public School(String name) {
-        Objects.requireNonNull(name, "School name must not be null");
-        if (name.isBlank()) throw new IllegalArgumentException(
+        if (name == null || name.isBlank()) throw new IllegalArgumentException(
             "School name must not be blank"
         );
         this.name = name.strip();
     }
 
     public void addMajor(Major major) {
-        Objects.requireNonNull(major, "Major must not be null");
         if (!majors.contains(major)) majors.add(major);
     }
 

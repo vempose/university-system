@@ -22,17 +22,14 @@ public class Admin extends Employee {
     }
 
     public void addUser(User user) {
-        Objects.requireNonNull(user, "User must not be null");
         // actual storage is delegated to UniversitySystem in the service layer
     }
 
     public void removeUser(User user) {
-        Objects.requireNonNull(user, "User must not be null");
         // actual removal is delegated to UniversitySystem in the service layer
     }
 
     public void updateUser(User user) {
-        Objects.requireNonNull(user, "User must not be null");
         // actual update is delegated to UniversitySystem in the service layer
     }
 
@@ -41,7 +38,7 @@ public class Admin extends Employee {
     }
 
     public void addLog(LogEntry entry) {
-        viewedLogs.add(Objects.requireNonNull(entry, "entry must not be null"));
+        viewedLogs.add(entry);
     }
 
         @Override

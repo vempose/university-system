@@ -11,17 +11,12 @@ public class StudentOrganization {
     private final List<OrganizationMembership> memberships = new ArrayList<>();
 
     public StudentOrganization(String name, String description) {
-        this.name = Objects.requireNonNull(
-            name,
-            "Organization name must not be null"
-        );
+        this.name = name;
         this.description = description;
     }
 
     public void addMembership(OrganizationMembership membership) {
-        memberships.add(
-            Objects.requireNonNull(membership, "Membership must not be null")
-        );
+        memberships.add(membership);
     }
 
     public List<OrganizationMembership> getMembers() {

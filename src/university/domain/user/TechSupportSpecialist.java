@@ -30,24 +30,19 @@ public class TechSupportSpecialist extends Employee {
     }
 
     public void acceptRequest(TechSupportRequest request) {
-        Objects.requireNonNull(request, "request must not be null");
         request.accept(this);
     }
 
     public void rejectRequest(TechSupportRequest request) {
-        Objects.requireNonNull(request, "request must not be null");
         request.reject();
     }
 
     public void completeRequest(TechSupportRequest request) {
-        Objects.requireNonNull(request, "request must not be null");
         request.complete();
     }
 
     public void assignRequest(TechSupportRequest request) {
-        assignedRequests.add(
-            Objects.requireNonNull(request, "request must not be null")
-        );
+        assignedRequests.add(request);
     }
 
     public List<TechSupportRequest> getAssignedRequests() {

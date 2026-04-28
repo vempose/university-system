@@ -33,7 +33,7 @@ public class Manager extends Employee {
         ManagerType type
     ) {
         super(id, name, email, passwordHash, language, salary);
-        this.type = Objects.requireNonNull(type, "type must not be null");
+        this.type = type;
     }
 
     public void assignTeacherToCourse(
@@ -41,14 +41,10 @@ public class Manager extends Employee {
         Course course,
         Lesson lesson
     ) {
-        Objects.requireNonNull(teacher, "teacher must not be null");
-        Objects.requireNonNull(course, "course must not be null");
-        Objects.requireNonNull(lesson, "lesson must not be null");
         lesson.setInstructor(teacher);
     }
 
     public void approveRegistration(Enrollment enrollment) {
-        Objects.requireNonNull(enrollment, "enrollment must not be null");
         enrollment.approve();
     }
 
@@ -58,9 +54,6 @@ public class Manager extends Employee {
         int yearOfStudy,
         CourseCategory category
     ) {
-        Objects.requireNonNull(course, "course must not be null");
-        Objects.requireNonNull(major, "major must not be null");
-        Objects.requireNonNull(category, "category must not be null");
         return new CourseRequirement(course, major, yearOfStudy, category);
     }
 
@@ -71,17 +64,15 @@ public class Manager extends Employee {
     }
 
     public void manageNews(News news) {
-        managedNews.add(Objects.requireNonNull(news, "news must not be null"));
+        managedNews.add(news);
     }
 
     public List<Student> viewStudentsSorted(UserComparator comparator) {
-        Objects.requireNonNull(comparator, "comparator must not be null");
         // Full implementation requires system-level access — delegated to service layer
         return List.of();
     }
 
     public List<Teacher> viewTeachersSorted(UserComparator comparator) {
-        Objects.requireNonNull(comparator, "comparator must not be null");
         // Full implementation requires system-level access — delegated to service layer
         return List.of();
     }
@@ -91,9 +82,7 @@ public class Manager extends Employee {
     }
 
     public void addEmployeeRequest(EmployeeRequest request) {
-        viewedRequests.add(
-            Objects.requireNonNull(request, "request must not be null")
-        );
+        viewedRequests.add(request);
     }
 
     public ManagerType getType() {
@@ -101,7 +90,7 @@ public class Manager extends Employee {
     }
 
     public void setType(ManagerType type) {
-        this.type = Objects.requireNonNull(type, "type must not be null");
+        this.type = type;
     }
 
     public List<AcademicReport> getCreatedReports() {
