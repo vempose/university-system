@@ -1,5 +1,8 @@
 package university.domain.user;
 
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
 import university.domain.academic.Major;
 import university.domain.research.ResearchPaper;
 import university.domain.research.ResearchProfile;
@@ -8,28 +11,26 @@ import university.enums.DegreeType;
 import university.enums.Language;
 import university.exception.InvalidSupervisorException;
 
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
-
 public class GraduateStudent extends Student {
 
     public static final int MIN_SUPERVISOR_H_INDEX = 3;
+
     @Serial
     private static final long serialVersionUID = 1L;
+
     private final List<ResearchPaper> diplomaPapers = new ArrayList<>();
     private Researcher supervisor;
 
     public GraduateStudent(
-            String id,
-            String name,
-            String email,
-            String passwordHash,
-            Language language,
-            DegreeType degreeType,
-            Major major
+        String id,
+        String name,
+        String email,
+        String password,
+        Language language,
+        DegreeType degreeType,
+        Major major
     ) {
-        super(id, name, email, passwordHash, language, degreeType, major);
+        super(id, name, email, password, language, degreeType, major);
         if (degreeType == DegreeType.MASTER || degreeType == DegreeType.PHD) {
             setResearchProfile(new ResearchProfile());
         }
@@ -40,14 +41,14 @@ public class GraduateStudent extends Student {
     }
 
     public void setSupervisor(Researcher supervisor)
-            throws InvalidSupervisorException {
+        throws InvalidSupervisorException {
         if (
-                supervisor == null ||
-                        supervisor.calculateHIndex() < MIN_SUPERVISOR_H_INDEX
+            supervisor == null ||
+            supervisor.calculateHIndex() < MIN_SUPERVISOR_H_INDEX
         ) {
             throw new InvalidSupervisorException(
-                    "Supervisor must have an H-index of at least " +
-                            MIN_SUPERVISOR_H_INDEX
+                "Supervisor must have an H-index of at least " +
+                    MIN_SUPERVISOR_H_INDEX
             );
         }
         this.supervisor = supervisor;
@@ -64,8 +65,8 @@ public class GraduateStudent extends Student {
     @Override
     public String toString() {
         return "GraduateStudent{id='%s', name='%s'}".formatted(
-                getId(),
-                getName()
+            getId(),
+            getName()
         );
     }
 }

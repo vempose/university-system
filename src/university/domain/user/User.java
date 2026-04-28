@@ -1,10 +1,9 @@
 package university.domain.user;
 
-import university.domain.research.ResearchProfile;
-import university.enums.Language;
-
 import java.io.Serial;
 import java.io.Serializable;
+import university.domain.research.ResearchProfile;
+import university.enums.Language;
 
 public abstract class User implements Comparable<User>, Serializable {
 
@@ -14,30 +13,29 @@ public abstract class User implements Comparable<User>, Serializable {
     private final String id;
     private String name;
     private String email;
-    private String passwordHash;
+    private String password;
     private Language language;
     private ResearchProfile researchProfile;
 
     protected User(
-            String id,
-            String name,
-            String email,
-            String passwordHash,
-            Language language
+        String id,
+        String name,
+        String email,
+        String password,
+        Language language
     ) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.passwordHash = passwordHash;
+        this.password = password;
         this.language = language;
     }
 
     public boolean login(String email, String password) {
-        return this.email.equals(email) && this.passwordHash.equals(password);
+        return this.email.equals(email) && this.password.equals(password);
     }
 
-    public void logout() {
-    }
+    public void logout() {}
 
     public void changeLanguage(Language language) {
         this.language = language;
@@ -63,9 +61,9 @@ public abstract class User implements Comparable<User>, Serializable {
     @Override
     public String toString() {
         return "%s{id='%s', name='%s'}".formatted(
-                getClass().getSimpleName(),
-                id,
-                name
+            getClass().getSimpleName(),
+            id,
+            name
         );
     }
 
@@ -89,12 +87,12 @@ public abstract class User implements Comparable<User>, Serializable {
         this.email = email;
     }
 
-    String getPasswordHash() {
-        return passwordHash;
+    String getPassword() {
+        return password;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Language getLanguage() {
