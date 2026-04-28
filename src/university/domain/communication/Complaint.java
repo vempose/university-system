@@ -1,5 +1,7 @@
 package university.domain.communication;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -8,7 +10,10 @@ import university.domain.user.Student;
 import university.domain.user.Teacher;
 import university.enums.UrgencyLevel;
 
-public class Complaint {
+public class Complaint implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final String id;
     private final Teacher sender;
@@ -91,7 +96,13 @@ public class Complaint {
     @Override
     public String toString() {
         return "Complaint{id='%s', sender='%s', targets=%d student(s), urgency=%s, receiver='%s', createdDate=%s, text='%s'}".formatted(
-                id, sender.getName(), targetStudents.size(), urgency, receiver.getName(), createdDate, text
+            id,
+            sender.getName(),
+            targetStudents.size(),
+            urgency,
+            receiver.getName(),
+            createdDate,
+            text
         );
     }
 }

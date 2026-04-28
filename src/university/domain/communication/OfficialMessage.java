@@ -1,8 +1,13 @@
 package university.domain.communication;
 
+import java.io.Serial;
+import java.io.Serializable;
 import university.domain.user.Employee;
 
-public class OfficialMessage extends Message {
+public class OfficialMessage extends Message implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final String eventType;
 
@@ -28,7 +33,13 @@ public class OfficialMessage extends Message {
     @Override
     public String toString() {
         return "OfficialMessage{id='%s', eventType='%s', sender=%s, receiver=%s, text='%s', sentDate=%s, isRead=%b}".formatted(
-                getId(), eventType, getSender().getName(), getReceiver().getName(), getText(), getSentDate(), isRead()
+            getId(),
+            eventType,
+            getSender().getName(),
+            getReceiver().getName(),
+            getText(),
+            getSentDate(),
+            isRead()
         );
     }
 }

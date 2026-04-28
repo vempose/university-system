@@ -1,16 +1,21 @@
 package university.domain.support;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.DoubleSummaryStatistics;
 
-public class AcademicReport {
+public class AcademicReport implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private static final Pattern TRAILING_NUMBER_PATTERN = Pattern.compile(
         "(\\d+(?:\\.\\d+)?)\\s*$"
@@ -147,8 +152,12 @@ public class AcademicReport {
         return Collections.unmodifiableList(entries);
     }
 
-        @Override
+    @Override
     public String toString() {
-        return "AcademicReport{id='%s', createdDate=%s, entryCount=%d}".formatted(id, createdDate, entries.size());
+        return "AcademicReport{id='%s', createdDate=%s, entryCount=%d}".formatted(
+            id,
+            createdDate,
+            entries.size()
+        );
     }
 }

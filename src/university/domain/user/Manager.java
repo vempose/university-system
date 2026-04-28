@@ -1,9 +1,10 @@
 package university.domain.user;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
-import university.comparator.UserComparator;
 import university.domain.academic.Course;
 import university.domain.academic.CourseRequirement;
 import university.domain.academic.Enrollment;
@@ -17,6 +18,9 @@ import university.enums.Language;
 import university.enums.ManagerType;
 
 public class Manager extends Employee {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private ManagerType type;
     private final List<News> managedNews = new ArrayList<>();
@@ -42,6 +46,7 @@ public class Manager extends Employee {
         Lesson lesson
     ) {
         lesson.setInstructor(teacher);
+        teacher.addAssignedCourse(course);
     }
 
     public void approveRegistration(Enrollment enrollment) {
@@ -67,14 +72,18 @@ public class Manager extends Employee {
         managedNews.add(news);
     }
 
-    public List<Student> viewStudentsSorted(UserComparator comparator) {
-        // Full implementation requires system-level access — delegated to service layer
-        return List.of();
+    public List<Student> viewStudentsSorted(
+        List<Student> students,
+        Comparator<User> comparator
+    ) {
+        return students.stream().sorted(comparator).toList();
     }
 
-    public List<Teacher> viewTeachersSorted(UserComparator comparator) {
-        // Full implementation requires system-level access — delegated to service layer
-        return List.of();
+    public List<Teacher> viewTeachersSorted(
+        List<Teacher> teachers,
+        Comparator<User> comparator
+    ) {
+        return teachers.stream().sorted(comparator).toList();
     }
 
     public List<EmployeeRequest> viewEmployeeRequests() {
@@ -101,10 +110,8 @@ public class Manager extends Employee {
         return List.copyOf(managedNews);
     }
 
-        @Override
+    @Override
     public String toString() {
-        return "Manager{id='%s', name='%s', type=%s, reports=%d, news=%d}".formatted(
-                getId(), getName(), type, createdReports.size(), managedNews.size()
-        );
+        return "Manager{id='%s', name='%s'}".formatted(getId(), getName());
     }
 }

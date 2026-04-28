@@ -1,12 +1,17 @@
 package university.domain.communication;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.UUID;
 import university.domain.user.Employee;
 import university.domain.user.Manager;
 import university.enums.RequestStatus;
 
-public class EmployeeRequest {
+public class EmployeeRequest implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final String id;
     private final Employee sender;
@@ -44,6 +49,11 @@ public class EmployeeRequest {
     public void reject() {
         requireStatus(RequestStatus.VIEWED, "reject");
         this.status = RequestStatus.REJECTED;
+    }
+
+    public void done() {
+        requireStatus(RequestStatus.ACCEPTED, "done");
+        this.status = RequestStatus.DONE;
     }
 
     public void sign(Manager manager) {
@@ -104,7 +114,12 @@ public class EmployeeRequest {
     @Override
     public String toString() {
         return "EmployeeRequest{id='%s', sender=%s, status=%s, signedBy=%s, createdDate=%s, description='%s'}".formatted(
-                id, sender, status, (signedBy != null) ? signedBy : "unsigned", createdDate, description
+            id,
+            sender,
+            status,
+            (signedBy != null) ? signedBy : "unsigned",
+            createdDate,
+            description
         );
     }
 }

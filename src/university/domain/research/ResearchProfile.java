@@ -1,12 +1,17 @@
 package university.domain.research;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import university.enums.CitationFormat;
 
-public class ResearchProfile implements Researcher {
+public class ResearchProfile implements Researcher, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private int hIndex;
     private final List<ResearchPaper> papers;
@@ -18,10 +23,12 @@ public class ResearchProfile implements Researcher {
         this.projects = new ArrayList<>();
     }
 
+    @Override
     public void publishPaper(ResearchPaper paper) {
         if (paper != null) papers.add(paper);
     }
 
+    @Override
     public void joinProject(ResearchProject project) {
         if (project != null) projects.add(project);
     }
@@ -58,16 +65,21 @@ public class ResearchProfile implements Researcher {
         return Collections.unmodifiableList(papers);
     }
 
-    public int getHIndex() {
-        return hIndex;
-    }
-
+    @Override
     public List<ResearchProject> getProjects() {
         return Collections.unmodifiableList(projects);
     }
 
-        @Override
+    public int getHIndex() {
+        return hIndex;
+    }
+
+    @Override
     public String toString() {
-        return "ResearchProfile{hIndex=%d, papers=%d, projects=%d}".formatted(hIndex, papers.size(), projects.size());
+        return "ResearchProfile{hIndex=%d, papers=%d, projects=%d}".formatted(
+            hIndex,
+            papers.size(),
+            projects.size()
+        );
     }
 }

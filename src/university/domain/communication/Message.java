@@ -1,10 +1,15 @@
 package university.domain.communication;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import university.domain.user.Employee;
 
-public class Message {
+public class Message implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final String id;
     private final Employee sender;
@@ -63,7 +68,12 @@ public class Message {
     @Override
     public String toString() {
         return "Message{id='%s', sender=%s, receiver=%s, sentDate=%s, isRead=%b, text='%s'}".formatted(
-                id, sender.getName(), receiver.getName(), sentDate, isRead, text
+            id,
+            sender.getName(),
+            receiver.getName(),
+            sentDate,
+            isRead,
+            text
         );
     }
 }

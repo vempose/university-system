@@ -1,8 +1,9 @@
 package university.domain.user;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import university.domain.academic.Major;
 import university.domain.research.ResearchPaper;
 import university.domain.research.ResearchProfile;
@@ -12,6 +13,9 @@ import university.enums.Language;
 import university.exception.InvalidSupervisorException;
 
 public class GraduateStudent extends Student {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     public static final int MIN_SUPERVISOR_H_INDEX = 3;
 
@@ -28,6 +32,9 @@ public class GraduateStudent extends Student {
         Major major
     ) {
         super(id, name, email, passwordHash, language, degreeType, major);
+        if (degreeType == DegreeType.MASTER || degreeType == DegreeType.PHD) {
+            setResearchProfile(new ResearchProfile());
+        }
     }
 
     public void setSupervisor(Researcher supervisor)
@@ -37,10 +44,8 @@ public class GraduateStudent extends Student {
             supervisor.calculateHIndex() < MIN_SUPERVISOR_H_INDEX
         ) {
             throw new InvalidSupervisorException(
-                "Supervisor h-index must be >= " +
-                    MIN_SUPERVISOR_H_INDEX +
-                    ", got: " +
-                    (supervisor == null ? "null" : supervisor.calculateHIndex())
+                "Supervisor must have an H-index of at least " +
+                    MIN_SUPERVISOR_H_INDEX
             );
         }
         this.supervisor = supervisor;
@@ -58,16 +63,11 @@ public class GraduateStudent extends Student {
         return List.copyOf(diplomaPapers);
     }
 
-    // graduate students must always have an active research profile — null is not allowed here
-    @Override
-    public void setResearchProfile(ResearchProfile researchProfile) {
-        super.setResearchProfile(researchProfile);
-    }
-
     @Override
     public String toString() {
-        return "GraduateStudent{id='%s', name='%s', degree=%s, major=%s, supervisor=%s, papers=%d}".formatted(
-                getId(), getName(), getDegreeType(), getMajor(), (supervisor != null ? supervisor.getClass().getSimpleName() : "none"), diplomaPapers.size()
+        return "GraduateStudent{id='%s', name='%s'}".formatted(
+            getId(),
+            getName()
         );
     }
 }

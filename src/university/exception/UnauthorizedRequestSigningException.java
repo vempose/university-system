@@ -6,7 +6,10 @@ public class UnauthorizedRequestSigningException extends RuntimeException {
         super(message);
     }
 
-    public UnauthorizedRequestSigningException(String message, Throwable cause) {
+    public UnauthorizedRequestSigningException(
+        String message,
+        Throwable cause
+    ) {
         super(message, cause);
     }
 }

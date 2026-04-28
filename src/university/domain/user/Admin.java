@@ -1,12 +1,17 @@
 package university.domain.user;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import university.domain.support.LogEntry;
 import university.enums.Language;
+import university.system.UniversitySystem;
 
 public class Admin extends Employee {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final List<LogEntry> viewedLogs = new ArrayList<>();
 
@@ -21,28 +26,30 @@ public class Admin extends Employee {
         super(id, name, email, passwordHash, language, salary);
     }
 
-    public void addUser(User user) {
-        // actual storage is delegated to UniversitySystem in the service layer
+    public void addUser(User user, UniversitySystem system) {
+        system.addUser(user);
+        system.addLog(new LogEntry(this, "Added user: " + user.getId()));
     }
 
-    public void removeUser(User user) {
-        // actual removal is delegated to UniversitySystem in the service layer
+    public void removeUser(User user, UniversitySystem system) {
+        system.removeUser(user);
     }
 
-    public void updateUser(User user) {
-        // actual update is delegated to UniversitySystem in the service layer
+    public void updateUser(User user, String newName, String newEmail) {
+        user.setName(newName);
+        user.setEmail(newEmail);
     }
 
-    public List<LogEntry> viewLogs() {
-        return List.copyOf(viewedLogs);
+    public List<LogEntry> viewLogs(UniversitySystem system) {
+        return List.copyOf(system.getLogs());
     }
 
     public void addLog(LogEntry entry) {
         viewedLogs.add(entry);
     }
 
-        @Override
+    @Override
     public String toString() {
-        return "Admin{id='%s', name='%s', logs=%d}".formatted(getId(), getName(), viewedLogs.size());
+        return "Admin{id='%s', name='%s'}".formatted(getId(), getName());
     }
 }

@@ -1,6 +1,12 @@
 package university.domain.academic;
 
-public class Mark {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class Mark implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     public static final double MAX_FIRST_ATTESTATION = 30.0;
     public static final double MAX_SECOND_ATTESTATION = 30.0;
@@ -83,7 +89,11 @@ public class Mark {
     @Override
     public String toString() {
         return "Mark{first=%.1f, second=%.1f, final=%.1f, total=%.1f, passed=%b}".formatted(
-                firstAttestation, secondAttestation, finalExam, getTotal(), isPassed()
+            firstAttestation,
+            secondAttestation,
+            finalExam,
+            getTotal(),
+            isPassed()
         );
     }
 

@@ -1,15 +1,21 @@
 package university.domain.research;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 import university.enums.CitationFormat;
 
-public final class ResearchPaper {
+public final class ResearchPaper implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final String title;
     private final String authors;
     private final String journalName;
     private final String pages;
+    private final int pageCount;
     private final LocalDate publishDate;
     private final String doi;
     private final int citations;
@@ -19,19 +25,24 @@ public final class ResearchPaper {
         String authors,
         String journalName,
         String pages,
+        int pageCount,
         LocalDate publishDate,
         String doi,
         int citations
     ) {
+        if (pageCount < 1) throw new IllegalArgumentException(
+            "pageCount must be >= 1, got: " + pageCount
+        );
+        if (citations < 0) throw new IllegalArgumentException(
+            "citations must be non-negative, got: " + citations
+        );
         this.title = title;
         this.authors = authors;
         this.journalName = journalName;
         this.pages = pages;
+        this.pageCount = pageCount;
         this.publishDate = publishDate;
         this.doi = doi;
-        if (citations < 0) throw new IllegalArgumentException(
-            "citations must be non-negative, got: " + citations
-        );
         this.citations = citations;
     }
 
@@ -55,23 +66,15 @@ public final class ResearchPaper {
 
     private String buildBibtexCitation() {
         String citationKey = doi.replaceAll("[^A-Za-z0-9]", "_");
-        return """
-        @article{%s,
-          author  = {%s},
-          title   = {%s},
-          journal = {%s},
-          year    = {%d},
-          pages   = {%s},
-          doi     = {%s}
-        }""".formatted(
-                citationKey,
-                authors,
-                title,
-                journalName,
-                publishDate.getYear(),
-                pages,
-                doi
-            );
+        return "@article{%s,\n  author={%s}, title={%s}, journal={%s}, year={%d}, pages={%s}, doi={%s}\n}".formatted(
+            citationKey,
+            authors,
+            title,
+            journalName,
+            publishDate.getYear(),
+            pages,
+            doi
+        );
     }
 
     public String getTitle() {
@@ -88,6 +91,10 @@ public final class ResearchPaper {
 
     public String getPages() {
         return pages;
+    }
+
+    public int getPageCount() {
+        return pageCount;
     }
 
     public LocalDate getPublishDate() {
@@ -114,8 +121,12 @@ public final class ResearchPaper {
         return Objects.hashCode(doi);
     }
 
-        @Override
+    @Override
     public String toString() {
-        return "ResearchPaper{doi='%s', title='%s', citations=%d}".formatted(doi, title, citations);
+        return "ResearchPaper{doi='%s', title='%s', citations=%d}".formatted(
+            doi,
+            title,
+            citations
+        );
     }
 }

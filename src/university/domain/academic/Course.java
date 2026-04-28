@@ -1,10 +1,15 @@
 package university.domain.academic;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public final class Course implements Comparable<Course> {
+public final class Course implements Comparable<Course>, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final String courseCode;
     private String title;

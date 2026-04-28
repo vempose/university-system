@@ -1,12 +1,17 @@
 package university.domain.research;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import university.exception.NonResearcherJoinProjectException;
 
-public final class ResearchProject {
+public final class ResearchProject implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final String id;
     private final String topic;
@@ -50,11 +55,6 @@ public final class ResearchProject {
         return Collections.unmodifiableList(publishedPapers);
     }
 
-        @Override
-    public String toString() {
-        return "ResearchProject{id='%s', topic='%s', participants=%d, papers=%d}".formatted(id, topic, participants.size(), publishedPapers.size());
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -65,5 +65,15 @@ public final class ResearchProject {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "ResearchProject{id='%s', topic='%s', participants=%d, papers=%d}".formatted(
+            id,
+            topic,
+            participants.size(),
+            publishedPapers.size()
+        );
     }
 }

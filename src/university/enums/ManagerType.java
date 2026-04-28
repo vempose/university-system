@@ -1,7 +1,7 @@
 package university.enums;
 
 public enum ManagerType {
-    TUTOR,
+    OR,
     DEPARTMENT,
     DEAN,
 }

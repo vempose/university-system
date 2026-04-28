@@ -1,11 +1,15 @@
 package university.domain.student;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Objects;
 import university.domain.user.Student;
 import university.domain.user.Teacher;
 
-public class TeacherRating {
+public class TeacherRating implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final Student student;
     private final Teacher teacher;
@@ -52,7 +56,11 @@ public class TeacherRating {
     @Override
     public String toString() {
         return "TeacherRating{student=%s, teacher=%s, score=%d, comment='%s', createdDate=%s}".formatted(
-                student, teacher, score, comment, createdDate
+            student,
+            teacher,
+            score,
+            comment,
+            createdDate
         );
     }
 }

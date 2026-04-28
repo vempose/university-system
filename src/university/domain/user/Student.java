@@ -1,9 +1,9 @@
 package university.domain.user;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import university.domain.academic.Course;
 import university.domain.academic.Enrollment;
 import university.domain.academic.Major;
@@ -17,6 +17,9 @@ import university.exception.CreditLimitExceededException;
 import university.exception.RetakeLimitExceededException;
 
 public class Student extends User {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     public static final int MAX_CREDITS = 21;
     public static final int MAX_ATTEMPTS = 3;
@@ -46,49 +49,23 @@ public class Student extends User {
         this.major = major;
     }
 
-    public List<Course> viewCourses() {
-        return enrollments
-            .stream()
-            .map(Enrollment::getCourse)
-            .distinct()
-            .toList();
-    }
-
     public Enrollment registerForCourse(Course course)
         throws CreditLimitExceededException, RetakeLimitExceededException {
+        if (totalCredits + course.getCredits() > MAX_CREDITS) {
             throw new CreditLimitExceededException(
-                "Registering for \"" +
-                    course.getTitle() +
-                    "\" would exceed the " +
-                    MAX_CREDITS +
-                    "-credit limit. Current enrolled credits: " +
-                    totalCredits +
-                    ", course credits: " +
-                    course.getCredits() +
-                    "."
+                "Credit limit exceeded: cannot register for " +
+                    course.getCourseCode()
             );
         }
-
         long previousAttempts = enrollments
             .stream()
             .filter(e -> e.getCourse().equals(course))
             .count();
-
         if (previousAttempts >= MAX_ATTEMPTS) {
             throw new RetakeLimitExceededException(
-                "Student '" +
-                    getId() +
-                    "' has already attempted course \"" +
-                    course.getTitle() +
-                    "\" " +
-                    previousAttempts +
-                    " time(s). " +
-                    "Maximum allowed is " +
-                    MAX_ATTEMPTS +
-                    "."
+                "Retake limit exceeded for course: " + course.getCourseCode()
             );
         }
-
         int attemptNo = (int) previousAttempts + 1;
         Enrollment enrollment = new Enrollment(
             this,
@@ -101,108 +78,85 @@ public class Student extends User {
         return enrollment;
     }
 
-    public List<Mark> viewMarks() {
-        return enrollments
-            .stream()
-            .map(Enrollment::getMark)
-            .flatMap(Optional::stream)
-            .toList();
-    }
-
-    public String viewTranscript() {
-        return getTranscript();
-    }
-
-    public String getTranscript() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(
-            "╔══════════════════════════════════════════════════════════════════════╗\n"
-        );
-        sb.append(
-            "║                       ACADEMIC TRANSCRIPT                           ║\n"
-        );
-        sb.append(
-            "╚══════════════════════════════════════════════════════════════════════╝\n"
-        );
-        sb.append(
-            String.format("Student  : %-30s  (ID: %s)%n", getName(), getId())
-        );
-        sb.append(
-            String.format(
-                "Degree   : %-15s  Year of Study: %d%n",
-                degreeType,
-                yearOfStudy
-            )
-        );
-        if (major != null) {
-            sb.append(String.format("Major    : %s%n", major));
-        }
-        if (school != null) {
-            sb.append(String.format("School   : %s%n", school));
-        }
-        sb.append("─".repeat(72)).append("\n");
-        sb.append(
-            String.format(
-                "%-35s  %-18s  %s  %s%n",
-                "Course",
-                "Semester",
-                "Att",
-                "Result"
-            )
-        );
-        sb.append("─".repeat(72)).append("\n");
-
-        for (Enrollment enrollment : enrollments) {
-            Course course = enrollment.getCourse();
-            String markText = enrollment
-                .getMark()
-                .<String>map(m ->
-                    String.format(
-                        "%5.1f  %-11s",
-                        m.getTotal(),
-                        m.isPassed() ? "PASSED" : "FAILED"
-                    )
-                )
-                .orElse("  N/A  IN PROGRESS");
-
-            sb.append(
-                String.format(
-                    "%-35s  %-18s   %d   %s%n",
-                    course.getTitle(),
-                    enrollment.getSemesterLabel(),
-                    enrollment.getAttemptNo(),
-                    markText
-                )
-            );
-        }
-
-        sb.append("─".repeat(72)).append("\n");
-        sb.append(String.format("Cumulative GPA   : %.2f%n", gpa));
-        sb.append(String.format("Total Enrollments: %d%n", enrollments.size()));
-        sb.append(String.format("Fail Count       : %d%n", failCount));
-
-        return sb.toString();
-    }
-
     public TeacherRating rateTeacher(
         Teacher teacher,
         int score,
         String comment
-    if (score < 1 || score > 5) {
-            throw new IllegalArgumentException(
-                "Rating score must be between 1 and 5, got: " + score
-            );
-        }
+    ) {
+        if (score < 1 || score > 5) throw new IllegalArgumentException(
+            "Score must be between 1 and 5, got: " + score
+        );
         TeacherRating rating = new TeacherRating(this, teacher, score, comment);
         givenRatings.add(rating);
         teacher.addRating(rating);
         return rating;
     }
 
-    // package-private — for loading persisted data without going through registerForCourse
+    public List<Course> viewCourses() {
+        return enrollments
+            .stream()
+            .map(Enrollment::getCourse)
+            .distinct()
+            .toList();
+    }
+
+    public List<Mark> viewMarks() {
+        return enrollments
+            .stream()
+            .map(e -> e.getMark().orElse(null))
+            .filter(m -> m != null)
+            .toList();
+    }
+
+    public String getTranscript() {
+        StringBuilder sb = new StringBuilder();
+        sb
+            .append("Transcript for ")
+            .append(getName())
+            .append(" (")
+            .append(getId())
+            .append(")\n");
+        sb
+            .append("Degree: ")
+            .append(degreeType)
+            .append(", Major: ")
+            .append(major.getName())
+            .append("\n");
+        sb
+            .append("GPA: ")
+            .append(gpa)
+            .append(", Total Credits: ")
+            .append(totalCredits)
+            .append("\n");
+        sb.append("-".repeat(50)).append("\n");
+        for (Enrollment e : enrollments) {
+            sb
+                .append(e.getCourse().getCourseCode())
+                .append(" | ")
+                .append(e.getCourse().getTitle())
+                .append(" | Attempt: ")
+                .append(e.getAttemptNo())
+                .append(" | Status: ")
+                .append(e.getStatus())
+                .append(" | Mark: ")
+                .append(
+                    e
+                        .getMark()
+                        .map(m -> String.valueOf(m.getTotal()))
+                        .orElse("N/A")
+                )
+                .append("\n");
+        }
+        sb.append("-".repeat(50));
+        return sb.toString();
+    }
+
     void addEnrollment(Enrollment enrollment) {
         enrollments.add(enrollment);
+    }
+
+    public void addMembership(OrganizationMembership membership) {
+        memberships.add(membership);
     }
 
     public double getGpa() {
@@ -225,13 +179,7 @@ public class Student extends User {
         return totalCredits;
     }
 
-    // bypasses the credit-limit check enforced by registerForCourse — use with care
     public void setTotalCredits(int totalCredits) {
-        if (totalCredits < 0) {
-            throw new IllegalArgumentException(
-                "totalCredits must be non-negative, got: " + totalCredits
-            );
-        }
         this.totalCredits = totalCredits;
     }
 
@@ -240,11 +188,6 @@ public class Student extends User {
     }
 
     public void setFailCount(int failCount) {
-        if (failCount < 0) {
-            throw new IllegalArgumentException(
-                "failCount must be non-negative, got: " + failCount
-            );
-        }
         this.failCount = failCount;
     }
 
@@ -284,7 +227,8 @@ public class Student extends User {
         return List.copyOf(memberships);
     }
 
-    public void addMembership(OrganizationMembership membership) {
-        memberships.add(membership);
+    @Override
+    public String toString() {
+        return "Student{id='%s', name='%s'}".formatted(getId(), getName());
     }
 }

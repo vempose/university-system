@@ -7,9 +7,6 @@ public final class StudentByGpaComparator implements UserComparator {
 
     @Override
     public int compare(User u1, User u2) {
-        Student s1 = (Student) u1;
-        Student s2 = (Student) u2;
-        // descending: highest GPA first
-        return Double.compare(s2.getGpa(), s1.getGpa());
+        return Double.compare(((Student) u2).getGpa(), ((Student) u1).getGpa());
     }
 }

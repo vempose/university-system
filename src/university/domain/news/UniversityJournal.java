@@ -1,5 +1,7 @@
 package university.domain.news;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,7 +9,10 @@ import java.util.Objects;
 import university.domain.research.ResearchPaper;
 import university.domain.user.User;
 
-public class UniversityJournal {
+public class UniversityJournal implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final String name;
     private final List<JournalSubscription> subscriptions = new ArrayList<>();
@@ -69,11 +74,6 @@ public class UniversityJournal {
     }
 
     @Override
-    public String toString() {
-        return "UniversityJournal{name='%s', subscribers=%d, publishedPapers=%d}".formatted(name, subscriptions.size(), publishedPapers.size());
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof UniversityJournal other)) return false;
@@ -83,5 +83,14 @@ public class UniversityJournal {
     @Override
     public int hashCode() {
         return Objects.hash(name);
+    }
+
+    @Override
+    public String toString() {
+        return "UniversityJournal{name='%s', subscribers=%d, publishedPapers=%d}".formatted(
+            name,
+            subscriptions.size(),
+            publishedPapers.size()
+        );
     }
 }

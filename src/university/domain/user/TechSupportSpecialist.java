@@ -1,13 +1,17 @@
 package university.domain.user;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import university.domain.support.TechSupportRequest;
 import university.enums.Language;
 import university.enums.RequestStatus;
 
 public class TechSupportSpecialist extends Employee {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final List<TechSupportRequest> assignedRequests = new ArrayList<>();
 
@@ -30,10 +34,12 @@ public class TechSupportSpecialist extends Employee {
     }
 
     public void acceptRequest(TechSupportRequest request) {
+        request.view();
         request.accept(this);
     }
 
     public void rejectRequest(TechSupportRequest request) {
+        request.view();
         request.reject();
     }
 
@@ -49,10 +55,11 @@ public class TechSupportSpecialist extends Employee {
         return List.copyOf(assignedRequests);
     }
 
-        @Override
+    @Override
     public String toString() {
-        return "TechSupportSpecialist{id='%s', name='%s', assignedTickets=%d}".formatted(
-                getId(), getName(), assignedRequests.size()
+        return "TechSupportSpecialist{id='%s', name='%s'}".formatted(
+            getId(),
+            getName()
         );
     }
 }

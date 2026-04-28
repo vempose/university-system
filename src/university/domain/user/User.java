@@ -1,10 +1,15 @@
 package university.domain.user;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 import university.domain.research.ResearchProfile;
 import university.enums.Language;
 
-public abstract class User implements Comparable<User> {
+public abstract class User implements Comparable<User>, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final String id;
     private String name;
@@ -31,9 +36,7 @@ public abstract class User implements Comparable<User> {
         return this.email.equals(email) && this.passwordHash.equals(password);
     }
 
-    public void logout() {
-        // session teardown hook — override in service layer if needed
-    }
+    public void logout() {}
 
     public void changeLanguage(Language language) {
         this.language = language;
@@ -42,6 +45,27 @@ public abstract class User implements Comparable<User> {
     @Override
     public int compareTo(User other) {
         return this.id.compareTo(other.id);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User other)) return false;
+        return id.equals(other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "%s{id='%s', name='%s'}".formatted(
+            getClass().getSimpleName(),
+            id,
+            name
+        );
     }
 
     public String getId() {
@@ -64,7 +88,6 @@ public abstract class User implements Comparable<User> {
         this.email = email;
     }
 
-    // package-private — not part of the public API
     String getPasswordHash() {
         return passwordHash;
     }
@@ -77,28 +100,15 @@ public abstract class User implements Comparable<User> {
         return language;
     }
 
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
+
     public ResearchProfile getResearchProfile() {
         return researchProfile;
     }
 
     public void setResearchProfile(ResearchProfile researchProfile) {
         this.researchProfile = researchProfile;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User other)) return false;
-        return id.equals(other.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
-
-        @Override
-    public String toString() {
-        return "%s{id='%s', name='%s'}".formatted(getClass().getSimpleName(), id, name);
     }
 }

@@ -1,12 +1,17 @@
 package university.domain.academic;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import university.domain.user.Teacher;
 import university.enums.LessonType;
 
-public class Lesson {
+public class Lesson implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private static final DateTimeFormatter DISPLAY_FORMATTER =
         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -88,7 +93,11 @@ public class Lesson {
     @Override
     public String toString() {
         return "Lesson[id=%s, type=%s, room=%s, time=%s, instructor=%s]".formatted(
-                id, type, room, time.format(DISPLAY_FORMATTER), instructor.getName()
+            id,
+            type,
+            room,
+            time.format(DISPLAY_FORMATTER),
+            instructor.getName()
         );
     }
 }

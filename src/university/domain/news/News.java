@@ -1,5 +1,7 @@
 package university.domain.news;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,7 +10,10 @@ import java.util.Objects;
 import java.util.UUID;
 import university.enums.NewsTopic;
 
-public class News {
+public class News implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final String id;
     private String title;
@@ -86,7 +91,12 @@ public class News {
     @Override
     public String toString() {
         return "News{id='%s', topic=%s, pinned=%b, title='%s', createdDate=%s, comments=%d}".formatted(
-                id, topic, pinned, title, createdDate, comments.size()
+            id,
+            topic,
+            pinned,
+            title,
+            createdDate,
+            comments.size()
         );
     }
 }

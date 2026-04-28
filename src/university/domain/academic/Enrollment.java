@@ -1,11 +1,16 @@
 package university.domain.academic;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 import university.domain.user.Student;
 import university.enums.EnrollmentStatus;
 
-public class Enrollment {
+public class Enrollment implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final Student student;
     private final Course course;
@@ -30,7 +35,6 @@ public class Enrollment {
         this.status = EnrollmentStatus.PENDING;
     }
 
-    // State machine: PENDING → APPROVED → REGISTERED, or PENDING → REJECTED
     public void approve() {
         if (status != EnrollmentStatus.PENDING) throw new IllegalStateException(
             "Can only approve a PENDING enrollment, current: " + status
@@ -112,7 +116,12 @@ public class Enrollment {
     @Override
     public String toString() {
         return "Enrollment{student=%s, course=%s, semester='%s', attempt=%d, status=%s, mark=%s}".formatted(
-                student.getName(), course.getCourseCode(), semesterLabel, attemptNo, status, mark != null ? mark.getTotal() : "N/A"
+            student.getName(),
+            course.getCourseCode(),
+            semesterLabel,
+            attemptNo,
+            status,
+            mark != null ? mark.getTotal() : "N/A"
         );
     }
 }

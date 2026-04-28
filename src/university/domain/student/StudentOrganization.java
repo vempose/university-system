@@ -1,10 +1,15 @@
 package university.domain.student;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class StudentOrganization {
+public class StudentOrganization implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final String name;
     private String description;
@@ -49,6 +54,10 @@ public class StudentOrganization {
 
     @Override
     public String toString() {
-        return "StudentOrganization{name='%s', description='%s', memberCount=%d}".formatted(name, description, memberships.size());
+        return "StudentOrganization{name='%s', description='%s', memberCount=%d}".formatted(
+            name,
+            description,
+            memberships.size()
+        );
     }
 }

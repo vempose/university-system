@@ -1,12 +1,17 @@
 package university.domain.support;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import university.domain.user.TechSupportSpecialist;
 import university.domain.user.User;
 import university.enums.RequestStatus;
 
-public final class TechSupportRequest {
+public final class TechSupportRequest implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final String id;
     private final String description;
@@ -98,7 +103,14 @@ public final class TechSupportRequest {
     @Override
     public String toString() {
         return "TechSupportRequest{id='%s', status=%s, requester='%s', assignedSpecialist='%s', createdDate=%s, description='%s'}".formatted(
-                id, status, requester.getName(), assignedSpecialist != null ? assignedSpecialist.getName() : "unassigned", createdDate, description
+            id,
+            status,
+            requester.getName(),
+            assignedSpecialist != null
+                ? assignedSpecialist.getName()
+                : "unassigned",
+            createdDate,
+            description
         );
     }
 }

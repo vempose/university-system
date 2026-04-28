@@ -1,8 +1,13 @@
 package university.domain.academic;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Major {
+public class Major implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final String name;
     private School school;
@@ -23,7 +28,6 @@ public class Major {
         return school;
     }
 
-    // package-private — used by School when re-parenting a major
     void setSchool(School school) {
         this.school = school;
     }
@@ -42,6 +46,9 @@ public class Major {
 
     @Override
     public String toString() {
-        return "Major{name='%s', school='%s'}".formatted(name, school.getName());
+        return "Major{name='%s', school='%s'}".formatted(
+            name,
+            school.getName()
+        );
     }
 }

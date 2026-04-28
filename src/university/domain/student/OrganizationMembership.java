@@ -1,11 +1,15 @@
 package university.domain.student;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Objects;
 import university.domain.user.Student;
 import university.enums.OrganizationRole;
 
-public class OrganizationMembership {
+public class OrganizationMembership implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final Student student;
     private final StudentOrganization organization;
@@ -46,7 +50,10 @@ public class OrganizationMembership {
     @Override
     public String toString() {
         return "OrganizationMembership{student=%s, organization='%s', role=%s, joinDate=%s}".formatted(
-                student, organization.getName(), role, joinDate
+            student,
+            organization.getName(),
+            role,
+            joinDate
         );
     }
 }

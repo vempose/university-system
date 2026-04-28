@@ -1,12 +1,15 @@
 package university.domain.user;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import university.domain.academic.Course;
 import university.domain.academic.Enrollment;
 import university.domain.academic.Mark;
+import university.domain.academic.School;
 import university.domain.communication.Complaint;
+import university.domain.research.ResearchProfile;
 import university.domain.student.TeacherRating;
 import university.enums.Language;
 import university.enums.TeacherPosition;
@@ -14,9 +17,13 @@ import university.enums.UrgencyLevel;
 
 public class Teacher extends Employee {
 
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private TeacherPosition position;
     private final List<TeacherRating> receivedRatings = new ArrayList<>();
     private final List<Complaint> submittedComplaints = new ArrayList<>();
+    private final List<Course> assignedCourses = new ArrayList<>();
 
     public Teacher(
         String id,
@@ -32,21 +39,30 @@ public class Teacher extends Employee {
     }
 
     public List<Course> viewCourses() {
-        // Full implementation requires system-level access — delegated to service layer
-        return List.of();
+        return List.copyOf(assignedCourses);
     }
 
-    public void manageCourse(Course course) {
-        // management logic delegated to service layer
+    public void addAssignedCourse(Course course) {
+        if (!assignedCourses.contains(course)) {
+            assignedCourses.add(course);
+        }
     }
+
+    public void manageCourse(Course course) {}
 
     public void putMark(Enrollment enrollment, Mark mark) {
         enrollment.setMark(mark);
     }
 
-    public List<Student> viewStudents(Course course) {
-        // Full implementation requires system-level access — delegated to service layer
-        return List.of();
+    public List<Student> viewStudents(
+        Course course,
+        List<Enrollment> enrollments
+    ) {
+        return enrollments
+            .stream()
+            .filter(e -> e.getCourse().equals(course))
+            .map(Enrollment::getStudent)
+            .toList();
     }
 
     public Complaint sendComplaint(
@@ -55,7 +71,13 @@ public class Teacher extends Employee {
         String text,
         Manager receiver
     ) {
-        Complaint complaint = new Complaint(this, targets, urgency, text, receiver);
+        Complaint complaint = new Complaint(
+            this,
+            targets,
+            urgency,
+            text,
+            receiver
+        );
         submittedComplaints.add(complaint);
         return complaint;
     }
@@ -65,9 +87,7 @@ public class Teacher extends Employee {
     }
 
     public double getAverageRating() {
-        if (receivedRatings.isEmpty()) {
-            return 0.0;
-        }
+        if (receivedRatings.isEmpty()) return 0.0;
         return receivedRatings
             .stream()
             .mapToInt(TeacherRating::getScore)
@@ -79,9 +99,14 @@ public class Teacher extends Employee {
         return position;
     }
 
-    // promoting to PROFESSOR requires a ResearchProfile — enforced by service layer
     public void setPosition(TeacherPosition position) {
         this.position = position;
+        if (
+            position == TeacherPosition.PROFESSOR &&
+            getResearchProfile() == null
+        ) {
+            setResearchProfile(new ResearchProfile());
+        }
     }
 
     public List<TeacherRating> getReceivedRatings() {
@@ -92,10 +117,8 @@ public class Teacher extends Employee {
         return List.copyOf(submittedComplaints);
     }
 
-        @Override
+    @Override
     public String toString() {
-        return "Teacher{id='%s', name='%s', position=%s, avgRating=%.2f, ratings=%d, complaints=%d}".formatted(
-                getId(), getName(), position, getAverageRating(), receivedRatings.size(), submittedComplaints.size()
-        );
+        return "Teacher{id='%s', name='%s'}".formatted(getId(), getName());
     }
 }

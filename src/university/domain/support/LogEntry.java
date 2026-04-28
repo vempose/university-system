@@ -1,10 +1,15 @@
 package university.domain.support;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import university.domain.user.User;
 
-public final class LogEntry {
+public final class LogEntry implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final String id;
     private final User actor;
@@ -44,13 +49,6 @@ public final class LogEntry {
         return timestamp;
     }
 
-        @Override
-    public String toString() {
-        return "LogEntry[id='%s', timestamp=%s, actor=%s(id=%s), action='%s']".formatted(
-                id, timestamp, actor.getClass().getSimpleName(), actor.getId(), action
-        );
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -61,5 +59,16 @@ public final class LogEntry {
     @Override
     public int hashCode() {
         return id.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "LogEntry[id='%s', timestamp=%s, actor=%s(id=%s), action='%s']".formatted(
+            id,
+            timestamp,
+            actor.getClass().getSimpleName(),
+            actor.getId(),
+            action
+        );
     }
 }

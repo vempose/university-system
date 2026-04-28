@@ -1,10 +1,15 @@
 package university.domain.news;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import university.domain.user.User;
 
-public class NewsComment {
+public class NewsComment implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final String id;
     private final String text;
@@ -44,7 +49,10 @@ public class NewsComment {
     @Override
     public String toString() {
         return "NewsComment{id='%s', author='%s', createdDate=%s, text='%s'}".formatted(
-                id, author.getName(), createdDate, text
+            id,
+            author.getName(),
+            createdDate,
+            text
         );
     }
 }

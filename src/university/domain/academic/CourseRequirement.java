@@ -1,8 +1,13 @@
 package university.domain.academic;
 
+import java.io.Serial;
+import java.io.Serializable;
 import university.enums.CourseCategory;
 
-public class CourseRequirement {
+public class CourseRequirement implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final Course course;
     private final Major major;
@@ -52,7 +57,10 @@ public class CourseRequirement {
     @Override
     public String toString() {
         return "CourseRequirement{course=%s, major='%s', yearOfStudy=%d, category=%s}".formatted(
-                course.getCourseCode(), major.getName(), yearOfStudy, category
+            course.getCourseCode(),
+            major.getName(),
+            yearOfStudy,
+            category
         );
     }
 }
