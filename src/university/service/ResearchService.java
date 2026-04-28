@@ -45,7 +45,7 @@ public class ResearchService {
             })
             .map(User::getResearchProfile)
             .filter(Objects::nonNull)
-            .max(Comparator.comparingInt(ResearchProfile::getHIndex));
+            .max(Comparator.comparingInt(ResearchProfile::calculateHIndex));
     }
 
     public Optional<ResearchProfile> getTopCitedResearcherOfYear(int year) {
@@ -94,7 +94,7 @@ public class ResearchService {
                 "Top cited researcher of " +
                     school.getName() +
                     ": h-index=" +
-                    profile.getHIndex()
+                    profile.calculateHIndex()
             );
         } else {
             System.out.println(

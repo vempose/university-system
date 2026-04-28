@@ -2,10 +2,12 @@ package university.domain.user;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import university.domain.academic.Course;
 import university.domain.academic.Enrollment;
+import university.domain.academic.Lesson;
 import university.domain.academic.Major;
 import university.domain.academic.Mark;
 import university.domain.academic.School;
@@ -98,6 +100,31 @@ public class Student extends User {
             .map(Enrollment::getCourse)
             .distinct()
             .toList();
+    }
+
+    public String viewMyAttendance(List<Lesson> lessons) {
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        String divider = "-".repeat(60);
+        StringBuilder sb = new StringBuilder();
+        sb.append("Attendance record for %s\n".formatted(getName()));
+        sb.append(divider).append("\n");
+
+        for (Lesson lesson : lessons) {
+            String statusLabel = lesson
+                .getAttendanceRecord(this)
+                .map(r -> r.getStatus().name())
+                .orElse("NOT RECORDED");
+            sb.append(
+                "  [%s] %-8s %s  → %s\n".formatted(
+                    lesson.getId(),
+                    lesson.getType(),
+                    lesson.getTime().format(fmt),
+                    statusLabel
+                )
+            );
+        }
+        sb.append(divider);
+        return sb.toString();
     }
 
     public List<Mark> viewMarks() {

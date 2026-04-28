@@ -4,8 +4,15 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import university.domain.user.Student;
 import university.domain.user.Teacher;
+import university.enums.AttendanceStatus;
 import university.enums.LessonType;
 
 public class Lesson implements Serializable {
@@ -21,6 +28,9 @@ public class Lesson implements Serializable {
     private String room;
     private LocalDateTime time;
     private Teacher instructor;
+
+    private final Map<Student, AttendanceRecord> attendanceRecords =
+        new LinkedHashMap<>();
 
     public Lesson(
         String id,
@@ -76,6 +86,48 @@ public class Lesson implements Serializable {
 
     public void setInstructor(Teacher instructor) {
         this.instructor = instructor;
+    }
+
+    public void markAttendance(
+        Student student,
+        AttendanceStatus status,
+        Teacher recordedBy
+    ) {
+        if (student == null) throw new IllegalArgumentException(
+            "student must not be null"
+        );
+        if (status == null) throw new IllegalArgumentException(
+            "status must not be null"
+        );
+        if (recordedBy == null) throw new IllegalArgumentException(
+            "recordedBy must not be null"
+        );
+        AttendanceRecord existing = attendanceRecords.get(student);
+        if (existing != null) {
+            existing.setStatus(status);
+        } else {
+            attendanceRecords.put(
+                student,
+                new AttendanceRecord(student, this, status, recordedBy)
+            );
+        }
+    }
+
+    public Optional<AttendanceRecord> getAttendanceRecord(Student student) {
+        return Optional.ofNullable(attendanceRecords.get(student));
+    }
+
+    public Map<Student, AttendanceRecord> getAttendanceRecords() {
+        return Collections.unmodifiableMap(attendanceRecords);
+    }
+
+    public List<Student> getStudentsByStatus(AttendanceStatus status) {
+        return attendanceRecords
+            .values()
+            .stream()
+            .filter(r -> r.getStatus() == status)
+            .map(AttendanceRecord::getStudent)
+            .toList();
     }
 
     @Override
