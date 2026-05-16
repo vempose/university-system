@@ -1,14 +1,13 @@
 package university.domain.user;
 
 import java.io.Serial;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import university.domain.academic.School;
 import university.domain.communication.Message;
 import university.enums.Language;
 
-public abstract class Employee extends User implements Serializable {
+public abstract class Employee extends User {
 
     @Serial
     private static final long serialVersionUID = 1L;
