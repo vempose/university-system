@@ -29,7 +29,7 @@ import java.util.UUID;
 
 public class Main {
 
-    static void main(String[] args) {
+    void main() {
         System.out.println("╔══════════════════════════════════════════╗");
         System.out.println("║       UNIVERSITY SYSTEM DEMO             ║");
         System.out.println("╚══════════════════════════════════════════╝");
@@ -382,7 +382,7 @@ public class Main {
         bachelor.addMembership(membership);
         System.out.println("Organization: " + org);
         System.out.println(
-                "Eve's role: " + bachelor.getMemberships().get(0).getRole()
+                "Eve's role: " + bachelor.getMemberships().getFirst().getRole()
         );
 
         System.out.println("\n--- [21] Save & Load System State ---");
