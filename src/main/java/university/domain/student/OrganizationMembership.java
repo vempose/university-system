@@ -7,6 +7,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+/// Links a student to a student organization with a specific role.
+///
+/// Keeps track of when the student joined.
 public class OrganizationMembership implements Serializable {
 
     @Serial
@@ -17,6 +20,9 @@ public class OrganizationMembership implements Serializable {
     private final LocalDate joinDate;
     private OrganizationRole role;
 
+    /// Creates a membership record.
+    ///
+    /// The join date is set to today.
     public OrganizationMembership(
             Student student,
             StudentOrganization organization,
@@ -40,6 +46,7 @@ public class OrganizationMembership implements Serializable {
         return role;
     }
 
+    /// Updates the member's role in the organization.
     public void setRole(OrganizationRole role) {
         this.role = role;
     }
@@ -48,6 +55,7 @@ public class OrganizationMembership implements Serializable {
         return joinDate;
     }
 
+    /// Returns a summary of the membership.
     @Override
     public String toString() {
         return "OrganizationMembership{student=%s, organization='%s', role=%s, joinDate=%s}".formatted(

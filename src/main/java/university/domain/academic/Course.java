@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/// A university course with a code, title, credits, and a list of lessons.
+///
+/// Comparable by `courseCode` so you can sort them alphabetically.
 public final class Course implements Comparable<Course>, Serializable {
 
     @Serial
@@ -17,6 +20,8 @@ public final class Course implements Comparable<Course>, Serializable {
     private String title;
     private int credits;
 
+    /// Creates a course. `courseCode` and `title` can't be blank,
+    /// and `credits` must be positive.
     public Course(String courseCode, String title, int credits) {
         if (
                 courseCode == null || courseCode.isBlank()
@@ -32,6 +37,7 @@ public final class Course implements Comparable<Course>, Serializable {
         this.credits = credits;
     }
 
+    /// Returns a formatted syllabus string with course info and all lessons.
     public String viewSyllabus() {
         String divider = "=".repeat(48);
         String lessonSection = lessons.isEmpty()
@@ -52,6 +58,7 @@ public final class Course implements Comparable<Course>, Serializable {
         );
     }
 
+    /// Adds a `lesson` to this course's schedule.
     public void addLesson(Lesson lesson) {
         if (lesson == null) throw new IllegalArgumentException(
                 "lesson must not be null"
@@ -71,6 +78,7 @@ public final class Course implements Comparable<Course>, Serializable {
         return title;
     }
 
+    /// Renames the course.
     public void setTitle(String title) {
         if (
                 title == null || title.isBlank()
@@ -82,6 +90,7 @@ public final class Course implements Comparable<Course>, Serializable {
         return credits;
     }
 
+    /// Changes the credit count (must stay positive).
     public void setCredits(int credits) {
         if (credits <= 0) throw new IllegalArgumentException(
                 "credits must be greater than zero, got: " + credits
@@ -90,6 +99,7 @@ public final class Course implements Comparable<Course>, Serializable {
     }
 
     @Override
+    /// Sorts by `courseCode` alphabetically.
     public int compareTo(Course other) {
         return this.courseCode.compareTo(other.courseCode);
     }

@@ -5,12 +5,17 @@ import university.enums.CourseCategory;
 import java.io.Serial;
 import java.io.Serializable;
 
+/// Links a `Course` to a `Major`'s curriculum for a given year.
+///
+/// A record that says "in year X of major Y, students must take this
+/// course as a required/elective/etc."
 public record CourseRequirement(Course course, Major major, int yearOfStudy,
                                 CourseCategory category) implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /// Compact constructor — validates nothing is null and year ≥ 1.
     public CourseRequirement {
         if (course == null) throw new IllegalArgumentException(
                 "Course must not be null."

@@ -13,6 +13,10 @@ import university.enums.Language;
 import university.exception.CreditLimitExceededException;
 import university.exception.RetakeLimitExceededException;
 
+/// A student enrolled in the university.
+///
+/// Tracks GPA, major, year of study, courses they're taking,
+/// teacher ratings, and club memberships.
 public class Student extends User {
 
     public static final int MAX_CREDITS = 21;
@@ -32,6 +36,9 @@ public class Student extends User {
     private Major major;
     private School school;
 
+    /// Creates a student with a degree type and major.
+    ///
+    /// Starts with 0 credits, GPA 0.0, and no enrollments.
     public Student(
         String id,
         String name,
@@ -46,6 +53,9 @@ public class Student extends User {
         this.major = major;
     }
 
+    /// Registers the student for a course.
+    ///
+    /// Throws if the credit limit (21) or retry limit (3) is exceeded.
     public Enrollment registerForCourse(Course course)
         throws CreditLimitExceededException, RetakeLimitExceededException {
         if (totalCredits + course.getCredits() > MAX_CREDITS) {
@@ -75,6 +85,7 @@ public class Student extends User {
         return enrollment;
     }
 
+    /// Rates a teacher from 1-5 with an optional comment.
     public TeacherRating rateTeacher(
         Teacher teacher,
         int score,
@@ -130,6 +141,7 @@ public class Student extends User {
             .toList();
     }
 
+    /// Returns a formatted transcript showing all enrollments with marks.
     public String getTranscript() {
         String divider = "-".repeat(50);
         List<String> lines = new ArrayList<>();

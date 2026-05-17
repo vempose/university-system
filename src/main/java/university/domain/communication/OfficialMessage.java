@@ -3,6 +3,9 @@ package university.domain.communication;
 import java.io.Serial;
 import university.domain.user.Employee;
 
+/// An official/formal message that extends `Message` with an event type.
+///
+/// Used for announcements, policy changes, etc.
 public class OfficialMessage extends Message {
 
     @Serial
@@ -10,6 +13,8 @@ public class OfficialMessage extends Message {
 
     private final String eventType;
 
+    /// Creates an official message. `eventType` describes the kind of
+    /// announcement (e.g. "policy change", "holiday").
     public OfficialMessage(
         Employee sender,
         Employee receiver,

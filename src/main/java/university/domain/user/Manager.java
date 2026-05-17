@@ -12,6 +12,10 @@ import university.enums.CourseCategory;
 import university.enums.Language;
 import university.enums.ManagerType;
 
+/// Handles the OR, department, or dean-level management tasks.
+///
+/// Assigns teachers to courses, approves enrollments, creates reports,
+/// manages news, and views sorted student/teacher lists.
 public class Manager extends Employee {
 
     @Serial
@@ -22,6 +26,7 @@ public class Manager extends Employee {
     private final List<AcademicReport> createdReports = new ArrayList<>();
     private ManagerType type;
 
+    /// Creates a manager with a specific type (OR / DEPARTMENT / DEAN).
     public Manager(
         String id,
         String name,
@@ -35,6 +40,7 @@ public class Manager extends Employee {
         this.type = type;
     }
 
+    /// Assigns a teacher to a specific course lesson.
     public void assignTeacherToCourse(
         Teacher teacher,
         Course course,
@@ -44,6 +50,7 @@ public class Manager extends Employee {
         teacher.addAssignedCourse(course);
     }
 
+    /// Approves a student's course enrollment.
     public void approveRegistration(Enrollment enrollment) {
         enrollment.approve();
     }
@@ -57,12 +64,14 @@ public class Manager extends Employee {
         return new CourseRequirement(course, major, yearOfStudy, category);
     }
 
+    /// Creates a new academic report and adds it to the history.
     public AcademicReport createAcademicReport() {
         AcademicReport report = new AcademicReport();
         createdReports.add(report);
         return report;
     }
 
+    /// Adds a news item that this manager oversees.
     public void manageNews(News news) {
         managedNews.add(news);
     }

@@ -2,6 +2,7 @@ package university.tui;
 
 import university.domain.academic.*;
 import university.domain.research.ResearchProfile;
+import university.domain.support.LogEntry;
 import university.domain.user.*;
 import university.enums.*;
 import university.system.UserFactory;
@@ -11,6 +12,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+/// Admin panel — CRUD for users and system log viewing.
+///
+/// Lets the admin add/remove/update users by type, list everyone,
+/// and browse activity logs.
 class AdminView {
 
     private final Session session;
@@ -19,6 +24,7 @@ class AdminView {
         this.session = session;
     }
 
+    /// Shows the admin menu and handles user choices.
     void show() {
         Admin admin = (Admin) session.getCurrentUser();
         UniversitySystem system = session.getSystem();
@@ -71,9 +77,9 @@ class AdminView {
             case 2 -> {
                 ConsoleMenu.printSection(Messages.get("admin.manager_type"));
                 LinkedHashMap<Integer, String> mTypes = new LinkedHashMap<>();
-                mTypes.put(1, "OR");
-                mTypes.put(2, "DEPARTMENT");
-                mTypes.put(3, "DEAN");
+                mTypes.put(1, Messages.get("admin.mgr_or"));
+                mTypes.put(2, Messages.get("admin.mgr_department"));
+                mTypes.put(3, Messages.get("admin.mgr_dean"));
                 int mt = ConsoleMenu.showMenu(Messages.get("admin.manager_type"), mTypes, false, false);
                 ManagerType managerType = switch (mt) {
                     case 2 -> ManagerType.DEPARTMENT;
@@ -87,10 +93,10 @@ class AdminView {
             case 3 -> {
                 ConsoleMenu.printSection(Messages.get("admin.teacher_position"));
                 LinkedHashMap<Integer, String> tTypes = new LinkedHashMap<>();
-                tTypes.put(1, "TUTOR");
-                tTypes.put(2, "LECTOR");
-                tTypes.put(3, "SENIOR_LECTOR");
-                tTypes.put(4, "PROFESSOR");
+                tTypes.put(1, Messages.get("admin.pos_tutor"));
+                tTypes.put(2, Messages.get("admin.pos_lector"));
+                tTypes.put(3, Messages.get("admin.pos_senior_lector"));
+                tTypes.put(4, Messages.get("admin.pos_professor"));
                 int tp = ConsoleMenu.showMenu(Messages.get("admin.teacher_position"), tTypes, false, false);
                 TeacherPosition position = switch (tp) {
                     case 1 -> TeacherPosition.TUTOR;
@@ -139,11 +145,8 @@ class AdminView {
             ConsoleInput.waitForEnter();
             return;
         }
-        for (int i = 0; i < users.size(); i++) {
-            System.out.printf("  [%d]  %s%n", i + 1, users.get(i));
-        }
-        int idx = ConsoleInput.readInt("\n  " + Messages.get("admin.remove_user") + ": ", 1, users.size()) - 1;
-        User toRemove = users.get(idx);
+        User toRemove = ConsoleMenu.pickFromList(users, Object::toString,
+                Messages.get("admin.remove_user"));
         if (ConsoleMenu.confirm(Messages.get("admin.remove_user") + " " + toRemove.getName() + "?")) {
             admin.removeUser(toRemove, system);
             ConsoleMenu.printSuccess(Messages.get("admin.user_removed"));
@@ -159,11 +162,8 @@ class AdminView {
             ConsoleInput.waitForEnter();
             return;
         }
-        for (int i = 0; i < users.size(); i++) {
-            System.out.printf("  [%d]  %s%n", i + 1, users.get(i));
-        }
-        int idx = ConsoleInput.readInt("\n  " + Messages.get("admin.update_user") + ": ", 1, users.size()) - 1;
-        User toUpdate = users.get(idx);
+        User toUpdate = ConsoleMenu.pickFromList(users, Object::toString,
+                Messages.get("admin.update_user"));
         String newName = ConsoleInput.readLineOrBlank("  " + Messages.get("common.name") + " ("
                 + Messages.get("admin.no_changes").toLowerCase() + "): ");
         String newEmail = ConsoleInput.readLineOrBlank("  " + Messages.get("common.email") + " ("
@@ -202,7 +202,7 @@ class AdminView {
 
     private void viewLogs(Admin admin, UniversitySystem system) {
         ConsoleMenu.printSection(Messages.get("admin.view_logs"));
-        List<university.domain.support.LogEntry> logs = admin.viewLogs(system);
+        List<LogEntry> logs = admin.viewLogs(system);
         if (logs.isEmpty()) {
             ConsoleMenu.printInfo(Messages.get("admin.no_logs"));
         } else {
@@ -215,9 +215,9 @@ class AdminView {
 
     private DegreeType pickDegree() {
         LinkedHashMap<Integer, String> degOptions = new LinkedHashMap<>();
-        degOptions.put(1, "BACHELOR");
-        degOptions.put(2, "MASTER");
-        degOptions.put(3, "PHD");
+        degOptions.put(1, Messages.get("admin.degree_bachelor"));
+        degOptions.put(2, Messages.get("admin.degree_master"));
+        degOptions.put(3, Messages.get("admin.degree_phd"));
         int d = ConsoleMenu.showMenu(Messages.get("admin.select_degree"), degOptions, false, false);
         return switch (d) {
             case 2 -> DegreeType.MASTER;

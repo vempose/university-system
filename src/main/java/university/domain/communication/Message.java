@@ -7,6 +7,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/// A basic message between two employees.
+///
+/// Tracks sender, receiver, text, timestamp, and read status.
 public class Message implements Serializable {
 
     @Serial
@@ -19,6 +22,8 @@ public class Message implements Serializable {
     private final LocalDateTime sentDate;
     private boolean isRead;
 
+    /// Creates a message. A UUID and timestamp are generated automatically;
+    /// starts unread.
     public Message(Employee sender, Employee receiver, String text) {
         if (sender == null) throw new IllegalArgumentException(
                 "Sender must not be null."
@@ -38,6 +43,7 @@ public class Message implements Serializable {
         this.isRead = false;
     }
 
+    /// Marks this message as read.
     public void markRead() {
         this.isRead = true;
     }

@@ -12,6 +12,8 @@ import university.service.ResearchService;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+/// Student panel — register for courses, view marks/transcript,
+/// rate teachers, browse courses, and manage organizations.
 class StudentView {
 
     private final Session session;
@@ -26,6 +28,7 @@ class StudentView {
         this.courseView = new CourseView(session);
     }
 
+    /// Shows the student menu and handles user choices.
     void show() {
         Student student = (Student) session.getCurrentUser();
 
@@ -71,7 +74,7 @@ class StudentView {
         for (int i = 0; i < allCourses.size(); i++) {
             Course c = allCourses.get(i);
             System.out.printf("  [%d]  %s - %s (%d %s)%n", i + 1,
-                    c.getCourseCode(), c.getTitle(), c.getCredits(), Messages.get("manager.credits").toLowerCase());
+                    c.getCourseCode(), c.getTitle(), c.getCredits(), Messages.get("student.credits_word"));
         }
         System.out.println("  " + Messages.get("student.credits_used",
                 student.getTotalCredits(), Student.MAX_CREDITS));
@@ -99,10 +102,11 @@ class StudentView {
             ConsoleMenu.printDivider();
             for (Enrollment e : enrollments) {
                 System.out.printf(
-                        "  %s | %-25s | Status: %-12s | Mark: %s%n",
+                        "  %s | %-25s | %s: %-12s | %s: %s%n",
                         e.getCourse().getCourseCode(),
                         e.getCourse().getTitle(),
-                        e.getStatus(),
+                        Messages.get("student.status_label"), e.getStatus(),
+                        Messages.get("student.mark_label"),
                         e.getMark().map(m -> String.valueOf(m.getTotal())).orElse("N/A")
                 );
             }
@@ -127,11 +131,9 @@ class StudentView {
             ConsoleInput.waitForEnter();
             return;
         }
-        for (int i = 0; i < teachers.size(); i++) {
-            System.out.printf("  [%d]  %s (%s)%n", i + 1, teachers.get(i).getName(), teachers.get(i).getPosition());
-        }
-        int ti = ConsoleInput.readInt("\n  " + Messages.get("student.select_teacher") + ": ", 1, teachers.size()) - 1;
-        Teacher teacher = teachers.get(ti);
+        Teacher teacher = ConsoleMenu.pickFromList(teachers,
+                t -> t.getName() + " (" + t.getPosition() + ")",
+                Messages.get("student.select_teacher"));
 
         int score = ConsoleInput.readInt("  " + Messages.get("student.rating_input") + ": ", 1, 5);
         String comment = ConsoleInput.readLineOrBlank("  " + Messages.get("student.comment_prompt") + ": ");
@@ -150,11 +152,8 @@ class StudentView {
             ConsoleInput.waitForEnter();
             return;
         }
-        for (int i = 0; i < teachers.size(); i++) {
-            System.out.printf("  [%d]  %s%n", i + 1, teachers.get(i).getName());
-        }
-        int ti = ConsoleInput.readInt("\n  " + Messages.get("student.select_teacher") + ": ", 1, teachers.size()) - 1;
-        Teacher teacher = teachers.get(ti);
+        Teacher teacher = ConsoleMenu.pickFromList(teachers, Teacher::getName,
+                Messages.get("student.select_teacher"));
 
         System.out.println();
         System.out.println("  " + Messages.get("student.name_label") + ": " + teacher.getName());

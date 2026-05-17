@@ -11,6 +11,10 @@ import university.enums.DegreeType;
 import university.enums.Language;
 import university.exception.InvalidSupervisorException;
 
+/// A master's or PhD student.
+///
+/// Has a supervisor (researcher with H-index >= 3) and
+/// can publish diploma papers as part of their degree.
 public class GraduateStudent extends Student {
 
     public static final int MIN_SUPERVISOR_H_INDEX = 3;
@@ -21,6 +25,9 @@ public class GraduateStudent extends Student {
     private final List<ResearchPaper> diplomaPapers = new ArrayList<>();
     private Researcher supervisor;
 
+    /// Creates a graduate student.
+    ///
+    /// Automatically gets a ResearchProfile if they're MASTER or PHD.
     public GraduateStudent(
         String id,
         String name,
@@ -40,6 +47,9 @@ public class GraduateStudent extends Student {
         return supervisor;
     }
 
+    /// Assigns a supervisor (must have H-index >= 3).
+    ///
+    /// @throws InvalidSupervisorException if null or H-index too low
     public void setSupervisor(Researcher supervisor)
         throws InvalidSupervisorException {
         if (
@@ -54,6 +64,7 @@ public class GraduateStudent extends Student {
         this.supervisor = supervisor;
     }
 
+    /// Adds a paper to the student's diploma publication list.
     public void addDiplomaPaper(ResearchPaper paper) {
         diplomaPapers.add(paper);
     }

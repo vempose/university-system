@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/// A student club or organization on campus.
+///
+/// Students can join and take on different roles.
 public class StudentOrganization implements Serializable {
 
     @Serial
@@ -15,11 +18,13 @@ public class StudentOrganization implements Serializable {
     private final List<OrganizationMembership> memberships = new ArrayList<>();
     private String description;
 
+    /// Creates an organization with a name and description.
     public StudentOrganization(String name, String description) {
         this.name = name;
         this.description = description;
     }
 
+    /// Adds a membership record to this org.
     public void addMembership(OrganizationMembership membership) {
         memberships.add(membership);
     }
@@ -36,10 +41,12 @@ public class StudentOrganization implements Serializable {
         return description;
     }
 
+    /// Updates the organization description.
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /// Two orgs are equal if they have the same name.
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -52,6 +59,7 @@ public class StudentOrganization implements Serializable {
         return Objects.hash(name);
     }
 
+    /// Returns a summary of the organization.
     @Override
     public String toString() {
         return "StudentOrganization{name='%s', description='%s', memberCount=%d}".formatted(

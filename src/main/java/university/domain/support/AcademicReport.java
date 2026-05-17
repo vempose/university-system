@@ -7,6 +7,10 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/// Academic performance report for a student.
+///
+/// Stores entries (e.g. grades) and can generate formatted reports
+/// and basic statistics like average and pass rate.
 public class AcademicReport implements Serializable {
 
     @Serial
@@ -20,11 +24,15 @@ public class AcademicReport implements Serializable {
     private final LocalDate createdDate;
     private final List<String> entries = new ArrayList<>();
 
+    /// Creates an empty report with a random ID.
     public AcademicReport() {
         this.id = UUID.randomUUID().toString();
         this.createdDate = LocalDate.now();
     }
 
+    /// Adds a new entry (e.g. a grade) to the report.
+    ///
+    /// @param entry must not be null or blank
     public void addEntry(String entry) {
         if (entry == null || entry.isBlank()) {
             throw new IllegalArgumentException(
@@ -34,6 +42,7 @@ public class AcademicReport implements Serializable {
         entries.add(entry);
     }
 
+    /// Generates a formatted report listing all entries.
     public String generateMarksReport() {
         if (entries.isEmpty()) {
             return "Academic Report [%s] — No entries recorded.".formatted(id);
@@ -57,6 +66,8 @@ public class AcademicReport implements Serializable {
         );
     }
 
+    /// Computes statistics (min, max, avg, pass rate) from numeric
+    /// scores found at the end of each entry line.
     public String generateStatistics() {
         if (entries.isEmpty()) {
             return "Academic Report [%s] — Statistics unavailable: no entries.".formatted(
@@ -133,6 +144,7 @@ public class AcademicReport implements Serializable {
         return Collections.unmodifiableList(entries);
     }
 
+    /// Returns a summary of the report.
     @Override
     public String toString() {
         return "AcademicReport{id='%s', createdDate=%s, entryCount=%d}".formatted(

@@ -10,6 +10,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
+/// Tracks whether a student showed up for a specific lesson.
+///
+/// Stores who recorded it, when, and what the status was
+/// (present, late, absent, etc.).
 public class AttendanceRecord implements Serializable {
 
     @Serial
@@ -24,6 +28,12 @@ public class AttendanceRecord implements Serializable {
     private final Teacher recordedBy;
     private AttendanceStatus status;
 
+    /// Creates a record marking a `student`'s attendance for a `lesson`.
+    ///
+    /// @param student  the student whose attendance is logged
+    /// @param lesson   the lesson they attended (or didn't)
+    /// @param status   `Present`, `Absent`, `Late`, etc.
+    /// @param recordedBy the teacher who took attendance
     public AttendanceRecord(
             Student student,
             Lesson lesson,
@@ -61,6 +71,7 @@ public class AttendanceRecord implements Serializable {
         return status;
     }
 
+    /// Updates the attendance status (e.g. correcting a mistake).
     public void setStatus(AttendanceStatus status) {
         if (status == null) throw new IllegalArgumentException(
                 "status must not be null"

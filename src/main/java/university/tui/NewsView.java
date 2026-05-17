@@ -8,6 +8,8 @@ import university.system.UniversitySystem;
 
 import java.util.List;
 
+/// News menu — browse, read, pin, and comment on news posts
+/// with topic filtering.
 class NewsView {
 
     private final Session session;
@@ -16,6 +18,7 @@ class NewsView {
         this.session = session;
     }
 
+    /// Shows the news list and detail view with comments.
     void show() {
         UniversitySystem system = session.getSystem();
 
@@ -25,25 +28,20 @@ class NewsView {
 
             if (allNews.isEmpty()) {
                 ConsoleMenu.printInfo(Messages.get("news.no_news"));
-                System.out.println("\n  [0]  Go Back");
-                int choice = ConsoleInput.readInt("\n  Choose an option: ", 0, 0);
+                System.out.println("\n  [0]  " + Messages.get("news.back"));
+                ConsoleInput.readInt("\n  " + Messages.get("menu.choose") + ": ", 0, 0);
                 return;
             }
 
             for (int i = 0; i < allNews.size(); i++) {
                 News n = allNews.get(i);
-                System.out.printf(
-                        "  [%d]  %s%s | %s%n",
-                        i + 1,
-                        n.isPinned() ? "[PINNED] " : "",
-                        n.getTopic(),
-                        n.getTitle()
-                );
+                String pinned = n.isPinned() ? Messages.get("news.pinned") + " " : "";
+                System.out.printf("  [%d]  %s%s | %s%n", i + 1, pinned, n.getTopic(), n.getTitle());
             }
             System.out.println();
-            System.out.println("  [0]  Go Back");
+            System.out.println("  [0]  " + Messages.get("news.back"));
 
-            int choice = ConsoleInput.readInt("\n  " + Messages.get("news.select_read") + " (#): ", 0, allNews.size());
+            int choice = ConsoleInput.readInt("\n  " + Messages.get("news.select_read") + ": ", 0, allNews.size());
             if (choice == 0) return;
 
             News selected = allNews.get(choice - 1);
@@ -53,8 +51,8 @@ class NewsView {
 
     private void showNewsDetail(News news) {
         ConsoleMenu.printSection(news.getTitle());
-        System.out.println("  Topic: " + news.getTopic() + (news.isPinned() ? " [PINNED]" : ""));
-        System.out.println("  Date: " + news.getCreatedDate());
+        System.out.println("  " + Messages.get("news.topic") + ": " + news.getTopic() + (news.isPinned() ? " " + Messages.get("news.pinned") : ""));
+        System.out.println("  " + Messages.get("news.date") + ": " + news.getCreatedDate());
         System.out.println();
         System.out.println("  " + news.getContent());
         System.out.println();
@@ -62,10 +60,9 @@ class NewsView {
         List<NewsComment> comments = news.getComments();
         if (!comments.isEmpty()) {
             ConsoleMenu.printDivider();
-            System.out.println("  Comments (" + comments.size() + "):");
+            System.out.println("  " + Messages.get("news.comments_header", String.valueOf(comments.size())) + ":");
             for (NewsComment c : comments) {
-                System.out.printf(
-                        "    %s (%s): %s%n",
+                System.out.printf("    %s (%s): %s%n",
                         c.getAuthor().getName(),
                         c.getCreatedDate().toLocalDate(),
                         c.getText()
@@ -75,12 +72,11 @@ class NewsView {
 
         System.out.println();
         System.out.println("  [1]  " + Messages.get("news.add_comment"));
-        System.out.println("  [0]  Go Back");
+        System.out.println("  [0]  " + Messages.get("news.back"));
 
-        int choice = ConsoleInput.readInt("\n  Choose an option: ", 0, 1);
+        int choice = ConsoleInput.readInt("\n  " + Messages.get("menu.choose") + ": ", 0, 1);
         if (choice == 1) {
             addComment(news);
-            ConsoleInput.waitForEnter();
         }
     }
 
@@ -92,5 +88,6 @@ class NewsView {
             news.addComment(comment);
             ConsoleMenu.printSuccess(Messages.get("news.comment_added"));
         }
+        ConsoleInput.waitForEnter();
     }
 }

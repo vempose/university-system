@@ -13,6 +13,10 @@ import university.enums.Language;
 import university.enums.TeacherPosition;
 import university.enums.UrgencyLevel;
 
+/// A teacher who gives lectures, marks attendance, grades students.
+///
+/// Tracks their position (assistant → professor), assigned courses,
+/// ratings from students, and complaints they've submitted.
 public class Teacher extends Employee {
 
     @Serial
@@ -23,6 +27,7 @@ public class Teacher extends Employee {
     private final List<Course> assignedCourses = new ArrayList<>();
     private TeacherPosition position;
 
+    /// Creates a teacher with a given position and salary.
     public Teacher(
         String id,
         String name,
@@ -48,6 +53,7 @@ public class Teacher extends Employee {
 
     public void manageCourse(Course course) {}
 
+    /// Marks a single student's attendance for a lesson.
     public void markAttendance(
         Lesson lesson,
         Student student,
@@ -56,6 +62,7 @@ public class Teacher extends Employee {
         lesson.markAttendance(student, status, this);
     }
 
+    /// Marks attendance for multiple students at once.
     public void markAttendanceBulk(
         Lesson lesson,
         Map<Student, AttendanceStatus> attendanceMap
@@ -123,6 +130,7 @@ public class Teacher extends Employee {
         return sb.toString();
     }
 
+    /// Assigns a mark to a student's enrollment.
     public void putMark(Enrollment enrollment, Mark mark) {
         enrollment.setMark(mark);
     }
@@ -138,6 +146,7 @@ public class Teacher extends Employee {
             .toList();
     }
 
+    /// Sends a complaint about students to a manager.
     public Complaint sendComplaint(
         List<Student> targets,
         UrgencyLevel urgency,
@@ -159,6 +168,7 @@ public class Teacher extends Employee {
         receivedRatings.add(rating);
     }
 
+    /// Returns the average rating from all student ratings (0 if none).
     public double getAverageRating() {
         if (receivedRatings.isEmpty()) return 0.0;
         return receivedRatings

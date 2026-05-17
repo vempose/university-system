@@ -25,11 +25,22 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+/// Fills the system with sample data for testing.
+///
+/// Creates users, courses, lessons, enrollments, research papers, journals,
+/// news, tech support requests, student orgs, messages, complaints, etc.
+/// Everything you need to see the app actually do something.
 public final class MockData {
 
+    /// Utility class — no instantiation.
     private MockData() {
     }
 
+    /// Fills the given system with mock data.
+    ///
+    /// Calls all the private createX methods to build up a realistic state.
+    ///
+    /// @param system the system to populate
     public static void populate(UniversitySystem system) {
         ResearchService researchService = new ResearchService(system);
         NewsService newsService = new NewsService(system, researchService);

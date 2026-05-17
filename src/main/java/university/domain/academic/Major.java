@@ -4,6 +4,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
+/// An academic major or department within a `School`.
+///
+/// Pretty much just a name tied to a school.
 public class Major implements Serializable {
 
     @Serial
@@ -12,6 +15,7 @@ public class Major implements Serializable {
     private final String name;
     private School school;
 
+    /// Creates a major under the given `school`.
     public Major(String name, School school) {
         if (name == null || name.isBlank()) throw new IllegalArgumentException(
                 "Major name must not be blank."

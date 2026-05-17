@@ -1,5 +1,9 @@
 package university.exception;
 
+/// Thrown when a non-researcher tries to join a research project.
+///
+/// Only users with a `ResearchProfile` can be added
+/// as members of `ResearchProject`.
 public class NonResearcherJoinProjectException extends Exception {
 
     public NonResearcherJoinProjectException(String message) {

@@ -10,6 +10,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/// A journal that publishes research papers and notifies subscribers.
+///
+/// Users can subscribe to get notified when new papers come out.
 public class UniversityJournal implements Serializable {
 
     @Serial
@@ -19,6 +22,9 @@ public class UniversityJournal implements Serializable {
     private final List<JournalSubscription> subscriptions = new ArrayList<>();
     private final List<ResearchPaper> publishedPapers = new ArrayList<>();
 
+    /// Creates a journal with the given name.
+    ///
+    /// @param name must not be null or blank
     public UniversityJournal(String name) {
         if (name == null || name.isBlank()) throw new IllegalArgumentException(
                 "Journal name must not be blank"
@@ -26,10 +32,12 @@ public class UniversityJournal implements Serializable {
         this.name = name;
     }
 
+    /// Subscribes a user to this journal.
     public void subscribe(User user) {
         subscriptions.add(new JournalSubscription(user, this));
     }
 
+    /// Removes a user's subscription.
     public void unsubscribe(User user) {
         subscriptions
                 .stream()
@@ -38,11 +46,16 @@ public class UniversityJournal implements Serializable {
                 .ifPresent(subscriptions::remove);
     }
 
+    /// Publishes a paper and notifies all subscribers.
     public void publishPaper(ResearchPaper paper) {
         publishedPapers.add(paper);
         notifySubscribers(paper);
     }
 
+    /// Sends a notification to every subscriber.
+    ///
+    /// If the subscriber implements {@link JournalObserver},
+    /// their callback is invoked; otherwise a console message is printed.
     public void notifySubscribers(ResearchPaper paper) {
         for (JournalSubscription subscription : List.copyOf(subscriptions)) {
             User subscriber = subscription.getSubscriber();
@@ -69,6 +82,7 @@ public class UniversityJournal implements Serializable {
         return Collections.unmodifiableList(publishedPapers);
     }
 
+    /// Two journals are equal if they have the same name.
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -81,6 +95,7 @@ public class UniversityJournal implements Serializable {
         return Objects.hash(name);
     }
 
+    /// Returns a summary of the journal.
     @Override
     public String toString() {
         return "UniversityJournal{name='%s', subscribers=%d, publishedPapers=%d}".formatted(

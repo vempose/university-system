@@ -8,6 +8,10 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
+/// Links a student to a course they enrolled in.
+///
+/// Tracks the attempt number, mark, and enrollment status through
+/// the semester (PENDING → APPROVED → REGISTERED).
 public class Enrollment implements Serializable {
 
     @Serial
@@ -20,6 +24,8 @@ public class Enrollment implements Serializable {
     private EnrollmentStatus status;
     private Mark mark;
 
+    /// Creates an enrollment for `student` in `course` with a starting
+    /// status of `PENDING`. `attemptNo` starts at 1.
     public Enrollment(
             Student student,
             Course course,
@@ -36,6 +42,7 @@ public class Enrollment implements Serializable {
         this.status = EnrollmentStatus.PENDING;
     }
 
+    /// Approves the enrollment — moves from `PENDING` to `APPROVED`.
     public void approve() {
         if (status != EnrollmentStatus.PENDING) throw new IllegalStateException(
                 "Can only approve a PENDING enrollment, current: " + status
@@ -43,6 +50,7 @@ public class Enrollment implements Serializable {
         status = EnrollmentStatus.APPROVED;
     }
 
+    /// Rejects the enrollment — moves from `PENDING` to `REJECTED`.
     public void reject() {
         if (status != EnrollmentStatus.PENDING) throw new IllegalStateException(
                 "Can only reject a PENDING enrollment, current: " + status
@@ -50,6 +58,7 @@ public class Enrollment implements Serializable {
         status = EnrollmentStatus.REJECTED;
     }
 
+    /// Registers a previously approved enrollment (`APPROVED` → `REGISTERED`).
     public void register() {
         if (
                 status != EnrollmentStatus.APPROVED
@@ -59,10 +68,12 @@ public class Enrollment implements Serializable {
         status = EnrollmentStatus.REGISTERED;
     }
 
+    /// Returns the mark if one has been set (wrapped in `Optional`).
     public Optional<Mark> getMark() {
         return Optional.ofNullable(mark);
     }
 
+    /// Assigns a mark — only allowed when status is `REGISTERED`.
     public void setMark(Mark mark) {
         if (
                 status != EnrollmentStatus.REGISTERED

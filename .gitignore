@@ -30,3 +30,5 @@ replay_pid*
 .idea/workspace.xml
 university-system.iml
 /.opencode/
+
+target/**

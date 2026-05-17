@@ -10,6 +10,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+/// A news article posted in the system.
+///
+/// Can be pinned, commented on, and filtered by topic.
 public class News implements Serializable {
 
     @Serial
@@ -23,6 +26,9 @@ public class News implements Serializable {
     private String content;
     private boolean pinned;
 
+    /// Creates a news article with the given title, content and topic.
+    ///
+    /// Automatically generates an ID and timestamp.
     public News(String title, String content, NewsTopic topic) {
         this.id = UUID.randomUUID().toString();
         this.title = title;
@@ -32,10 +38,12 @@ public class News implements Serializable {
         this.pinned = false;
     }
 
+    /// Pins this article so it stays at the top.
     public void pin() {
         this.pinned = true;
     }
 
+    /// Adds a comment to this article.
     public void addComment(NewsComment comment) {
         comments.add(comment);
     }
@@ -48,6 +56,7 @@ public class News implements Serializable {
         return title;
     }
 
+    /// Changes the title of the article.
     public void setTitle(String title) {
         this.title = title;
     }
@@ -56,6 +65,7 @@ public class News implements Serializable {
         return content;
     }
 
+    /// Replaces the article content.
     public void setContent(String content) {
         this.content = content;
     }
@@ -72,10 +82,12 @@ public class News implements Serializable {
         return pinned;
     }
 
+    /// Returns the list of comments (read-only).
     public List<NewsComment> getComments() {
         return Collections.unmodifiableList(comments);
     }
 
+    /// Two articles are equal if they have the same ID.
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -88,6 +100,7 @@ public class News implements Serializable {
         return id.hashCode();
     }
 
+    /// Returns a summary of the article.
     @Override
     public String toString() {
         return "News{id='%s', topic=%s, pinned=%b, title='%s', createdDate=%s, comments=%d}".formatted(

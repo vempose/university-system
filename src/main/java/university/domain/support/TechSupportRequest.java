@@ -9,6 +9,10 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/// A tech support ticket submitted by a user.
+///
+/// Moves through a workflow: NEW -> VIEWED -> ACCEPTED -> DONE
+/// (or VIEWED -> REJECTED). Each stage transition is validated.
 public final class TechSupportRequest implements Serializable {
 
     @Serial
@@ -21,6 +25,10 @@ public final class TechSupportRequest implements Serializable {
     private RequestStatus status;
     private TechSupportSpecialist assignedSpecialist;
 
+    /// Creates a new support request with NEW status.
+    ///
+    /// @param requester must not be null
+    /// @param description must not be null or blank
     public TechSupportRequest(User requester, String description) {
         if (requester == null) {
             throw new IllegalArgumentException("Requester must not be null.");
@@ -38,11 +46,15 @@ public final class TechSupportRequest implements Serializable {
         this.createdDate = LocalDateTime.now();
     }
 
+    /// Marks the request as viewed. Only allowed if status is NEW.
     public void view() {
         requireStatus(RequestStatus.NEW, "view");
         this.status = RequestStatus.VIEWED;
     }
 
+    /// Assigns a specialist and marks the request as accepted.
+    ///
+    /// @throws IllegalStateException if status is not VIEWED
     public void accept(TechSupportSpecialist specialist) {
         if (specialist == null) {
             throw new IllegalArgumentException(
@@ -54,11 +66,13 @@ public final class TechSupportRequest implements Serializable {
         this.status = RequestStatus.ACCEPTED;
     }
 
+    /// Rejects the request. Only allowed if status is VIEWED.
     public void reject() {
         requireStatus(RequestStatus.VIEWED, "reject");
         this.status = RequestStatus.REJECTED;
     }
 
+    /// Marks the request as done. Only allowed if status is ACCEPTED.
     public void complete() {
         requireStatus(RequestStatus.ACCEPTED, "complete");
         this.status = RequestStatus.DONE;
@@ -101,6 +115,7 @@ public final class TechSupportRequest implements Serializable {
         }
     }
 
+    /// Returns a summary of the request.
     @Override
     public String toString() {
         return "TechSupportRequest{id='%s', status=%s, requester='%s', assignedSpecialist='%s', createdDate=%s, description='%s'}".formatted(

@@ -2,12 +2,17 @@ package university.tui;
 
 import university.MockData;
 import university.domain.user.*;
+import university.enums.Language;
 import university.service.NewsService;
 import university.service.ResearchService;
 import university.system.UniversitySystem;
 
 import java.util.LinkedHashMap;
 
+/// Entry point for the TUI app.
+///
+/// Handles the login loop, main menu, language switching,
+/// and dispatches to the right role view based on the user type.
 public final class TuiApplication {
 
     private final Session session;
@@ -26,12 +31,13 @@ public final class TuiApplication {
     private final CourseView courseView;
     private int languageMenuChoice;
 
+    /// Creates the app, loads system data, seeds mock users,
+    /// and wires up all the role views.
     public TuiApplication() {
         UniversitySystem system = UniversitySystem.getInstance();
         try {
             system.load();
-        } catch (Exception e) {
-            system = UniversitySystem.getInstance();
+        } catch (Exception ignored) {
         }
 
         if (system.getUsers().isEmpty()) {
@@ -58,6 +64,8 @@ public final class TuiApplication {
         this.courseView = new CourseView(session);
     }
 
+    /// Starts the main loop — shows login, then the main menu,
+    /// and routes to the appropriate sub-view or exits.
     public void run() {
         while (true) {
             authView.show();
@@ -100,17 +108,17 @@ public final class TuiApplication {
                 Messages.get("lang.current"), user.getLanguage());
 
         LinkedHashMap<Integer, String> langOptions = new LinkedHashMap<>();
-        langOptions.put(1, "English (EN)");
-        langOptions.put(2, "Қазақша (KZ)");
-        langOptions.put(3, "Русский (RU)");
+        langOptions.put(1, Messages.get("lang.en"));
+        langOptions.put(2, Messages.get("lang.kz"));
+        langOptions.put(3, Messages.get("lang.ru"));
 
         int lc = ConsoleMenu.showMenu(Messages.get("lang.title"), langOptions, true, false);
         if (lc == 0) return;
 
-        university.enums.Language newLang = switch (lc) {
-            case 2 -> university.enums.Language.KZ;
-            case 3 -> university.enums.Language.RU;
-            default -> university.enums.Language.EN;
+        Language newLang = switch (lc) {
+            case 2 -> Language.KZ;
+            case 3 -> Language.RU;
+            default -> Language.EN;
         };
 
         user.changeLanguage(newLang);
@@ -160,43 +168,45 @@ public final class TuiApplication {
     }
 
     private void dispatchRoleMenu(User user, int choice) {
-        int offset = 4;
-        int manageIndex = offset;
-
         if (choice == 1) {
             newsView.show();
         } else if (choice == 2) {
             journalView.show();
         } else if (choice == 3) {
             courseView.show();
-        } else if (choice == manageIndex && user instanceof Admin) {
-            adminView.show();
-        } else if (choice == (manageIndex + (user instanceof Admin ? 1 : 0)) && user instanceof Teacher) {
-            teacherView.show();
-        } else if (choice == (manageIndex + (user instanceof Admin ? 1 : 0) + (user instanceof Teacher ? 1 : 0)) && user instanceof Student) {
-            studentView.show();
-        } else if (choice == (manageIndex + (user instanceof Admin ? 1 : 0) + (user instanceof Teacher ? 1 : 0) + (user instanceof Student ? 1 : 0)) && user instanceof Manager) {
-            managerView.show();
-        } else if (choice == (manageIndex + (user instanceof Admin ? 1 : 0) + (user instanceof Teacher ? 1 : 0) + (user instanceof Student ? 1 : 0) + (user instanceof Manager ? 1 : 0)) && user instanceof TechSupportSpecialist) {
-            techSupportView.show();
-        } else if (choice == (manageIndex + (user instanceof Admin ? 1 : 0) + (user instanceof Teacher ? 1 : 0) + (user instanceof Student ? 1 : 0) + (user instanceof Manager ? 1 : 0) + (user instanceof TechSupportSpecialist ? 1 : 0)) && user.getResearchProfile() != null) {
-            researchView.show();
-        } else if (user instanceof Employee && isMessageChoice(user, choice)) {
-            messageView.show((Employee) user);
+        } else {
+            int roleIdx = 4;
+            if (user instanceof Admin) {
+                if (choice == roleIdx) { adminView.show(); return; }
+                roleIdx++;
+            }
+            if (user instanceof Teacher) {
+                if (choice == roleIdx) { teacherView.show(); return; }
+                roleIdx++;
+            }
+            if (user instanceof Student) {
+                if (choice == roleIdx) { studentView.show(); return; }
+                roleIdx++;
+            }
+            if (user instanceof Manager) {
+                if (choice == roleIdx) { managerView.show(); return; }
+                roleIdx++;
+            }
+            if (user instanceof TechSupportSpecialist) {
+                if (choice == roleIdx) { techSupportView.show(); return; }
+                roleIdx++;
+            }
+            if (user.getResearchProfile() != null) {
+                if (choice == roleIdx) { researchView.show(); return; }
+                roleIdx++;
+            }
+            if (user instanceof Employee && choice == roleIdx) {
+                messageView.show((Employee) user);
+            }
         }
     }
 
-    private boolean isMessageChoice(User user, int choice) {
-        int messageIndex = 4 +
-                (user instanceof Admin ? 1 : 0) +
-                (user instanceof Teacher ? 1 : 0) +
-                (user instanceof Student ? 1 : 0) +
-                (user instanceof Manager ? 1 : 0) +
-                (user instanceof TechSupportSpecialist ? 1 : 0) +
-                (user.getResearchProfile() != null ? 1 : 0);
-        return choice == messageIndex;
-    }
-
+    /// Launches the TUI from the command line.
     public static void main(String[] args) {
         new TuiApplication().run();
     }

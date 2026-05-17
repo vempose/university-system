@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/// A school or faculty within the university.
+///
+/// Has a name and a list of `Major` offerings under it.
 public final class School implements Serializable {
 
     @Serial
@@ -14,6 +17,7 @@ public final class School implements Serializable {
     private final String name;
     private final List<Major> majors = new ArrayList<>();
 
+    /// Creates a school. Name is trimmed and must not be blank.
     public School(String name) {
         if (name == null || name.isBlank()) throw new IllegalArgumentException(
                 "School name must not be blank"
@@ -21,6 +25,7 @@ public final class School implements Serializable {
         this.name = name.strip();
     }
 
+    /// Adds a major to this school (skips duplicates).
     public void addMajor(Major major) {
         if (!majors.contains(major)) majors.add(major);
     }

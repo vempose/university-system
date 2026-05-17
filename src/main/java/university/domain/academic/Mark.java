@@ -3,6 +3,10 @@ package university.domain.academic;
 import java.io.Serial;
 import java.io.Serializable;
 
+/// A grade given to a student for a specific enrollment attempt.
+///
+/// Stores points for different assignment types (final, midterm, etc.)
+/// and computes a total.
 public class Mark implements Serializable {
 
     public static final double MAX_FIRST_ATTESTATION = 30.0;
@@ -15,6 +19,10 @@ public class Mark implements Serializable {
     private double secondAttestation;
     private double finalExam;
 
+    /// Creates a mark with attestation scores and a final exam grade.
+    ///
+    /// Each value is validated against the max allowed for that component
+    /// (30 / 30 / 40).
     public Mark(
             double firstAttestation,
             double secondAttestation,
@@ -56,10 +64,12 @@ public class Mark implements Serializable {
         );
     }
 
+    /// Sum of all three components (max 100).
     public double getTotal() {
         return firstAttestation + secondAttestation + finalExam;
     }
 
+    /// Returns `true` if total ≥ 50 (the passing threshold).
     public boolean isPassed() {
         return getTotal() >= PASSING_THRESHOLD;
     }

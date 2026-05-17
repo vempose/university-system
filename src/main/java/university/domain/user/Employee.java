@@ -7,6 +7,10 @@ import university.domain.academic.School;
 import university.domain.communication.Message;
 import university.enums.Language;
 
+/// Staff member with a salary, school, and messaging.
+///
+/// Extends User with work-related stuff like salary and
+/// the ability to send/receive messages to other employees.
 public abstract class Employee extends User {
 
     @Serial
@@ -17,6 +21,9 @@ public abstract class Employee extends User {
     private double salary;
     private School school;
 
+    /// Creates an employee with a salary.
+    ///
+    /// @param salary  annual salary (must be >= 0)
     protected Employee(
         String id,
         String name,
@@ -29,6 +36,9 @@ public abstract class Employee extends User {
         this.salary = salary;
     }
 
+    /// Sends a text message to another employee.
+    ///
+    /// The message gets added to both the sender's and receiver's lists.
     public Message sendMessage(Employee receiver, String text) {
         Message message = new Message(this, receiver, text);
         sentMessages.add(message);

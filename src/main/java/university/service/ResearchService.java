@@ -6,35 +6,50 @@ import university.domain.research.ResearchPaper;
 import university.domain.research.ResearchProfile;
 import university.domain.user.Student;
 import university.domain.user.User;
-import university.enums.CitationFormat;
 import university.enums.NewsTopic;
 import university.system.UniversitySystem;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+/// Handles research stuff — papers, citations, h-index calculations.
+///
+/// Works with the system to find researchers, sort papers, and figure out
+/// who the top-cited people are each year.
 public class ResearchService {
 
     private final UniversitySystem system;
 
+    /// Creates a ResearchService.
+    ///
+    /// @param system the system holding all user and paper data
     public ResearchService(UniversitySystem system) {
         this.system = system;
     }
 
-    public void printAllPapers(Comparator<ResearchPaper> comparator) {
-        system
+    /// Returns every research paper from all users, sorted however you want.
+    ///
+    /// @param comparator defines the sort order
+    /// @return sorted list of papers
+    public List<ResearchPaper> getAllPapersSorted(Comparator<ResearchPaper> comparator) {
+        return system
                 .getUsers()
                 .stream()
                 .map(User::getResearchProfile)
                 .filter(Objects::nonNull)
                 .flatMap(p -> p.getPapers().stream())
                 .sorted(comparator)
-                .forEach(p ->
-                        System.out.println(p.getCitation(CitationFormat.PLAIN_TEXT))
-                );
+                .toList();
     }
 
+    /// Finds the researcher with the highest h-index in a specific school.
+    ///
+    /// Only looks at students for now.
+    ///
+    /// @param school the school to search in
+    /// @return the top research profile, if any
     public Optional<ResearchProfile> getTopCitedResearcherBySchool(
             School school
     ) {
@@ -50,6 +65,10 @@ public class ResearchService {
                 .max(Comparator.comparingInt(ResearchProfile::calculateHIndex));
     }
 
+    /// Finds the researcher with the most citations in a given year.
+    ///
+    /// @param year the year to check
+    /// @return the top research profile, if any
     public Optional<ResearchProfile> getTopCitedResearcherOfYear(int year) {
         return system
                 .getUsers()
@@ -68,43 +87,10 @@ public class ResearchService {
                 );
     }
 
-    public void printTopCitedResearcherOfYear(int year) {
-        Optional<ResearchProfile> top = getTopCitedResearcherOfYear(year);
-        if (top.isPresent()) {
-            ResearchProfile profile = top.get();
-            System.out.println(
-                    "Top cited researcher of " +
-                            year +
-                            ": h-index=" +
-                            profile.getHIndex() +
-                            ", papers=" +
-                            profile.getPapers().size()
-            );
-            profile.printPapers(
-                    Comparator.comparingInt(ResearchPaper::citations).reversed()
-            );
-        } else {
-            System.out.println("No researchers found for year " + year + ".");
-        }
-    }
-
-    public void printTopCitedResearcherBySchool(School school) {
-        Optional<ResearchProfile> top = getTopCitedResearcherBySchool(school);
-        if (top.isPresent()) {
-            ResearchProfile profile = top.get();
-            System.out.println(
-                    "Top cited researcher of " +
-                            school.getName() +
-                            ": h-index=" +
-                            profile.calculateHIndex()
-            );
-        } else {
-            System.out.println(
-                    "No researchers found for school: " + school.getName()
-            );
-        }
-    }
-
+    /// Generates a news article about the top-cited researcher of a year.
+    ///
+    /// @param year the year
+    /// @return a news item
     public News generateTopCitedResearcherNews(int year) {
         Optional<ResearchProfile> top = getTopCitedResearcherOfYear(year);
         String content = top

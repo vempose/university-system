@@ -11,6 +11,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+/// A complaint filed by a teacher against one or more students.
+///
+/// Tracked with a unique ID, urgency level, and a manager assigned as
+/// receiver.
 public class Complaint implements Serializable {
 
     @Serial
@@ -24,6 +28,9 @@ public class Complaint implements Serializable {
     private final LocalDate createdDate;
     private Manager receiver;
 
+    /// Creates a complaint from a `Teacher` about `targetStudents`.
+    ///
+    /// The list of students must not be empty. A UUID is auto-generated.
     public Complaint(
             Teacher sender,
             List<Student> targetStudents,
@@ -87,6 +94,7 @@ public class Complaint implements Serializable {
         return receiver;
     }
 
+    /// Reassigns the complaint to a different manager.
     public void setReceiver(Manager receiver) {
         if (receiver == null) throw new NullPointerException(
                 "receiver must not be null"

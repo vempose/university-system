@@ -2,6 +2,7 @@ package university.tui;
 
 import university.domain.academic.*;
 import university.domain.communication.Complaint;
+import university.domain.student.TeacherRating;
 import university.domain.user.*;
 import university.enums.*;
 import university.service.NewsService;
@@ -10,6 +11,8 @@ import university.service.ResearchService;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+/// Teacher panel — view courses, put marks, attendance,
+/// send messages/complaints, view ratings, and research.
 class TeacherView {
 
     private final Session session;
@@ -26,6 +29,7 @@ class TeacherView {
         this.messageView = new MessageView(session);
     }
 
+    /// Shows the teacher menu and handles user choices.
     void show() {
         Teacher teacher = (Teacher) session.getCurrentUser();
 
@@ -80,11 +84,9 @@ class TeacherView {
             ConsoleInput.waitForEnter();
             return;
         }
-        for (int i = 0; i < courses.size(); i++) {
-            System.out.printf("  [%d]  %s - %s%n", i + 1, courses.get(i).getCourseCode(), courses.get(i).getTitle());
-        }
-        int ci = ConsoleInput.readInt("\n  " + Messages.get("teacher.select_course") + ": ", 1, courses.size()) - 1;
-        Course course = courses.get(ci);
+        Course course = ConsoleMenu.pickFromList(courses,
+                c -> c.getCourseCode() + " - " + c.getTitle(),
+                Messages.get("teacher.select_course"));
 
         List<Enrollment> enrollments = session.getSystem().getAllStudents().stream()
                 .flatMap(s -> s.getEnrollments().stream())
@@ -97,16 +99,12 @@ class TeacherView {
             return;
         }
 
-        for (int i = 0; i < enrollments.size(); i++) {
-            Enrollment e = enrollments.get(i);
-            System.out.printf(
-                    "  [%d]  %s | Attempt %d | Current mark: %s%n",
-                    i + 1, e.getStudent().getName(), e.getAttemptNo(),
-                    e.getMark().map(m -> String.valueOf(m.getTotal())).orElse("N/A")
-            );
-        }
-        int ei = ConsoleInput.readInt("\n  " + Messages.get("teacher.select_enrollment") + ": ", 1, enrollments.size()) - 1;
-        Enrollment enrollment = enrollments.get(ei);
+        Enrollment enrollment = ConsoleMenu.pickFromList(enrollments,
+                e -> e.getStudent().getName() + " | "
+                        + Messages.get("teacher.attempt_label") + " " + e.getAttemptNo() + " | "
+                        + Messages.get("student.mark_label") + ": "
+                        + e.getMark().map(m -> String.valueOf(m.getTotal())).orElse("N/A"),
+                Messages.get("teacher.select_enrollment"));
 
         double first = ConsoleInput.readDouble("  " + Messages.get("teacher.first_att") + ": ", 0, 30);
         double second = ConsoleInput.readDouble("  " + Messages.get("teacher.second_att") + ": ", 0, 30);
@@ -128,11 +126,9 @@ class TeacherView {
             ConsoleInput.waitForEnter();
             return;
         }
-        for (int i = 0; i < courses.size(); i++) {
-            System.out.printf("  [%d]  %s - %s%n", i + 1, courses.get(i).getCourseCode(), courses.get(i).getTitle());
-        }
-        int ci = ConsoleInput.readInt("\n  " + Messages.get("teacher.select_course") + ": ", 1, courses.size()) - 1;
-        Course course = courses.get(ci);
+        Course course = ConsoleMenu.pickFromList(courses,
+                c -> c.getCourseCode() + " - " + c.getTitle(),
+                Messages.get("teacher.select_course"));
 
         List<Student> students = session.getSystem().getAllStudents().stream()
                 .filter(s -> s.getEnrollments().stream().anyMatch(e -> e.getCourse().equals(course)))
@@ -160,12 +156,9 @@ class TeacherView {
             ConsoleInput.waitForEnter();
             return;
         }
-        for (int i = 0; i < employees.size(); i++) {
-            System.out.printf("  [%d]  %s (%s)%n", i + 1, employees.get(i).getName(),
-                    employees.get(i).getClass().getSimpleName());
-        }
-        int ei = ConsoleInput.readInt("\n  " + Messages.get("teacher.select_receiver") + ": ", 1, employees.size()) - 1;
-        Employee receiver = employees.get(ei);
+        Employee receiver = ConsoleMenu.pickFromList(employees,
+                e -> e.getName() + " (" + e.getClass().getSimpleName() + ")",
+                Messages.get("teacher.select_receiver"));
         String text = ConsoleInput.readLine("  " + Messages.get("message.text") + ": ");
         teacher.sendMessage(receiver, text);
         ConsoleMenu.printSuccess(Messages.get("teacher.message_sent", receiver.getName()));
@@ -184,11 +177,9 @@ class TeacherView {
             ConsoleInput.waitForEnter();
             return;
         }
-        for (int i = 0; i < managers.size(); i++) {
-            System.out.printf("  [%d]  %s (%s)%n", i + 1, managers.get(i).getName(), managers.get(i).getType());
-        }
-        int mi = ConsoleInput.readInt("\n  " + Messages.get("teacher.select_receiver") + ": ", 1, managers.size()) - 1;
-        Manager receiver = managers.get(mi);
+        Manager receiver = ConsoleMenu.pickFromList(managers,
+                m -> m.getName() + " (" + m.getType() + ")",
+                Messages.get("teacher.select_receiver"));
 
         List<Student> students = session.getSystem().getAllStudents();
         if (students.isEmpty()) {
@@ -202,7 +193,7 @@ class TeacherView {
         }
         List<Student> targets = new java.util.ArrayList<>();
         while (true) {
-            int si = ConsoleInput.readInt("  #: ", 0, students.size());
+            int si = ConsoleInput.readInt("  " + Messages.get("teacher.student_number") + ": ", 0, students.size());
             if (si == 0) break;
             Student s = students.get(si - 1);
             if (!targets.contains(s)) targets.add(s);
@@ -215,9 +206,9 @@ class TeacherView {
         }
 
         LinkedHashMap<Integer, String> urgOptions = new LinkedHashMap<>();
-        urgOptions.put(1, "LOW");
-        urgOptions.put(2, "MEDIUM");
-        urgOptions.put(3, "HIGH");
+        urgOptions.put(1, Messages.get("teacher.urgency_low"));
+        urgOptions.put(2, Messages.get("teacher.urgency_medium"));
+        urgOptions.put(3, Messages.get("teacher.urgency_high"));
         int uc = ConsoleMenu.showMenu(Messages.get("teacher.select_urgency"), urgOptions, false, false);
         UrgencyLevel urgency = switch (uc) {
             case 2 -> UrgencyLevel.MEDIUM;
@@ -233,13 +224,15 @@ class TeacherView {
 
     private void viewMyRatings(Teacher teacher) {
         ConsoleMenu.printSection(Messages.get("teacher.view_ratings"));
-        List<university.domain.student.TeacherRating> ratings = teacher.getReceivedRatings();
+        List<TeacherRating> ratings = teacher.getReceivedRatings();
         if (ratings.isEmpty()) {
             ConsoleMenu.printInfo(Messages.get("teacher.no_ratings"));
         } else {
             for (var r : ratings) {
-                System.out.printf("  Score: %d/5 | By: %s | %s%n",
-                        r.getScore(), r.getStudent().getName(), r.getComment());
+                System.out.printf("  %s: %d/5 | %s: %s | %s%n",
+                        Messages.get("teacher.score_label"), r.getScore(),
+                        Messages.get("teacher.by_label"), r.getStudent().getName(),
+                        r.getComment());
             }
             System.out.println("  " + Messages.get("teacher.avg_rating",
                     String.format("%.2f", teacher.getAverageRating())));

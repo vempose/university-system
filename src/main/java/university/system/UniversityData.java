@@ -10,6 +10,10 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
+/// Holds all the data that gets saved and loaded.
+///
+/// Contains users, courses, news, journals, and logs. Just a bag of data
+/// that UniversitySystem serializes to a file.
 public final class UniversityData implements Serializable {
 
     @Serial
@@ -21,6 +25,9 @@ public final class UniversityData implements Serializable {
     final List<UniversityJournal> journals;
     final List<LogEntry> logs;
 
+    /// Creates a snapshot of the system state.
+    ///
+    /// Makes defensive copies so the original lists aren't touched.
     UniversityData(List<User> users, List<Course> courses, List<News> newsList,
                    List<UniversityJournal> journals, List<LogEntry> logs) {
         this.users = List.copyOf(users);

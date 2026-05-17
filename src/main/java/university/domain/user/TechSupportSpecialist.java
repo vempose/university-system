@@ -7,6 +7,9 @@ import university.domain.support.TechSupportRequest;
 import university.enums.Language;
 import university.enums.RequestStatus;
 
+/// Handles incoming tech support requests.
+///
+/// Can view new requests, accept, reject, or mark them complete.
 public class TechSupportSpecialist extends Employee {
 
     @Serial
@@ -14,6 +17,7 @@ public class TechSupportSpecialist extends Employee {
 
     private final List<TechSupportRequest> assignedRequests = new ArrayList<>();
 
+    /// Creates a tech support specialist (same params as any employee).
     public TechSupportSpecialist(
         String id,
         String name,
@@ -25,6 +29,7 @@ public class TechSupportSpecialist extends Employee {
         super(id, name, email, password, language, salary);
     }
 
+    /// Returns requests that haven't been touched yet (status = NEW).
     public List<TechSupportRequest> viewNewRequests() {
         return assignedRequests
             .stream()
@@ -32,20 +37,24 @@ public class TechSupportSpecialist extends Employee {
             .toList();
     }
 
+    /// Marks a request as viewed and accepted by this specialist.
     public void acceptRequest(TechSupportRequest request) {
         request.view();
         request.accept(this);
     }
 
+    /// Rejects a request after viewing it.
     public void rejectRequest(TechSupportRequest request) {
         request.view();
         request.reject();
     }
 
+    /// Marks a request as completed.
     public void completeRequest(TechSupportRequest request) {
         request.complete();
     }
 
+    /// Assigns a request to this specialist's queue.
     public void assignRequest(TechSupportRequest request) {
         assignedRequests.add(request);
     }

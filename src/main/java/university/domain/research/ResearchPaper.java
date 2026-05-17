@@ -7,12 +7,16 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
+/// A published research paper.
+///
+/// Records metadata like authors, journal, DOI, and citation count.
 public record ResearchPaper(String title, String authors, String journalName, String pages, int pageCount,
                             LocalDate publishDate, String doi, int citations) implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /// Validates that pageCount >= 1 and citations >= 0.
     public ResearchPaper {
         if (pageCount < 1) throw new IllegalArgumentException(
                 "pageCount must be >= 1, got: " + pageCount
@@ -22,6 +26,7 @@ public record ResearchPaper(String title, String authors, String journalName, St
         );
     }
 
+    /// Returns a citation string in the requested format.
     public String getCitation(CitationFormat format) {
         return switch (format) {
             case PLAIN_TEXT -> buildPlainTextCitation();
@@ -53,6 +58,7 @@ public record ResearchPaper(String title, String authors, String journalName, St
         );
     }
 
+    /// Two papers are equal if they have the same DOI.
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -65,6 +71,7 @@ public record ResearchPaper(String title, String authors, String journalName, St
         return Objects.hashCode(doi);
     }
 
+    /// Returns a short summary of the paper.
     @Override
     public String toString() {
         return "ResearchPaper{doi='%s', title='%s', citations=%d}".formatted(

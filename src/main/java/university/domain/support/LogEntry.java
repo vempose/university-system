@@ -7,6 +7,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/// An entry in the system activity log.
+///
+/// Records who did what and when.
 public final class LogEntry implements Serializable {
 
     @Serial
@@ -17,6 +20,10 @@ public final class LogEntry implements Serializable {
     private final String action;
     private final LocalDateTime timestamp;
 
+    /// Creates a log entry for an action performed by a user.
+    ///
+    /// @param actor the user who performed the action (must not be null)
+    /// @param action description of what was done (must not be blank)
     public LogEntry(User actor, String action) {
         if (actor == null) {
             throw new IllegalArgumentException(
@@ -50,6 +57,7 @@ public final class LogEntry implements Serializable {
         return timestamp;
     }
 
+    /// Two entries are equal if they have the same ID.
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -62,6 +70,7 @@ public final class LogEntry implements Serializable {
         return id.hashCode();
     }
 
+    /// Returns a detailed string of the entry.
     @Override
     public String toString() {
         return "LogEntry[id='%s', timestamp=%s, actor=%s(id=%s), action='%s']".formatted(

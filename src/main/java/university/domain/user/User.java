@@ -5,6 +5,10 @@ import java.io.Serializable;
 import university.domain.research.ResearchProfile;
 import university.enums.Language;
 
+/// Base class for everyone in the system.
+///
+/// Stores the basics — name, email, hashed password, and a unique ID.
+/// Two users with the same ID are considered equal.
 public abstract class User implements Comparable<User>, Serializable {
 
     @Serial
@@ -17,6 +21,9 @@ public abstract class User implements Comparable<User>, Serializable {
     private Language language;
     private ResearchProfile researchProfile;
 
+    /// Creates a user with all the required fields.
+    ///
+    /// @param id  unique identifier (used for equality & comparison)
     protected User(
         String id,
         String name,
@@ -31,12 +38,15 @@ public abstract class User implements Comparable<User>, Serializable {
         this.language = language;
     }
 
+    /// Checks if the given email + password match what's stored.
     public boolean login(String email, String password) {
         return this.email.equals(email) && this.password.equals(password);
     }
 
+    /// Logs the user out — no-op for now but here for future use.
     public void logout() {}
 
+    /// Switches the system language for this user.
     public void changeLanguage(Language language) {
         this.language = language;
     }

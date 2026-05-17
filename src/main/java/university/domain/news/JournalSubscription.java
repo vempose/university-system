@@ -6,6 +6,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+/// Links a user to a university journal they subscribed to.
+///
+/// Keeps track of when they subscribed.
 public class JournalSubscription implements Serializable {
 
     @Serial
@@ -15,6 +18,10 @@ public class JournalSubscription implements Serializable {
     private final UniversityJournal journal;
     private final LocalDate subscribeDate;
 
+    /// Creates a new subscription for now.
+    ///
+    /// @param subscriber the user who's subscribing
+    /// @param journal the journal they're subscribing to
     public JournalSubscription(User subscriber, UniversityJournal journal) {
         if (subscriber == null) throw new IllegalArgumentException(
                 "Subscriber must not be null."
@@ -40,6 +47,7 @@ public class JournalSubscription implements Serializable {
         return subscribeDate;
     }
 
+    /// Returns a readable summary of this subscription.
     @Override
     public String toString() {
         return "JournalSubscription{subscriber=%s, journal='%s', subscribeDate=%s}".formatted(

@@ -7,6 +7,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+/// A rating given by a student to a teacher.
+///
+/// Scores go from 1 to 5, with an optional comment.
 public class TeacherRating implements Serializable {
 
     @Serial
@@ -18,6 +21,7 @@ public class TeacherRating implements Serializable {
     private final String comment;
     private final LocalDate createdDate;
 
+    /// Creates a rating. Score must be between 1 and 5.
     public TeacherRating(
             Student student,
             Teacher teacher,
@@ -54,6 +58,7 @@ public class TeacherRating implements Serializable {
         return createdDate;
     }
 
+    /// Returns a summary of the rating.
     @Override
     public String toString() {
         return "TeacherRating{student=%s, teacher=%s, score=%d, comment='%s', createdDate=%s}".formatted(

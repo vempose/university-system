@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/// A single lesson session within a course.
+///
+/// Has a room, time, instructor, and attendance records for every student.
 public class Lesson implements Serializable {
 
     @Serial
@@ -27,6 +30,7 @@ public class Lesson implements Serializable {
     private LocalDateTime time;
     private Teacher instructor;
 
+    /// Creates a lesson. `id` and `room` must not be blank.
     public Lesson(
             String id,
             LessonType type,
@@ -83,6 +87,10 @@ public class Lesson implements Serializable {
         this.instructor = instructor;
     }
 
+    /// Records or updates a student's attendance for this lesson.
+    ///
+    /// If the student already has a record the status is updated;
+    /// otherwise a new `AttendanceRecord` is created.
     public void markAttendance(
             Student student,
             AttendanceStatus status,
@@ -108,14 +116,17 @@ public class Lesson implements Serializable {
         }
     }
 
+    /// Looks up one student's attendance record (if they have one).
     public Optional<AttendanceRecord> getAttendanceRecord(Student student) {
         return Optional.ofNullable(attendanceRecords.get(student));
     }
 
+    /// Returns an unmodifiable view of all attendance records.
     public Map<Student, AttendanceRecord> getAttendanceRecords() {
         return Collections.unmodifiableMap(attendanceRecords);
     }
 
+    /// Returns all students whose attendance matches a given `status`.
     public List<Student> getStudentsByStatus(AttendanceStatus status) {
         return attendanceRecords
                 .values()

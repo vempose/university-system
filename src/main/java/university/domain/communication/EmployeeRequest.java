@@ -9,6 +9,10 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.UUID;
 
+/// A request from an employee to their manager.
+///
+/// Goes through a lifecycle: NEW → VIEWED → ACCEPTED/REJECTED → DONE.
+/// A manager can sign off on it along the way.
 public class EmployeeRequest implements Serializable {
 
     @Serial
@@ -21,6 +25,7 @@ public class EmployeeRequest implements Serializable {
     private RequestStatus status;
     private Manager signedBy;
 
+    /// Creates a new request. Starts with status `NEW` and no signatory.
     public EmployeeRequest(Employee sender, String description) {
         if (sender == null) throw new IllegalArgumentException(
                 "sender must not be null"
@@ -37,26 +42,33 @@ public class EmployeeRequest implements Serializable {
         this.createdDate = LocalDate.now();
     }
 
+    /// Marks the request as viewed (`NEW` → `VIEWED`).
     public void view() {
         requireStatus(RequestStatus.NEW, "view");
         this.status = RequestStatus.VIEWED;
     }
 
+    /// Accepts the request (`VIEWED` → `ACCEPTED`).
     public void accept() {
         requireStatus(RequestStatus.VIEWED, "accept");
         this.status = RequestStatus.ACCEPTED;
     }
 
+    /// Rejects the request (`VIEWED` → `REJECTED`).
     public void reject() {
         requireStatus(RequestStatus.VIEWED, "reject");
         this.status = RequestStatus.REJECTED;
     }
 
+    /// Marks an accepted request as done (`ACCEPTED` → `DONE`).
     public void done() {
         requireStatus(RequestStatus.ACCEPTED, "done");
         this.status = RequestStatus.DONE;
     }
 
+    /// Signs the request with a manager's approval.
+    ///
+    /// Can be called from `VIEWED` or `ACCEPTED` status.
     public void sign(Manager manager) {
         if (manager == null) throw new IllegalArgumentException(
                 "signing manager must not be null"

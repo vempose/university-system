@@ -9,6 +9,7 @@ import university.system.UniversitySystem;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+/// Messaging menu — view received/sent messages and send new ones.
 class MessageView {
 
     private final Session session;
@@ -17,6 +18,7 @@ class MessageView {
         this.session = session;
     }
 
+    /// Shows the inbox/send menu for the given employee.
     void show(Employee employee) {
         UniversitySystem system = session.getSystem();
 
@@ -54,12 +56,12 @@ class MessageView {
         } else {
             for (Message m : messages) {
                 System.out.printf(
-                        "  From: %-20s | To: %-20s | %s%n",
-                        m.getSender().getName(),
-                        m.getReceiver().getName(),
+                        "  %s: %-20s | %s: %-20s | %s%n",
+                        Messages.get("message.from_label"), m.getSender().getName(),
+                        Messages.get("message.to_label"), m.getReceiver().getName(),
                         m.getSentDate()
                 );
-                System.out.println("    " + m.getText() + (m.isRead() ? "" : " [UNREAD]"));
+                System.out.println("    " + m.getText() + (m.isRead() ? "" : " " + Messages.get("message.unread_tag")));
                 System.out.println();
                 m.markRead();
             }
@@ -79,15 +81,9 @@ class MessageView {
             ConsoleInput.waitForEnter();
             return;
         }
-        for (int i = 0; i < employees.size(); i++) {
-            System.out.printf("  [%d]  %s (%s)%n",
-                    i + 1,
-                    employees.get(i).getName(),
-                    employees.get(i).getClass().getSimpleName()
-            );
-        }
-        int ei = ConsoleInput.readInt("\n  " + Messages.get("message.select_receiver") + ": ", 1, employees.size()) - 1;
-        Employee receiver = employees.get(ei);
+        Employee receiver = ConsoleMenu.pickFromList(employees,
+                e -> e.getName() + " (" + e.getClass().getSimpleName() + ")",
+                Messages.get("message.select_receiver"));
         String text = ConsoleInput.readLine("  " + Messages.get("message.text") + ": ");
         sender.sendMessage(receiver, text);
         ConsoleMenu.printSuccess(Messages.get("message.sent_to", receiver.getName()));
