@@ -9,7 +9,10 @@ import university.service.NewsService;
 import university.service.ResearchService;
 import university.system.UniversitySystem;
 
+import university.tui.Messages;
+
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -35,17 +38,17 @@ class ManagerView {
 
         while (true) {
             LinkedHashMap<Integer, String> options = new LinkedHashMap<>();
-            options.put(1, "Approve Student Registrations");
-            options.put(2, "Assign Teacher to Course");
-            options.put(3, "Add Course for Registration");
-            options.put(4, "View Students Sorted");
-            options.put(5, "View Teachers Sorted");
-            options.put(6, "Manage News");
-            options.put(7, "View My Messages");
-            options.put(8, "View Statistics");
-            options.put(9, "Browse Courses");
+            options.put(1, Messages.get("manager.approve"));
+            options.put(2, Messages.get("manager.assign"));
+            options.put(3, Messages.get("manager.add_course"));
+            options.put(4, Messages.get("manager.view_students"));
+            options.put(5, Messages.get("manager.view_teachers"));
+            options.put(6, Messages.get("manager.manage_news"));
+            options.put(7, Messages.get("manager.view_messages"));
+            options.put(8, Messages.get("manager.statistics"));
+            options.put(9, Messages.get("manager.browse_courses"));
 
-            int choice = ConsoleMenu.showMenu("Manager Panel", options, true, false);
+            int choice = ConsoleMenu.showMenu(Messages.get("manager.title"), options, true, false);
             switch (choice) {
                 case 0 -> { return; }
                 case 1 -> approveRegistrations(manager);
@@ -62,7 +65,7 @@ class ManagerView {
     }
 
     private void approveRegistrations(Manager manager) {
-        ConsoleMenu.printSection("Approve Student Registrations");
+        ConsoleMenu.printSection(Messages.get("manager.approve"));
         List<Student> students = session.getSystem().getAllStudents();
         List<Enrollment> pending = students.stream()
                 .flatMap(s -> s.getEnrollments().stream())
@@ -70,7 +73,7 @@ class ManagerView {
                 .toList();
 
         if (pending.isEmpty()) {
-            ConsoleMenu.printInfo("No pending registrations.");
+            ConsoleMenu.printInfo(Messages.get("manager.no_pending"));
             ConsoleInput.waitForEnter();
             return;
         }
@@ -91,20 +94,21 @@ class ManagerView {
         if (ei == 0) return;
 
         Enrollment selected = pending.get(ei - 1);
-        if (ConsoleMenu.confirm("Approve " + selected.getStudent().getName() + " for " + selected.getCourse().getCourseCode() + "?")) {
+        if (ConsoleMenu.confirm(Messages.get("manager.approve_confirm", selected.getStudent().getName(), selected.getCourse().getCourseCode()))) {
             manager.approveRegistration(selected);
-            ConsoleMenu.printSuccess("Registration approved.");
+            selected.register();
+            ConsoleMenu.printSuccess(Messages.get("manager.reg_approved"));
         }
         ConsoleInput.waitForEnter();
     }
 
     private void assignTeacherToCourse(Manager manager) {
-        ConsoleMenu.printSection("Assign Teacher to Course");
+        ConsoleMenu.printSection(Messages.get("manager.assign"));
         List<Teacher> teachers = session.getSystem().getAllTeachers();
         List<Course> courses = session.getSystem().getCourses();
 
         if (teachers.isEmpty() || courses.isEmpty()) {
-            ConsoleMenu.printInfo("Need at least one teacher and one course.");
+            ConsoleMenu.printInfo(Messages.get("manager.no_teachers_courses"));
             ConsoleInput.waitForEnter();
             return;
         }
@@ -121,46 +125,56 @@ class ManagerView {
         int ti = ConsoleInput.readInt("\n  Select teacher: ", 1, teachers.size()) - 1;
         Teacher teacher = teachers.get(ti);
 
-        String lessonId = ConsoleInput.readLine("  Lesson ID (e.g. L001): ");
+        String lessonId = ConsoleInput.readLine("  " + Messages.get("manager.lesson_id") + ": ");
         LinkedHashMap<Integer, String> ltOptions = new LinkedHashMap<>();
         ltOptions.put(1, "LECTURE");
         ltOptions.put(2, "PRACTICE");
-        int ltc = ConsoleMenu.showMenu("Lesson Type", ltOptions, false, false);
+        int ltc = ConsoleMenu.showMenu(Messages.get("manager.lesson_type"), ltOptions, false, false);
         LessonType lessonType = ltc == 2 ? LessonType.PRACTICE : LessonType.LECTURE;
 
-        String room = ConsoleInput.readLine("  Room: ");
+        String room = ConsoleInput.readLine("  " + Messages.get("manager.room") + ": ");
         Lesson lesson = new Lesson(lessonId, lessonType, room, LocalDateTime.now(), teacher);
         course.addLesson(lesson);
         manager.assignTeacherToCourse(teacher, course, lesson);
-        ConsoleMenu.printSuccess("Teacher assigned to course.");
+        ConsoleMenu.printSuccess(Messages.get("manager.teacher_assigned"));
         ConsoleInput.waitForEnter();
     }
 
     private void addCourseForRegistration(Manager manager) {
-        ConsoleMenu.printSection("Add Course for Registration");
-        String code = ConsoleInput.readLine("  Course code: ");
-        String title = ConsoleInput.readLine("  Course title: ");
-        int credits = ConsoleInput.readInt("  Credits: ", 1, 30);
+        ConsoleMenu.printSection(Messages.get("manager.add_course"));
+        String code = ConsoleInput.readLine("  " + Messages.get("manager.course_code") + ": ");
+        String title = ConsoleInput.readLine("  " + Messages.get("manager.course_title") + ": ");
+        int credits = ConsoleInput.readInt("  " + Messages.get("manager.credits") + ": ", 1, 30);
 
         Course course = new Course(code, title, credits);
         session.getSystem().addCourse(course);
 
-        ConsoleMenu.printSuccess("Course added: " + code + " - " + title);
+        ConsoleMenu.printSuccess(Messages.get("manager.course_added", code, title));
         ConsoleInput.waitForEnter();
     }
 
     private void viewStudentsSorted(Manager manager, UniversitySystem system) {
-        ConsoleMenu.printSection("View Students Sorted");
+        ConsoleMenu.printSection(Messages.get("manager.view_students"));
         LinkedHashMap<Integer, String> sortOptions = new LinkedHashMap<>();
         sortOptions.put(1, "By GPA (highest first)");
-        sortOptions.put(2, "By Name (A-Z)");
+        sortOptions.put(2, "By GPA (lowest first)");
+        sortOptions.put(3, "By Name (A-Z)");
+        sortOptions.put(4, "By Name (Z-A)");
+        sortOptions.put(5, "By Credits (most first)");
+        sortOptions.put(6, "By Credits (least first)");
 
-        int sc = ConsoleMenu.showMenu("Sort By", sortOptions, true, false);
+        int sc = ConsoleMenu.showMenu(Messages.get("manager.sort_by"), sortOptions, true, false);
         if (sc == 0) return;
 
         List<Student> sorted = switch (sc) {
             case 1 -> manager.viewStudentsSorted(system.getAllStudents(), new StudentByGpaComparator());
-            case 2 -> manager.viewStudentsSorted(system.getAllStudents(), new UserByNameComparator());
+            case 2 -> manager.viewStudentsSorted(system.getAllStudents(), new StudentByGpaComparator().reversed());
+            case 3 -> manager.viewStudentsSorted(system.getAllStudents(), new UserByNameComparator());
+            case 4 -> manager.viewStudentsSorted(system.getAllStudents(), new UserByNameComparator().reversed());
+            case 5 -> manager.viewStudentsSorted(system.getAllStudents(),
+                    Comparator.<User, Integer>comparing(u -> ((Student) u).getTotalCredits(), Comparator.reverseOrder()));
+            case 6 -> manager.viewStudentsSorted(system.getAllStudents(),
+                    Comparator.comparingInt(u -> ((Student) u).getTotalCredits()));
             default -> system.getAllStudents();
         };
 
@@ -174,14 +188,23 @@ class ManagerView {
     }
 
     private void viewTeachersSorted(Manager manager, UniversitySystem system) {
-        ConsoleMenu.printSection("View Teachers Sorted");
+        ConsoleMenu.printSection(Messages.get("manager.view_teachers"));
         LinkedHashMap<Integer, String> sortOptions = new LinkedHashMap<>();
         sortOptions.put(1, "By Name (A-Z)");
+        sortOptions.put(2, "By Name (Z-A)");
+        sortOptions.put(3, "By Rating (highest first)");
+        sortOptions.put(4, "By Rating (lowest first)");
 
-        int sc = ConsoleMenu.showMenu("Sort By", sortOptions, true, false);
+        int sc = ConsoleMenu.showMenu(Messages.get("manager.sort_by"), sortOptions, true, false);
         if (sc == 0) return;
 
-        List<Teacher> sorted = manager.viewTeachersSorted(system.getAllTeachers(), new UserByNameComparator());
+        List<Teacher> sorted = switch (sc) {
+            case 1 -> manager.viewTeachersSorted(system.getAllTeachers(), new UserByNameComparator());
+            case 2 -> manager.viewTeachersSorted(system.getAllTeachers(), new UserByNameComparator().reversed());
+            case 3 -> manager.viewTeachersSorted(system.getAllTeachers(), new TeacherByRatingComparator());
+            case 4 -> manager.viewTeachersSorted(system.getAllTeachers(), new TeacherByRatingComparator().reversed());
+            default -> system.getAllTeachers();
+        };
 
         ConsoleMenu.printDivider();
         for (Teacher t : sorted) {
@@ -193,21 +216,21 @@ class ManagerView {
     }
 
     private void manageNews(Manager manager) {
-        ConsoleMenu.printSection("Manage News");
+        ConsoleMenu.printSection(Messages.get("manager.manage_news"));
         LinkedHashMap<Integer, String> options = new LinkedHashMap<>();
-        options.put(1, "Create News Post");
-        options.put(2, "View All News");
+        options.put(1, Messages.get("manager.create_news"));
+        options.put(2, Messages.get("manager.view_all_news"));
         int choice = ConsoleMenu.showMenu("News Management", options, true, false);
 
         if (choice == 1) {
-            String title = ConsoleInput.readLine("  Title: ");
-            String content = ConsoleInput.readLine("  Content: ");
+            String title = ConsoleInput.readLine("  " + Messages.get("manager.news_title") + ": ");
+            String content = ConsoleInput.readLine("  " + Messages.get("manager.news_content") + ": ");
             LinkedHashMap<Integer, String> topicOptions = new LinkedHashMap<>();
             topicOptions.put(1, "RESEARCH");
             topicOptions.put(2, "ACADEMIC");
             topicOptions.put(3, "EVENT");
             topicOptions.put(4, "GENERAL");
-            int tc = ConsoleMenu.showMenu("Select Topic", topicOptions, false, false);
+            int tc = ConsoleMenu.showMenu(Messages.get("manager.select_topic"), topicOptions, false, false);
             NewsTopic topic = switch (tc) {
                 case 2 -> NewsTopic.ACADEMIC;
                 case 3 -> NewsTopic.EVENT;
@@ -216,10 +239,10 @@ class ManagerView {
             };
             News news = new News(title, content, topic);
             newsService.publishNews(news);
-            ConsoleMenu.printSuccess("News published.");
+            ConsoleMenu.printSuccess(Messages.get("manager.news_published"));
         } else if (choice == 2) {
             List<News> allNews = session.getSystem().getNewsList();
-            ConsoleMenu.printSection("All News");
+            ConsoleMenu.printSection(Messages.get("manager.view_all_news"));
             if (allNews.isEmpty()) {
                 ConsoleMenu.printInfo("No news available.");
             } else {
@@ -235,26 +258,26 @@ class ManagerView {
     }
 
     private void viewStatistics(UniversitySystem system) {
-        ConsoleMenu.printSection("System Statistics");
+        ConsoleMenu.printSection(Messages.get("manager.stat_title"));
         int studentCount = system.getAllStudents().size();
         int teacherCount = system.getAllTeachers().size();
         int courseCount = system.getCourses().size();
         int newsCount = system.getNewsList().size();
         int journalCount = system.getJournals().size();
 
-        System.out.printf("  Total Users: %d%n", system.getUsers().size());
-        System.out.printf("  Students: %d%n", studentCount);
-        System.out.printf("  Teachers: %d%n", teacherCount);
-        System.out.printf("  Courses: %d%n", courseCount);
-        System.out.printf("  News Posts: %d%n", newsCount);
-        System.out.printf("  Journals: %d%n", journalCount);
+        System.out.printf("  %s: %d%n", Messages.get("manager.stat_users"), system.getUsers().size());
+        System.out.printf("  %s: %d%n", Messages.get("manager.stat_students"), studentCount);
+        System.out.printf("  %s: %d%n", Messages.get("manager.stat_teachers"), teacherCount);
+        System.out.printf("  %s: %d%n", Messages.get("manager.stat_courses"), courseCount);
+        System.out.printf("  %s: %d%n", Messages.get("manager.stat_news"), newsCount);
+        System.out.printf("  %s: %d%n", Messages.get("manager.stat_journals"), journalCount);
 
         if (!system.getAllStudents().isEmpty()) {
             double avgGpa = system.getAllStudents().stream()
                     .mapToDouble(Student::getGpa)
                     .average()
                     .orElse(0);
-            System.out.printf("%n  Average Student GPA: %.2f%n", avgGpa);
+            System.out.printf("%n  %s: %.2f%n", Messages.get("manager.stat_avg_gpa"), avgGpa);
         }
         ConsoleInput.waitForEnter();
     }

@@ -1,5 +1,6 @@
 package university.tui;
 
+import university.tui.Messages;
 import university.domain.news.News;
 import university.domain.news.NewsComment;
 import university.domain.user.User;
@@ -20,10 +21,10 @@ class NewsView {
 
         while (true) {
             List<News> allNews = system.getNewsList();
-            ConsoleMenu.printHeader("News & Announcements");
+            ConsoleMenu.printHeader(Messages.get("news.title"));
 
             if (allNews.isEmpty()) {
-                ConsoleMenu.printInfo("No news available.");
+                ConsoleMenu.printInfo(Messages.get("news.no_news"));
                 System.out.println("\n  [0]  Go Back");
                 int choice = ConsoleInput.readInt("\n  Choose an option: ", 0, 0);
                 return;
@@ -42,7 +43,7 @@ class NewsView {
             System.out.println();
             System.out.println("  [0]  Go Back");
 
-            int choice = ConsoleInput.readInt("\n  Select news to read (#): ", 0, allNews.size());
+            int choice = ConsoleInput.readInt("\n  " + Messages.get("news.select_read") + " (#): ", 0, allNews.size());
             if (choice == 0) return;
 
             News selected = allNews.get(choice - 1);
@@ -73,7 +74,7 @@ class NewsView {
         }
 
         System.out.println();
-        System.out.println("  [1]  Add Comment");
+        System.out.println("  [1]  " + Messages.get("news.add_comment"));
         System.out.println("  [0]  Go Back");
 
         int choice = ConsoleInput.readInt("\n  Choose an option: ", 0, 1);
@@ -85,11 +86,11 @@ class NewsView {
 
     private void addComment(News news) {
         User user = session.getCurrentUser();
-        String text = ConsoleInput.readLine("\n  Your comment: ");
+        String text = ConsoleInput.readLine("  " + Messages.get("news.your_comment") + ": ");
         if (!text.isEmpty()) {
             NewsComment comment = new NewsComment(text, user);
             news.addComment(comment);
-            ConsoleMenu.printSuccess("Comment added.");
+            ConsoleMenu.printSuccess(Messages.get("news.comment_added"));
         }
     }
 }

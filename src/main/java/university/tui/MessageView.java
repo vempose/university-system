@@ -1,5 +1,6 @@
 package university.tui;
 
+import university.tui.Messages;
 import university.domain.communication.Message;
 import university.domain.user.Employee;
 import university.domain.user.User;
@@ -21,11 +22,11 @@ class MessageView {
 
         while (true) {
             LinkedHashMap<Integer, String> options = new LinkedHashMap<>();
-            options.put(1, "View Received Messages");
-            options.put(2, "View Sent Messages");
-            options.put(3, "Send Message to Employee");
+            options.put(1, Messages.get("message.received"));
+            options.put(2, Messages.get("message.sent"));
+            options.put(3, Messages.get("message.send"));
 
-            int choice = ConsoleMenu.showMenu("Messages", options, true, false);
+            int choice = ConsoleMenu.showMenu(Messages.get("message.title"), options, true, false);
             switch (choice) {
                 case 0 -> { return; }
                 case 1 -> viewReceivedMessages(employee);
@@ -36,15 +37,15 @@ class MessageView {
     }
 
     private void viewReceivedMessages(Employee employee) {
-        ConsoleMenu.printSection("Received Messages");
+        ConsoleMenu.printSection(Messages.get("message.received"));
         List<Message> messages = employee.getReceivedMessages();
-        printMessages(messages, "No received messages.");
+        printMessages(messages, Messages.get("message.no_received"));
     }
 
     private void viewSentMessages(Employee employee) {
-        ConsoleMenu.printSection("Sent Messages");
+        ConsoleMenu.printSection(Messages.get("message.sent"));
         List<Message> messages = employee.getSentMessages();
-        printMessages(messages, "No sent messages.");
+        printMessages(messages, Messages.get("message.no_sent"));
     }
 
     private void printMessages(List<Message> messages, String emptyMessage) {
@@ -67,14 +68,14 @@ class MessageView {
     }
 
     private void sendMessage(Employee sender) {
-        ConsoleMenu.printSection("Send Message");
+        ConsoleMenu.printSection(Messages.get("message.send"));
         List<Employee> employees = session.getSystem().getUsers().stream()
                 .filter(u -> u instanceof Employee && !u.equals(sender))
                 .map(u -> (Employee) u)
                 .toList();
 
         if (employees.isEmpty()) {
-            ConsoleMenu.printInfo("No other employees in the system.");
+            ConsoleMenu.printInfo(Messages.get("message.no_employees"));
             ConsoleInput.waitForEnter();
             return;
         }
@@ -85,11 +86,11 @@ class MessageView {
                     employees.get(i).getClass().getSimpleName()
             );
         }
-        int ei = ConsoleInput.readInt("\n  Select receiver: ", 1, employees.size()) - 1;
+        int ei = ConsoleInput.readInt("\n  " + Messages.get("message.select_receiver") + ": ", 1, employees.size()) - 1;
         Employee receiver = employees.get(ei);
-        String text = ConsoleInput.readLine("  Message: ");
+        String text = ConsoleInput.readLine("  " + Messages.get("message.text") + ": ");
         sender.sendMessage(receiver, text);
-        ConsoleMenu.printSuccess("Message sent to " + receiver.getName());
+        ConsoleMenu.printSuccess(Messages.get("message.sent_to", receiver.getName()));
         ConsoleInput.waitForEnter();
     }
 }

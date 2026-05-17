@@ -1,6 +1,7 @@
 package university.tui;
 
 import university.domain.support.TechSupportRequest;
+import university.tui.Messages;
 import university.domain.user.*;
 import university.enums.RequestStatus;
 import university.system.UniversitySystem;
@@ -21,14 +22,14 @@ class TechSupportView {
 
         while (true) {
             LinkedHashMap<Integer, String> options = new LinkedHashMap<>();
-            options.put(1, "View New Requests");
-            options.put(2, "View All Assigned Requests");
-            options.put(3, "Accept Request");
-            options.put(4, "Reject Request");
-            options.put(5, "Complete Request");
-            options.put(6, "Create New Request (as User)");
+            options.put(1, Messages.get("techsupport.view_new"));
+            options.put(2, Messages.get("techsupport.view_all"));
+            options.put(3, Messages.get("techsupport.accept"));
+            options.put(4, Messages.get("techsupport.reject"));
+            options.put(5, Messages.get("techsupport.complete"));
+            options.put(6, Messages.get("techsupport.create"));
 
-            int choice = ConsoleMenu.showMenu("Tech Support Panel", options, true, false);
+            int choice = ConsoleMenu.showMenu(Messages.get("techsupport.title"), options, true, false);
             switch (choice) {
                 case 0 -> { return; }
                 case 1 -> viewNewRequests(specialist);
@@ -42,14 +43,14 @@ class TechSupportView {
     }
 
     private void viewNewRequests(TechSupportSpecialist specialist) {
-        ConsoleMenu.printSection("New Requests");
+        ConsoleMenu.printSection(Messages.get("techsupport.view_new"));
         List<TechSupportRequest> requests = specialist.viewNewRequests();
         printRequests(requests);
         ConsoleInput.waitForEnter();
     }
 
     private void viewAllRequests(TechSupportSpecialist specialist) {
-        ConsoleMenu.printSection("All Assigned Requests");
+        ConsoleMenu.printSection(Messages.get("techsupport.view_all"));
         List<TechSupportRequest> requests = specialist.getAssignedRequests();
         printRequests(requests);
         ConsoleInput.waitForEnter();
@@ -57,7 +58,7 @@ class TechSupportView {
 
     private void printRequests(List<TechSupportRequest> requests) {
         if (requests.isEmpty()) {
-            ConsoleMenu.printInfo("No requests.");
+            ConsoleMenu.printInfo(Messages.get("techsupport.no_requests"));
             return;
         }
         for (int i = 0; i < requests.size(); i++) {
@@ -70,19 +71,19 @@ class TechSupportView {
     }
 
     private void acceptRequest(TechSupportSpecialist specialist) {
-        ConsoleMenu.printSection("Accept Request");
+        ConsoleMenu.printSection(Messages.get("techsupport.accept"));
         List<TechSupportRequest> newRequests = specialist.viewNewRequests();
         if (newRequests.isEmpty()) {
-            ConsoleMenu.printInfo("No new requests to accept.");
+            ConsoleMenu.printInfo(Messages.get("techsupport.no_new"));
             ConsoleInput.waitForEnter();
             return;
         }
         printRequests(newRequests);
-        int ri = ConsoleInput.readInt("\n  Select request: ", 1, newRequests.size()) - 1;
+        int ri = ConsoleInput.readInt("\n  " + Messages.get("techsupport.accept") + ": ", 1, newRequests.size()) - 1;
         TechSupportRequest request = newRequests.get(ri);
         try {
             specialist.acceptRequest(request);
-            ConsoleMenu.printSuccess("Request accepted.");
+            ConsoleMenu.printSuccess(Messages.get("techsupport.accepted"));
         } catch (Exception e) {
             ConsoleMenu.printError(e.getMessage());
         }
@@ -90,19 +91,19 @@ class TechSupportView {
     }
 
     private void rejectRequest(TechSupportSpecialist specialist) {
-        ConsoleMenu.printSection("Reject Request");
+        ConsoleMenu.printSection(Messages.get("techsupport.reject"));
         List<TechSupportRequest> newRequests = specialist.viewNewRequests();
         if (newRequests.isEmpty()) {
-            ConsoleMenu.printInfo("No new requests to reject.");
+            ConsoleMenu.printInfo(Messages.get("techsupport.no_new"));
             ConsoleInput.waitForEnter();
             return;
         }
         printRequests(newRequests);
-        int ri = ConsoleInput.readInt("\n  Select request: ", 1, newRequests.size()) - 1;
+        int ri = ConsoleInput.readInt("\n  " + Messages.get("techsupport.reject") + ": ", 1, newRequests.size()) - 1;
         TechSupportRequest request = newRequests.get(ri);
         try {
             specialist.rejectRequest(request);
-            ConsoleMenu.printSuccess("Request rejected.");
+            ConsoleMenu.printSuccess(Messages.get("techsupport.rejected"));
         } catch (Exception e) {
             ConsoleMenu.printError(e.getMessage());
         }
@@ -110,21 +111,21 @@ class TechSupportView {
     }
 
     private void completeRequest(TechSupportSpecialist specialist) {
-        ConsoleMenu.printSection("Complete Request");
+        ConsoleMenu.printSection(Messages.get("techsupport.complete"));
         List<TechSupportRequest> accepted = specialist.getAssignedRequests().stream()
                 .filter(r -> r.getStatus() == RequestStatus.ACCEPTED)
                 .toList();
         if (accepted.isEmpty()) {
-            ConsoleMenu.printInfo("No accepted requests to complete.");
+            ConsoleMenu.printInfo(Messages.get("techsupport.no_accepted"));
             ConsoleInput.waitForEnter();
             return;
         }
         printRequests(accepted);
-        int ri = ConsoleInput.readInt("\n  Select request: ", 1, accepted.size()) - 1;
+        int ri = ConsoleInput.readInt("\n  " + Messages.get("techsupport.complete") + ": ", 1, accepted.size()) - 1;
         TechSupportRequest request = accepted.get(ri);
         try {
             specialist.completeRequest(request);
-            ConsoleMenu.printSuccess("Request completed.");
+            ConsoleMenu.printSuccess(Messages.get("techsupport.completed"));
         } catch (Exception e) {
             ConsoleMenu.printError(e.getMessage());
         }
@@ -132,9 +133,9 @@ class TechSupportView {
     }
 
     private void createRequest() {
-        ConsoleMenu.printSection("Create Tech Support Request");
+        ConsoleMenu.printSection(Messages.get("techsupport.create"));
         User currentUser = session.getCurrentUser();
-        String description = ConsoleInput.readLine("  Describe the issue: ");
+        String description = ConsoleInput.readLine("  " + Messages.get("techsupport.describe") + ": ");
         TechSupportRequest request = new TechSupportRequest(currentUser, description);
 
         List<TechSupportSpecialist> specialists = session.getSystem().getUsers().stream()
@@ -146,10 +147,10 @@ class TechSupportView {
             for (int i = 0; i < specialists.size(); i++) {
                 System.out.printf("  [%d]  %s%n", i + 1, specialists.get(i).getName());
             }
-            int si = ConsoleInput.readInt("\n  Assign to specialist: ", 1, specialists.size()) - 1;
+            int si = ConsoleInput.readInt("\n  " + Messages.get("techsupport.assign_to") + ": ", 1, specialists.size()) - 1;
             specialists.get(si).assignRequest(request);
         }
-        ConsoleMenu.printSuccess("Request created: " + request.getId());
+        ConsoleMenu.printSuccess(Messages.get("techsupport.created", request.getId()));
         ConsoleInput.waitForEnter();
     }
 }

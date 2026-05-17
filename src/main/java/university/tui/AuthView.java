@@ -1,11 +1,7 @@
 package university.tui;
 
 import university.domain.user.User;
-import university.system.UniversitySystem;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
+import university.enums.Language;
 
 public final class AuthView {
 
@@ -16,23 +12,24 @@ public final class AuthView {
     }
 
     public void show() {
-        ConsoleMenu.printHeader("UNIVERSITY MANAGEMENT SYSTEM");
-        System.out.println("  Welcome! Please authenticate to continue.");
+        ConsoleMenu.printHeader(Messages.get("app.title"));
+        System.out.println("  " + Messages.get("auth.welcome"));
         System.out.println();
 
         boolean authenticated = false;
         while (!authenticated && !Thread.currentThread().isInterrupted()) {
-            String email = ConsoleInput.readEmail("  Email : ");
-            String password = ConsoleInput.readPassword("  Password: ");
+            String email = ConsoleInput.readEmail("  " + Messages.get("auth.email") + " : ");
+            String password = ConsoleInput.readPassword("  " + Messages.get("auth.password") + ": ");
 
             User user = session.getSystem().authenticate(email, password).orElse(null);
 
             if (user != null) {
+                Messages.setLanguage(user.getLanguage());
                 session.setCurrentUser(user);
-                ConsoleMenu.printSuccess("Login successful. Welcome, " + user.getName() + "!");
+                ConsoleMenu.printSuccess(Messages.get("auth.success", user.getName()));
                 authenticated = true;
             } else {
-                ConsoleMenu.printError("Invalid email or password. Please try again.");
+                ConsoleMenu.printError(Messages.get("auth.fail"));
                 System.out.println();
             }
         }

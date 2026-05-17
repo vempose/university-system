@@ -6,7 +6,6 @@ import university.domain.user.*;
 import university.enums.CitationFormat;
 import university.exception.NonResearcherJoinProjectException;
 import university.service.ResearchService;
-import university.system.UniversitySystem;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -28,19 +27,19 @@ class ResearchView {
 
         while (true) {
             LinkedHashMap<Integer, String> options = new LinkedHashMap<>();
-            options.put(1, "Publish Research Paper");
-            options.put(2, "View My Papers");
-            options.put(3, "Print My Papers Sorted");
-            options.put(4, "View My H-Index");
-            options.put(5, "Join Research Project");
-            options.put(6, "View My Projects");
-            options.put(7, "View All Papers (University)");
-            options.put(8, "Top Cited Researcher of Year");
+            options.put(1, Messages.get("research.publish"));
+            options.put(2, Messages.get("research.view_papers"));
+            options.put(3, Messages.get("research.print_sorted"));
+            options.put(4, Messages.get("research.view_hindex"));
+            options.put(5, Messages.get("research.join_project"));
+            options.put(6, Messages.get("research.view_projects"));
+            options.put(7, Messages.get("research.view_all"));
+            options.put(8, Messages.get("research.top_year"));
             if (user instanceof Student s && s.getSchool() != null) {
-                options.put(9, "Top Cited Researcher by School");
+                options.put(9, Messages.get("research.top_school"));
             }
 
-            int choice = ConsoleMenu.showMenu("Research Panel", options, true, false);
+            int choice = ConsoleMenu.showMenu(Messages.get("research.title"), options, true, false);
             switch (choice) {
                 case 0 -> { return; }
                 case 1 -> publishPaper(profile);
@@ -61,72 +60,80 @@ class ResearchView {
     }
 
     private void publishPaper(ResearchProfile profile) {
-        ConsoleMenu.printSection("Publish Research Paper");
-        String title = ConsoleInput.readLine("  Title: ");
-        String authors = ConsoleInput.readLine("  Authors: ");
-        String journal = ConsoleInput.readLine("  Journal name: ");
-        String pages = ConsoleInput.readLine("  Pages (e.g. 1-10): ");
-        int pageCount = ConsoleInput.readInt("  Page count: ", 1, 1000);
-        LocalDate date = ConsoleInput.readDate("  Publish date");
-        String doi = ConsoleInput.readLine("  DOI: ");
-        int citations = ConsoleInput.readInt("  Citations: ", 0, 1000000);
+        ConsoleMenu.printSection(Messages.get("research.publish"));
+        String title = ConsoleInput.readLine("  " + Messages.get("research.paper_title") + ": ");
+        String authors = ConsoleInput.readLine("  " + Messages.get("research.authors") + ": ");
+        String journal = ConsoleInput.readLine("  " + Messages.get("research.journal") + ": ");
+        String pages = ConsoleInput.readLine("  " + Messages.get("research.pages") + ": ");
+        int pageCount = ConsoleInput.readInt("  " + Messages.get("research.page_count") + ": ", 1, 1000);
+        LocalDate date = ConsoleInput.readDate("  " + Messages.get("research.publish_date"));
+        String doi = ConsoleInput.readLine("  " + Messages.get("research.doi") + ": ");
+        int citations = ConsoleInput.readInt("  " + Messages.get("research.citations") + ": ", 0, 1000000);
 
         ResearchPaper paper = new ResearchPaper(title, authors, journal, pages, pageCount, date, doi, citations);
         profile.publishPaper(paper);
-        ConsoleMenu.printSuccess("Paper published: " + paper.getCitation(CitationFormat.PLAIN_TEXT));
+        ConsoleMenu.printSuccess(Messages.get("research.paper_published",
+                paper.getCitation(CitationFormat.PLAIN_TEXT)));
         ConsoleInput.waitForEnter();
     }
 
     private void viewMyPapers(ResearchProfile profile) {
-        ConsoleMenu.printSection("My Research Papers");
+        ConsoleMenu.printSection(Messages.get("research.view_papers"));
         List<ResearchPaper> papers = profile.getPapers();
         if (papers.isEmpty()) {
-            ConsoleMenu.printInfo("No papers published yet.");
+            ConsoleMenu.printInfo(Messages.get("research.no_papers"));
         } else {
             for (int i = 0; i < papers.size(); i++) {
-                System.out.printf("  [%d]  %s%n", i + 1, papers.get(i).getCitation(CitationFormat.PLAIN_TEXT));
+                System.out.printf("  [%d]  %s%n", i + 1,
+                        papers.get(i).getCitation(CitationFormat.PLAIN_TEXT));
             }
         }
         ConsoleInput.waitForEnter();
     }
 
     private void printMyPapersSorted(ResearchProfile profile) {
-        ConsoleMenu.printSection("Print My Papers Sorted");
+        ConsoleMenu.printSection(Messages.get("research.print_sorted"));
         LinkedHashMap<Integer, String> sortOptions = new LinkedHashMap<>();
-        sortOptions.put(1, "By Citations (most first)");
-        sortOptions.put(2, "By Date (newest first)");
-        sortOptions.put(3, "By Page Count (smallest first)");
+        sortOptions.put(1, Messages.get("research.sort_citations"));
+        sortOptions.put(2, Messages.get("research.sort_citations_asc"));
+        sortOptions.put(3, Messages.get("research.sort_date"));
+        sortOptions.put(4, Messages.get("research.sort_date_asc"));
+        sortOptions.put(5, Messages.get("research.sort_pages"));
+        sortOptions.put(6, Messages.get("research.sort_pages_desc"));
 
-        int sc = ConsoleMenu.showMenu("Sort By", sortOptions, true, false);
+        int sc = ConsoleMenu.showMenu(Messages.get("manager.sort_by"), sortOptions, true, false);
         if (sc == 0) return;
 
         switch (sc) {
             case 1 -> profile.printPapers(new PaperByCitationsComparator());
-            case 2 -> profile.printPapers(new PaperByDateComparator());
-            case 3 -> profile.printPapers(new PaperByPagesComparator());
+            case 2 -> profile.printPapers(new PaperByCitationsComparator().reversed());
+            case 3 -> profile.printPapers(new PaperByDateComparator());
+            case 4 -> profile.printPapers(new PaperByDateComparator().reversed());
+            case 5 -> profile.printPapers(new PaperByPagesComparator());
+            case 6 -> profile.printPapers(new PaperByPagesComparator().reversed());
         }
         ConsoleInput.waitForEnter();
     }
 
     private void viewHIndex(ResearchProfile profile) {
-        ConsoleMenu.printSection("H-Index");
+        ConsoleMenu.printSection(Messages.get("research.view_hindex"));
         int hIndex = profile.calculateHIndex();
-        System.out.printf("  Your H-Index: %d%n", hIndex);
-        System.out.printf("  Total Papers: %d%n", profile.getPapers().size());
-        System.out.printf("  Total Projects: %d%n", profile.getProjects().size());
+        System.out.println("  " + Messages.get("research.hindex_result", hIndex));
+        System.out.println("  " + Messages.get("research.total_papers", profile.getPapers().size()));
+        System.out.println("  " + Messages.get("research.total_projects", profile.getProjects().size()));
         ConsoleInput.waitForEnter();
     }
 
     private void joinProject(ResearchProfile profile) {
-        ConsoleMenu.printSection("Join Research Project");
-        String projectId = ConsoleInput.readLine("  Project ID: ");
-        String topic = ConsoleInput.readLine("  Project topic: ");
+        ConsoleMenu.printSection(Messages.get("research.join_project"));
+        String projectId = ConsoleInput.readLine("  " + Messages.get("research.project_id") + ": ");
+        String topic = ConsoleInput.readLine("  " + Messages.get("research.project_topic") + ": ");
 
         ResearchProject project = new ResearchProject(projectId, topic);
         try {
             project.addParticipant(profile);
             profile.joinProject(project);
-            ConsoleMenu.printSuccess("Joined project: " + topic);
+            ConsoleMenu.printSuccess(Messages.get("research.joined_project", topic));
         } catch (NonResearcherJoinProjectException e) {
             ConsoleMenu.printError(e.getMessage());
         }
@@ -134,10 +141,10 @@ class ResearchView {
     }
 
     private void viewMyProjects(ResearchProfile profile) {
-        ConsoleMenu.printSection("My Research Projects");
+        ConsoleMenu.printSection(Messages.get("research.view_projects"));
         List<ResearchProject> projects = profile.getProjects();
         if (projects.isEmpty()) {
-            ConsoleMenu.printInfo("No projects yet.");
+            ConsoleMenu.printInfo(Messages.get("research.no_projects"));
         } else {
             for (ResearchProject p : projects) {
                 System.out.printf("  [%s] %s | Participants: %d | Papers: %d%n",
@@ -148,32 +155,38 @@ class ResearchView {
     }
 
     private void viewAllPapers() {
-        ConsoleMenu.printSection("All University Papers");
+        ConsoleMenu.printSection(Messages.get("research.view_all"));
         LinkedHashMap<Integer, String> sortOptions = new LinkedHashMap<>();
-        sortOptions.put(1, "By Citations (most first)");
-        sortOptions.put(2, "By Date (newest first)");
-        sortOptions.put(3, "By Page Count");
+        sortOptions.put(1, Messages.get("research.sort_citations"));
+        sortOptions.put(2, Messages.get("research.sort_citations_asc"));
+        sortOptions.put(3, Messages.get("research.sort_date"));
+        sortOptions.put(4, Messages.get("research.sort_date_asc"));
+        sortOptions.put(5, Messages.get("research.sort_pages"));
+        sortOptions.put(6, Messages.get("research.sort_pages_desc"));
 
-        int sc = ConsoleMenu.showMenu("Sort By", sortOptions, true, false);
+        int sc = ConsoleMenu.showMenu(Messages.get("manager.sort_by"), sortOptions, true, false);
         if (sc == 0) return;
 
         switch (sc) {
             case 1 -> researchService.printAllPapers(new PaperByCitationsComparator());
-            case 2 -> researchService.printAllPapers(new PaperByDateComparator());
-            case 3 -> researchService.printAllPapers(new PaperByPagesComparator());
+            case 2 -> researchService.printAllPapers(new PaperByCitationsComparator().reversed());
+            case 3 -> researchService.printAllPapers(new PaperByDateComparator());
+            case 4 -> researchService.printAllPapers(new PaperByDateComparator().reversed());
+            case 5 -> researchService.printAllPapers(new PaperByPagesComparator());
+            case 6 -> researchService.printAllPapers(new PaperByPagesComparator().reversed());
         }
         ConsoleInput.waitForEnter();
     }
 
     private void topCitedOfYear() {
-        ConsoleMenu.printSection("Top Cited Researcher");
+        ConsoleMenu.printSection(Messages.get("research.top_year"));
         int year = ConsoleInput.readInt("  Year: ", 2000, 2100);
         researchService.printTopCitedResearcherOfYear(year);
         ConsoleInput.waitForEnter();
     }
 
     private void topCitedBySchool(university.domain.academic.School school) {
-        ConsoleMenu.printSection("Top Cited Researcher in " + school.getName());
+        ConsoleMenu.printSection(Messages.get("research.top_school"));
         researchService.printTopCitedResearcherBySchool(school);
         ConsoleInput.waitForEnter();
     }

@@ -1,5 +1,6 @@
 package university.tui;
 
+import university.tui.Messages;
 import university.domain.news.UniversityJournal;
 import university.domain.research.ResearchPaper;
 import university.domain.user.User;
@@ -22,13 +23,13 @@ class JournalView {
 
         while (true) {
             LinkedHashMap<Integer, String> options = new LinkedHashMap<>();
-            options.put(1, "View All Journals");
-            options.put(2, "Subscribe to Journal");
-            options.put(3, "Unsubscribe from Journal");
-            options.put(4, "View Journal Papers");
-            options.put(5, "Create New Journal");
+            options.put(1, Messages.get("journal.view_all"));
+            options.put(2, Messages.get("journal.subscribe"));
+            options.put(3, Messages.get("journal.unsubscribe"));
+            options.put(4, Messages.get("journal.view_papers"));
+            options.put(5, Messages.get("journal.create"));
 
-            int choice = ConsoleMenu.showMenu("University Journals", options, true, false);
+            int choice = ConsoleMenu.showMenu(Messages.get("journal.title"), options, true, false);
             switch (choice) {
                 case 0 -> { return; }
                 case 1 -> viewAllJournals(system);
@@ -41,10 +42,10 @@ class JournalView {
     }
 
     private void viewAllJournals(UniversitySystem system) {
-        ConsoleMenu.printSection("All Journals");
+        ConsoleMenu.printSection(Messages.get("journal.title"));
         List<UniversityJournal> journals = system.getJournals();
         if (journals.isEmpty()) {
-            ConsoleMenu.printInfo("No journals available.");
+            ConsoleMenu.printInfo(Messages.get("journal.no_journals"));
         } else {
             for (UniversityJournal j : journals) {
                 System.out.printf(
@@ -59,57 +60,67 @@ class JournalView {
     }
 
     private void subscribe(UniversitySystem system, User user) {
-        ConsoleMenu.printSection("Subscribe to Journal");
-        List<UniversityJournal> journals = system.getJournals();
-        if (journals.isEmpty()) {
-            ConsoleMenu.printInfo("No journals available.");
+        ConsoleMenu.printSection(Messages.get("journal.subscribe"));
+        List<UniversityJournal> allJournals = system.getJournals();
+        List<UniversityJournal> available = allJournals.stream()
+                .filter(j -> j.getSubscriptions().stream()
+                        .noneMatch(s -> s.getSubscriber().equals(user)))
+                .toList();
+        if (available.isEmpty()) {
+            ConsoleMenu.printInfo(allJournals.isEmpty()
+                    ? Messages.get("journal.no_journals")
+                    : "You are subscribed to all journals.");
             ConsoleInput.waitForEnter();
             return;
         }
-        for (int i = 0; i < journals.size(); i++) {
-            System.out.printf("  [%d]  %s%n", i + 1, journals.get(i).getName());
+        for (int i = 0; i < available.size(); i++) {
+            System.out.printf("  [%d]  %s%n", i + 1, available.get(i).getName());
         }
-        int ji = ConsoleInput.readInt("\n  Select journal: ", 1, journals.size()) - 1;
-        journals.get(ji).subscribe(user);
-        ConsoleMenu.printSuccess("Subscribed to " + journals.get(ji).getName());
+        int ji = ConsoleInput.readInt("\n  " + Messages.get("journal.select") + ": ", 1, available.size()) - 1;
+        available.get(ji).subscribe(user);
+        ConsoleMenu.printSuccess(Messages.get("journal.subscribed", available.get(ji).getName()));
         ConsoleInput.waitForEnter();
     }
 
     private void unsubscribe(UniversitySystem system, User user) {
-        ConsoleMenu.printSection("Unsubscribe from Journal");
-        List<UniversityJournal> journals = system.getJournals();
-        if (journals.isEmpty()) {
-            ConsoleMenu.printInfo("No journals available.");
+        ConsoleMenu.printSection(Messages.get("journal.unsubscribe"));
+        List<UniversityJournal> allJournals = system.getJournals();
+        List<UniversityJournal> subscribed = allJournals.stream()
+                .filter(j -> j.getSubscriptions().stream()
+                        .anyMatch(s -> s.getSubscriber().equals(user)))
+                .toList();
+        if (subscribed.isEmpty()) {
+            ConsoleMenu.printInfo("You are not subscribed to any journals.");
             ConsoleInput.waitForEnter();
             return;
         }
-        for (int i = 0; i < journals.size(); i++) {
-            System.out.printf("  [%d]  %s%n", i + 1, journals.get(i).getName());
+        for (int i = 0; i < subscribed.size(); i++) {
+            System.out.printf("  [%d]  %s%n", i + 1, subscribed.get(i).getName());
         }
-        int ji = ConsoleInput.readInt("\n  Select journal: ", 1, journals.size()) - 1;
-        journals.get(ji).unsubscribe(user);
-        ConsoleMenu.printSuccess("Unsubscribed from " + journals.get(ji).getName());
+        int ji = ConsoleInput.readInt("\n  " + Messages.get("journal.select") + ": ", 1, subscribed.size()) - 1;
+        subscribed.get(ji).unsubscribe(user);
+        ConsoleMenu.printSuccess(Messages.get("journal.unsubscribed", subscribed.get(ji).getName()));
         ConsoleInput.waitForEnter();
     }
 
     private void viewJournalPapers(UniversitySystem system) {
-        ConsoleMenu.printSection("View Journal Papers");
+        ConsoleMenu.printSection(Messages.get("journal.view_papers"));
         List<UniversityJournal> journals = system.getJournals();
         if (journals.isEmpty()) {
-            ConsoleMenu.printInfo("No journals available.");
+            ConsoleMenu.printInfo(Messages.get("journal.no_journals"));
             ConsoleInput.waitForEnter();
             return;
         }
         for (int i = 0; i < journals.size(); i++) {
             System.out.printf("  [%d]  %s%n", i + 1, journals.get(i).getName());
         }
-        int ji = ConsoleInput.readInt("\n  Select journal: ", 1, journals.size()) - 1;
+        int ji = ConsoleInput.readInt("\n  " + Messages.get("journal.select") + ": ", 1, journals.size()) - 1;
         UniversityJournal journal = journals.get(ji);
 
-        ConsoleMenu.printSection(journal.getName() + " - Published Papers");
+        ConsoleMenu.printSection(Messages.get("journal.view_papers"));
         List<ResearchPaper> papers = journal.getPublishedPapers();
         if (papers.isEmpty()) {
-            ConsoleMenu.printInfo("No papers published in this journal yet.");
+            ConsoleMenu.printInfo(Messages.get("journal.no_papers"));
         } else {
             for (ResearchPaper p : papers) {
                 System.out.println("  " + p.getCitation(university.enums.CitationFormat.PLAIN_TEXT));
@@ -119,11 +130,11 @@ class JournalView {
     }
 
     private void createJournal(UniversitySystem system) {
-        ConsoleMenu.printSection("Create New Journal");
-        String name = ConsoleInput.readLine("  Journal name: ");
+        ConsoleMenu.printSection(Messages.get("journal.create"));
+        String name = ConsoleInput.readLine("  " + Messages.get("journal.name") + ": ");
         UniversityJournal journal = new UniversityJournal(name);
         system.addJournal(journal);
-        ConsoleMenu.printSuccess("Journal created: " + name);
+        ConsoleMenu.printSuccess(Messages.get("journal.created", name));
         ConsoleInput.waitForEnter();
     }
 }

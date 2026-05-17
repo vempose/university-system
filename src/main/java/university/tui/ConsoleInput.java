@@ -20,17 +20,14 @@ public final class ConsoleInput {
                 int value = SCANNER.nextInt();
                 SCANNER.nextLine();
                 if (value < min || value > max) {
-                    System.out.printf(
-                            "  [!] Please enter a number between %d and %d.%n",
-                            min,
-                            max
-                    );
+                    System.out.println(
+                            "  " + Messages.get("msg.invalid_range", min, max));
                     continue;
                 }
                 return value;
             } catch (InputMismatchException e) {
                 SCANNER.nextLine();
-                System.out.println("  [!] Invalid input. Please enter a valid integer.");
+                System.out.println("  " + Messages.get("msg.invalid_int"));
             }
         }
     }
@@ -44,7 +41,7 @@ public final class ConsoleInput {
                 return value;
             } catch (InputMismatchException e) {
                 SCANNER.nextLine();
-                System.out.println("  [!] Invalid input. Please enter a valid integer.");
+                System.out.println("  " + Messages.get("msg.invalid_int"));
             }
         }
     }
@@ -56,17 +53,13 @@ public final class ConsoleInput {
                 double value = SCANNER.nextDouble();
                 SCANNER.nextLine();
                 if (value < min || value > max) {
-                    System.out.printf(
-                            "  [!] Please enter a number between %.1f and %.1f.%n",
-                            min,
-                            max
-                    );
+                    System.out.println("  " + Messages.get("msg.invalid_range", min, max));
                     continue;
                 }
                 return value;
             } catch (InputMismatchException e) {
                 SCANNER.nextLine();
-                System.out.println("  [!] Invalid input. Please enter a valid number.");
+                System.out.println("  " + Messages.get("msg.invalid_double"));
             }
         }
     }
@@ -78,7 +71,7 @@ public final class ConsoleInput {
             if (!line.isEmpty()) {
                 return line;
             }
-            System.out.println("  [!] Input cannot be empty. Please try again.");
+            System.out.println("  " + Messages.get("msg.empty"));
         }
     }
 
@@ -89,15 +82,13 @@ public final class ConsoleInput {
 
     public static boolean readYesNo(String prompt) {
         while (true) {
-            System.out.print(prompt + " (y/n): ");
+            System.out.print(prompt + " " + Messages.get("msg.yes_no") + ": ");
             String line = SCANNER.nextLine().trim().toLowerCase();
-            if (line.equals("y") || line.equals("yes")) {
-                return true;
-            }
-            if (line.equals("n") || line.equals("no")) {
-                return false;
-            }
-            System.out.println("  [!] Please enter 'y' or 'n'.");
+            String yes = Messages.get("msg.yes").toLowerCase();
+            String no = Messages.get("msg.no").toLowerCase();
+            if (line.equals(yes)) return true;
+            if (line.equals(no)) return false;
+            System.out.println("  " + Messages.get("msg.invalid_range", yes, no));
         }
     }
 
@@ -106,11 +97,11 @@ public final class ConsoleInput {
             System.out.print(prompt);
             String email = SCANNER.nextLine().trim();
             if (email.isEmpty()) {
-                System.out.println("  [!] Email cannot be empty.");
+                System.out.println("  " + Messages.get("msg.empty_email"));
                 continue;
             }
             if (!email.contains("@")) {
-                System.out.println("  [!] Invalid email format. Please include '@'.");
+                System.out.println("  " + Messages.get("msg.invalid_email"));
                 continue;
             }
             return email;
@@ -122,7 +113,7 @@ public final class ConsoleInput {
             System.out.print(prompt);
             String password = SCANNER.nextLine().trim();
             if (password.isEmpty()) {
-                System.out.println("  [!] Password cannot be empty.");
+                System.out.println("  " + Messages.get("msg.empty_password"));
                 continue;
             }
             return password;
@@ -135,19 +126,19 @@ public final class ConsoleInput {
             System.out.print(prompt + " (yyyy-MM-dd): ");
             String line = SCANNER.nextLine().trim();
             if (line.isEmpty()) {
-                System.out.println("  [!] Date cannot be empty.");
+                System.out.println("  " + Messages.get("msg.empty"));
                 continue;
             }
             try {
                 return LocalDate.parse(line, fmt);
             } catch (DateTimeParseException e) {
-                System.out.println("  [!] Invalid date format. Use yyyy-MM-dd.");
+                System.out.println("  " + Messages.get("msg.invalid_date"));
             }
         }
     }
 
     public static void waitForEnter() {
-        System.out.print("\nPress Enter to continue...");
+        System.out.print("\n" + Messages.get("msg.press_enter") + "...");
         SCANNER.nextLine();
     }
 }

@@ -1,5 +1,6 @@
 package university.tui;
 
+import university.MockData;
 import university.domain.user.*;
 import university.service.NewsService;
 import university.service.ResearchService;
@@ -23,13 +24,22 @@ public final class TuiApplication {
     private final JournalView journalView;
     private final MessageView messageView;
     private final CourseView courseView;
+    private int languageMenuChoice;
 
     public TuiApplication() {
         UniversitySystem system = UniversitySystem.getInstance();
         try {
             system.load();
         } catch (Exception e) {
-            ConsoleMenu.printInfo("No saved state found. Starting with empty system.");
+            system = UniversitySystem.getInstance();
+        }
+
+        if (system.getUsers().isEmpty()) {
+            MockData.populate(system);
+            try {
+                system.save();
+            } catch (Exception e) {
+            }
         }
 
         this.session = new Session(system);
@@ -63,48 +73,83 @@ public final class TuiApplication {
 
                 switch (choice) {
                     case 0 -> {
+                        session.getSystem().save();
                         running = false;
                     }
                     case 9 -> {
+                        session.getSystem().save();
                         session.logout();
-                        System.out.println("\n  Goodbye!\n");
+                        System.out.println("\n  " + Messages.get("goodbye") + "\n");
                         return;
                     }
-                    default -> dispatchRoleMenu(user, choice);
+                    default -> {
+                        if (choice == languageMenuChoice) {
+                            showLanguageMenu(user);
+                        } else {
+                            dispatchRoleMenu(user, choice);
+                        }
+                    }
                 }
             }
         }
+    }
+
+    private void showLanguageMenu(User user) {
+        ConsoleMenu.printSection(Messages.get("lang.title"));
+        System.out.printf("  %s: %s%n%n",
+                Messages.get("lang.current"), user.getLanguage());
+
+        LinkedHashMap<Integer, String> langOptions = new LinkedHashMap<>();
+        langOptions.put(1, "English (EN)");
+        langOptions.put(2, "Қазақша (KZ)");
+        langOptions.put(3, "Русский (RU)");
+
+        int lc = ConsoleMenu.showMenu(Messages.get("lang.title"), langOptions, true, false);
+        if (lc == 0) return;
+
+        university.enums.Language newLang = switch (lc) {
+            case 2 -> university.enums.Language.KZ;
+            case 3 -> university.enums.Language.RU;
+            default -> university.enums.Language.EN;
+        };
+
+        user.changeLanguage(newLang);
+        Messages.setLanguage(newLang);
+        ConsoleMenu.printSuccess(Messages.get("lang.changed") + ": " + newLang);
+        ConsoleInput.waitForEnter();
     }
 
     private int showMainMenu(User user) {
         LinkedHashMap<Integer, String> options = new LinkedHashMap<>();
         int index = 1;
 
-        options.put(index++, "News & Announcements");
-        options.put(index++, "Browse Journals");
-        options.put(index++, "Browse Courses");
+        options.put(index++, Messages.get("main.news"));
+        options.put(index++, Messages.get("main.journals"));
+        options.put(index++, Messages.get("main.courses"));
 
         if (user instanceof Admin) {
-            options.put(index++, "Admin Panel");
+            options.put(index++, Messages.get("main.admin"));
         }
         if (user instanceof Teacher) {
-            options.put(index++, "Teacher Panel");
+            options.put(index++, Messages.get("main.teacher"));
         }
         if (user instanceof Student) {
-            options.put(index++, "Student Panel");
+            options.put(index++, Messages.get("main.student"));
         }
         if (user instanceof Manager) {
-            options.put(index++, "Manager Panel");
+            options.put(index++, Messages.get("main.manager"));
         }
         if (user instanceof TechSupportSpecialist) {
-            options.put(index++, "Tech Support Panel");
+            options.put(index++, Messages.get("main.techsupport"));
         }
         if (user.getResearchProfile() != null) {
-            options.put(index++, "Research Panel");
+            options.put(index++, Messages.get("main.research"));
         }
         if (user instanceof Employee) {
-            options.put(index++, "Messages");
+            options.put(index++, Messages.get("main.messages"));
         }
+        languageMenuChoice = index;
+        options.put(index++, Messages.get("main.language"));
 
         return ConsoleMenu.showMenu(
                 "Main Menu [" + user.getClass().getSimpleName() + ": " + user.getName() + "]",

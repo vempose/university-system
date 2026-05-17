@@ -1,5 +1,6 @@
 package university.tui;
 
+import university.tui.Messages;
 import university.domain.academic.Course;
 import university.system.UniversitySystem;
 
@@ -18,10 +19,10 @@ class CourseView {
 
         while (true) {
             List<Course> courses = system.getCourses();
-            ConsoleMenu.printHeader("Browse Courses");
+            ConsoleMenu.printHeader(Messages.get("course.title"));
 
             if (courses.isEmpty()) {
-                ConsoleMenu.printInfo("No courses available.");
+                ConsoleMenu.printInfo(Messages.get("course.no_courses"));
                 System.out.println("\n  [0]  Go Back");
                 int choice = ConsoleInput.readInt("\n  Choose an option: ", 0, 0);
                 return;
@@ -41,7 +42,7 @@ class CourseView {
             System.out.println();
             System.out.println("  [0]  Go Back");
 
-            int choice = ConsoleInput.readInt("\n  Select course to view details (#): ", 0, courses.size());
+            int choice = ConsoleInput.readInt("\n  " + Messages.get("course.select_view") + ": ", 0, courses.size());
             if (choice == 0) return;
 
             Course selected = courses.get(choice - 1);

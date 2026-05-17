@@ -8,18 +8,18 @@ public final class ConsoleMenu {
     }
 
     public static void printHeader(String title) {
-        String line = "═".repeat(60);
-        int padding = (60 - title.length() - 2) / 2;
-        String paddedTitle = " ".repeat(Math.max(0, padding)) + title;
+        String line = "═".repeat(55);
+        int padding = Math.max(0, (55 - title.length() - 2) / 2);
+        String paddedTitle = " ".repeat(padding) + title;
         System.out.println();
         System.out.println(line);
-        System.out.printf("║ %-56s ║%n", paddedTitle);
+        System.out.printf("║ %-51s ║%n", paddedTitle);
         System.out.println(line);
         System.out.println();
     }
 
     public static void printSection(String title) {
-        String line = "─".repeat(50);
+        String line = "─".repeat(48);
         System.out.println("\n" + line);
         System.out.println("  " + title);
         System.out.println(line);
@@ -29,16 +29,12 @@ public final class ConsoleMenu {
         printHeader(title);
         options.forEach((key, label) ->
                 System.out.printf("  [%d]  %s%n", key, label));
-        if (showBack && showExit) {
-            System.out.println();
-            System.out.println("  [0]  Go Back");
-            System.out.println("  [9]  Logout & Exit");
-        } else if (showBack) {
-            System.out.println();
-            System.out.println("  [0]  Go Back");
-        } else if (showExit) {
-            System.out.println();
-            System.out.println("  [9]  Logout & Exit");
+        System.out.println();
+        if (showBack) {
+            System.out.println("  [0]  " + Messages.get("menu.back"));
+        }
+        if (showExit) {
+            System.out.println("  [9]  " + Messages.get("menu.exit"));
         }
         System.out.println();
 
@@ -46,34 +42,28 @@ public final class ConsoleMenu {
         int max = options.keySet().stream().max(Integer::compareTo).orElse(0);
         if (showExit) max = Math.max(max, 9);
 
-        return ConsoleInput.readInt("Choose an option: ", min, max);
+        return ConsoleInput.readInt(Messages.get("menu.choose") + ": ", min, max);
     }
 
     public static void printSuccess(String message) {
-        System.out.println("  [✓] " + message);
+        System.out.println("  " + Messages.get("msg.success") + " " + message);
     }
 
     public static void printError(String message) {
-        System.out.println("  [✗] " + message);
+        System.out.println("  " + Messages.get("msg.error") + " " + message);
     }
 
     public static void printInfo(String message) {
-        System.out.println("  [i] " + message);
+        System.out.println("  " + Messages.get("msg.info") + " " + message);
     }
 
     public static boolean confirm(String message) {
-        return ConsoleInput.readYesNo("\n  [?] " + message + " Are you sure?");
-    }
-
-    public static void printTable(String... columns) {
-        System.out.print("  ");
-        for (int i = 0; i < columns.length; i++) {
-            System.out.printf("%-" + (i < columns.length - 1 ? 25 : 5) + "s", columns[i]);
-        }
-        System.out.println();
+        return ConsoleInput.readYesNo(
+                "\n  [?] " + message + " " + Messages.get("menu.confirm") + "?"
+        );
     }
 
     public static void printDivider() {
-        System.out.println("  " + "-".repeat(55));
+        System.out.println("  " + "-".repeat(50));
     }
 }
