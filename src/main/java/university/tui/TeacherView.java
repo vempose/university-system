@@ -187,16 +187,19 @@ class TeacherView {
             ConsoleInput.waitForEnter();
             return;
         }
-        System.out.println("  " + Messages.get("teacher.select_target") + ":");
-        for (int i = 0; i < students.size(); i++) {
-            System.out.printf("  [%d]  %s%n", i + 1, students.get(i).getName());
-        }
         List<Student> targets = new java.util.ArrayList<>();
         while (true) {
+            System.out.println("  " + Messages.get("teacher.select_target") + ":");
+            for (int i = 0; i < students.size(); i++) {
+                String selected = targets.contains(students.get(i)) ? " [SELECTED]" : "";
+                System.out.printf("  [%d]  %s%s%n", i + 1, students.get(i).getName(), selected);
+            }
+            System.out.println("  [0]  " + Messages.get("menu.back") + " (" + targets.size() + " selected)");
             int si = ConsoleInput.readInt("  " + Messages.get("teacher.student_number") + ": ", 0, students.size());
             if (si == 0) break;
             Student s = students.get(si - 1);
             if (!targets.contains(s)) targets.add(s);
+            else targets.remove(s);
             if (targets.size() == students.size()) break;
         }
         if (targets.isEmpty()) {

@@ -14,15 +14,25 @@ class AuthView {
         this.session = session;
     }
 
-    /// Shows the login prompt and loops until credentials are correct.
+    /// Shows the login prompt and loops until credentials are correct or user quits.
     public void show() {
         ConsoleMenu.printHeader(Messages.get("app.title"));
         System.out.println("  " + Messages.get("auth.welcome"));
         System.out.println();
+        System.out.println("  [0]  " + Messages.get("menu.exit"));
+        System.out.println();
 
-        boolean authenticated = false;
-        while (!authenticated && !Thread.currentThread().isInterrupted()) {
-            String email = ConsoleInput.readEmail("  " + Messages.get("auth.email") + " : ");
+        while (!Thread.currentThread().isInterrupted()) {
+            String email = ConsoleInput.readLineOrBlank("  " + Messages.get("auth.email") + " : ");
+            if (email.isEmpty()) {
+                session.logout();
+                return;
+            }
+            if (!email.contains("@")) {
+                ConsoleMenu.printError(Messages.get("msg.invalid_email"));
+                System.out.println("  [0]  " + Messages.get("menu.exit"));
+                continue;
+            }
             String password = ConsoleInput.readPassword("  " + Messages.get("auth.password") + ": ");
 
             User user = session.getSystem().authenticate(email, password).orElse(null);
@@ -31,10 +41,11 @@ class AuthView {
                 Messages.setLanguage(user.getLanguage());
                 session.setCurrentUser(user);
                 ConsoleMenu.printSuccess(Messages.get("auth.success", user.getName()));
-                authenticated = true;
+                return;
             } else {
                 ConsoleMenu.printError(Messages.get("auth.fail"));
                 System.out.println();
+                System.out.println("  [0]  " + Messages.get("menu.exit"));
             }
         }
     }

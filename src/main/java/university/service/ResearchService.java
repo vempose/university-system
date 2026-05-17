@@ -4,6 +4,7 @@ import university.domain.academic.School;
 import university.domain.news.News;
 import university.domain.research.ResearchPaper;
 import university.domain.research.ResearchProfile;
+import university.domain.research.ResearchProject;
 import university.domain.user.Student;
 import university.domain.user.User;
 import university.enums.NewsTopic;
@@ -85,6 +86,20 @@ public class ResearchService {
                                         .sum()
                         )
                 );
+    }
+
+    /// Returns every research project from all users.
+    ///
+    /// @return list of all projects (no duplicates)
+    public List<ResearchProject> getAllProjects() {
+        return system
+                .getUsers()
+                .stream()
+                .map(User::getResearchProfile)
+                .filter(Objects::nonNull)
+                .flatMap(p -> p.getProjects().stream())
+                .distinct()
+                .toList();
     }
 
     /// Generates a news article about the top-cited researcher of a year.

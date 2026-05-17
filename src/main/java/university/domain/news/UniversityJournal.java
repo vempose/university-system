@@ -55,17 +55,16 @@ public class UniversityJournal implements Serializable {
     /// Sends a notification to every subscriber.
     ///
     /// If the subscriber implements {@link JournalObserver},
-    /// their callback is invoked; otherwise a console message is printed.
+    /// their callback is invoked; otherwise the notification is queued
+    /// for display after the user logs in.
     public void notifySubscribers(ResearchPaper paper) {
+        String message = "[Journal Notification] Dear %%s, a new paper has been published in \"%s\": \"%s\".".formatted(name, paper.title());
         for (JournalSubscription subscription : List.copyOf(subscriptions)) {
             User subscriber = subscription.getSubscriber();
             if (subscriber instanceof JournalObserver observer) {
                 observer.onPaperPublished(paper, this);
             } else {
-                System.out.printf(
-                        "[Journal Notification] Dear %s, a new paper has been published in \"%s\": \"%s\".%n",
-                        subscriber.getName(), name, paper.title()
-                );
+                subscriber.addNotification(message.formatted(subscriber.getName()));
             }
         }
     }

@@ -346,7 +346,6 @@ public final class MockData {
                 "Nonlinear Dynamics in Plasma Physics", "Irene Prof, Leo PhD",
                 "Physical Review Letters", "015001-1-015001-8", 8,
                 LocalDate.of(2024, 2, 28), "10.1103/PRL.2024.005", 18);
-        irene.getResearchProfile().publishPaper(paper4);
         irene.getResearchProfile().publishPaper(paper5);
         leo.getResearchProfile().publishPaper(paper5);
 

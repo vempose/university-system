@@ -2,6 +2,8 @@ package university.domain.user;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import university.domain.research.ResearchProfile;
 import university.enums.Language;
 
@@ -20,6 +22,7 @@ public abstract class User implements Comparable<User>, Serializable {
     private String password;
     private Language language;
     private ResearchProfile researchProfile;
+    private final List<String> pendingNotifications = new ArrayList<>();
 
     /// Creates a user with all the required fields.
     ///
@@ -119,5 +122,15 @@ public abstract class User implements Comparable<User>, Serializable {
 
     public void setResearchProfile(ResearchProfile researchProfile) {
         this.researchProfile = researchProfile;
+    }
+
+    public void addNotification(String notification) {
+        pendingNotifications.add(notification);
+    }
+
+    public List<String> getAndClearNotifications() {
+        var copy = List.copyOf(pendingNotifications);
+        pendingNotifications.clear();
+        return copy;
     }
 }

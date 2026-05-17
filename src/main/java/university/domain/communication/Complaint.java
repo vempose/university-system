@@ -38,19 +38,19 @@ public class Complaint implements Serializable {
             String text,
             Manager receiver
     ) {
-        if (sender == null) throw new NullPointerException(
+        if (sender == null) throw new IllegalArgumentException(
                 "sender must not be null"
         );
-        if (targetStudents == null) throw new NullPointerException(
+        if (targetStudents == null) throw new IllegalArgumentException(
                 "targetStudents must not be null"
         );
-        if (urgency == null) throw new NullPointerException(
+        if (urgency == null) throw new IllegalArgumentException(
                 "urgency must not be null"
         );
-        if (text == null) throw new NullPointerException(
+        if (text == null) throw new IllegalArgumentException(
                 "text must not be null"
         );
-        if (receiver == null) throw new NullPointerException(
+        if (receiver == null) throw new IllegalArgumentException(
                 "receiver must not be null"
         );
         if (targetStudents.isEmpty()) throw new IllegalArgumentException(
@@ -96,7 +96,7 @@ public class Complaint implements Serializable {
 
     /// Reassigns the complaint to a different manager.
     public void setReceiver(Manager receiver) {
-        if (receiver == null) throw new NullPointerException(
+        if (receiver == null) throw new IllegalArgumentException(
                 "receiver must not be null"
         );
         this.receiver = receiver;

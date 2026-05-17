@@ -136,14 +136,23 @@ class ResearchView {
 
     private void joinProject(ResearchProfile profile) {
         ConsoleMenu.printSection(Messages.get("research.join_project"));
-        String projectId = ConsoleInput.readLine("  " + Messages.get("research.project_id") + ": ");
-        String topic = ConsoleInput.readLine("  " + Messages.get("research.project_topic") + ": ");
-
-        ResearchProject project = new ResearchProject(projectId, topic);
+        List<ResearchProject> allProjects = researchService.getAllProjects();
+        List<ResearchProject> available = allProjects.stream()
+                .filter(p -> !profile.getProjects().contains(p))
+                .toList();
+        if (available.isEmpty()) {
+            ConsoleMenu.printInfo(Messages.get("research.no_projects"));
+            ConsoleInput.waitForEnter();
+            return;
+        }
+        ResearchProject project = ConsoleMenu.pickFromList(available,
+                p -> p.getId() + " - " + p.getTopic(),
+                Messages.get("research.project_topic"), Messages.get("menu.back"));
+        if (project == null) return;
         try {
             project.addParticipant(profile);
             profile.joinProject(project);
-            ConsoleMenu.printSuccess(Messages.get("research.joined_project", topic));
+            ConsoleMenu.printSuccess(Messages.get("research.joined_project", project.getTopic()));
         } catch (NonResearcherJoinProjectException e) {
             ConsoleMenu.printError(e.getMessage());
         }

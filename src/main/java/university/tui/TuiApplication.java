@@ -74,6 +74,18 @@ public final class TuiApplication {
                 break;
             }
 
+            User authenticatedUser = session.getCurrentUser();
+            var notifications = authenticatedUser.getAndClearNotifications();
+            if (!notifications.isEmpty()) {
+                System.out.println();
+                ConsoleMenu.printSection("Pending Journal Notifications");
+                for (String n : notifications) {
+                    System.out.println("  " + n);
+                }
+                System.out.println();
+                ConsoleInput.waitForEnter();
+            }
+
             boolean running = true;
             while (running) {
                 User user = session.getCurrentUser();
@@ -82,10 +94,12 @@ public final class TuiApplication {
                 switch (choice) {
                     case 0 -> {
                         session.getSystem().save();
+                        ConsoleMenu.printSuccess("Data saved.");
                         running = false;
                     }
                     case 9 -> {
                         session.getSystem().save();
+                        ConsoleMenu.printSuccess("Data saved.");
                         session.logout();
                         System.out.println("\n  " + Messages.get("goodbye") + "\n");
                         return;

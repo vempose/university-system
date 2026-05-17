@@ -4,7 +4,7 @@ package university.exception;
 ///
 /// Only users with a `ResearchProfile` can be added
 /// as members of `ResearchProject`.
-public class NonResearcherJoinProjectException extends Exception {
+public class NonResearcherJoinProjectException extends RuntimeException {
 
     public NonResearcherJoinProjectException(String message) {
         super(message);
