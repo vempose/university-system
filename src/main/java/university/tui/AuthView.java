@@ -18,8 +18,7 @@ class AuthView {
     public void show() {
         ConsoleMenu.printHeader(Messages.get("app.title"));
         System.out.println("  " + Messages.get("auth.welcome"));
-        System.out.println();
-        System.out.println("  [0]  " + Messages.get("menu.exit"));
+        System.out.println("  (" + Messages.get("msg.press_enter") + " " + Messages.get("menu.exit").toLowerCase() + ")");
         System.out.println();
 
         while (!Thread.currentThread().isInterrupted()) {
@@ -30,7 +29,6 @@ class AuthView {
             }
             if (!email.contains("@")) {
                 ConsoleMenu.printError(Messages.get("msg.invalid_email"));
-                System.out.println("  [0]  " + Messages.get("menu.exit"));
                 continue;
             }
             String password = ConsoleInput.readPassword("  " + Messages.get("auth.password") + ": ");
@@ -45,7 +43,6 @@ class AuthView {
             } else {
                 ConsoleMenu.printError(Messages.get("auth.fail"));
                 System.out.println();
-                System.out.println("  [0]  " + Messages.get("menu.exit"));
             }
         }
     }
