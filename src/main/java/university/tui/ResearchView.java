@@ -152,8 +152,12 @@ class ResearchView {
             default -> null;
         };
         List<ResearchPaper> sorted = profile.getSortedPapers(comp);
-        for (ResearchPaper p : sorted) {
-            System.out.println("  " + p.getCitation(CitationFormat.PLAIN_TEXT));
+        if (sorted.isEmpty()) {
+            ConsoleMenu.printInfo(Messages.get("research.no_papers"));
+        } else {
+            for (ResearchPaper p : sorted) {
+                System.out.println("  " + p.getCitation(CitationFormat.PLAIN_TEXT));
+            }
         }
         ConsoleInput.waitForEnter();
     }

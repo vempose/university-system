@@ -37,6 +37,7 @@ class AdminView {
             options.put(3, Messages.get("admin.update_user"));
             options.put(4, Messages.get("admin.list_users"));
             options.put(5, Messages.get("admin.view_logs"));
+            options.put(6, Messages.get("admin.make_researcher"));
 
             int choice = ConsoleMenu.showMenu(Messages.get("admin.title"), options, true, false);
             switch (choice) {
@@ -46,6 +47,7 @@ class AdminView {
                 case 3 -> updateUser(admin);
                 case 4 -> listAllUsers(system);
                 case 5 -> viewLogs(admin, system);
+                case 6 -> manageResearcherStatus(admin, system);
             }
         }
     }
@@ -131,6 +133,10 @@ class AdminView {
         }
 
         if (newUser != null) {
+            if (newUser.getResearchProfile() == null
+                    && ConsoleInput.readYesNo("  " + Messages.get("admin.prompt_researcher") + " ")) {
+                newUser.setResearchProfile(new ResearchProfile());
+            }
             admin.addUser(newUser, system);
             ConsoleMenu.printSuccess(Messages.get("admin.user_created", newUser.getName(), newUser.getId()));
         }
@@ -269,5 +275,24 @@ class AdminView {
             return major;
         }
         return majors.get(mi - 1);
+    }
+
+    private void manageResearcherStatus(Admin admin, UniversitySystem system) {
+        ConsoleMenu.printSection(Messages.get("admin.make_researcher"));
+        List<User> candidates = system.getUsers().stream()
+                .filter(u -> u.getResearchProfile() == null)
+                .toList();
+        if (candidates.isEmpty()) {
+            ConsoleMenu.printInfo(Messages.get("admin.no_researcher_candidates"));
+            ConsoleInput.waitForEnter();
+            return;
+        }
+        User selected = ConsoleMenu.pickFromList(candidates, Object::toString,
+                Messages.get("admin.make_researcher"));
+        if (ConsoleMenu.confirm(Messages.get("admin.make_researcher") + " — " + selected.getName() + "?")) {
+            selected.setResearchProfile(new ResearchProfile());
+            ConsoleMenu.printSuccess(Messages.get("admin.researcher_added", selected.getName()));
+        }
+        ConsoleInput.waitForEnter();
     }
 }
