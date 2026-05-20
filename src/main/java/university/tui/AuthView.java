@@ -22,7 +22,7 @@ class AuthView {
         System.out.println();
 
         while (!Thread.currentThread().isInterrupted()) {
-            String email = ConsoleInput.readLineOrBlank("  " + Messages.get("auth.email") + " : ");
+            String email = ConsoleInput.readLineOrBlank("  " + Messages.get("auth.email") + ": ");
             if (email.isEmpty()) {
                 session.logout();
                 return;

@@ -122,7 +122,10 @@ class StudentView {
 
     private void viewTranscript(Student student) {
         ConsoleMenu.printSection(Messages.get("student.view_transcript"));
-        System.out.println(student.getTranscript());
+        String transcript = student.getTranscript();
+        for (String line : transcript.split("\n")) {
+            System.out.println("  " + line);
+        }
         ConsoleInput.waitForEnter();
     }
 

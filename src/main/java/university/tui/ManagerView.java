@@ -245,7 +245,7 @@ class ManagerView {
                 ConsoleMenu.printInfo(Messages.get("news.no_news"));
             } else {
                 for (News n : allNews) {
-                    System.out.printf("  [%s%s] %s%n",
+                    System.out.printf("  %s%s | %s%n",
                             n.isPinned() ? Messages.get("news.pinned") + " " : "",
                             n.getTopic(), n.getTitle());
                     System.out.println("    " + n.getContent());

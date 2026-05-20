@@ -11,21 +11,19 @@ public final class ConsoleMenu {
     private ConsoleMenu() {
     }
 
-    /// Prints a boxed header with the given title.
+    /// Prints a header with the given title.
     public static void printHeader(String title) {
-        String line = "─".repeat(55);
-        int padding = Math.max(0, (55 - title.length() - 2) / 2);
-        String paddedTitle = " ".repeat(padding) + title;
+        String line = "#".repeat(55);
         System.out.println();
         System.out.println(line);
-        System.out.printf("│ %-51s │%n", paddedTitle);
+        System.out.println("  " + title);
         System.out.println(line);
         System.out.println();
     }
 
     /// Prints a section divider with a title.
     public static void printSection(String title) {
-        String line = "─".repeat(48);
+        String line = "#".repeat(55);
         System.out.println("\n" + line);
         System.out.println("  " + title);
         System.out.println(line);
@@ -75,7 +73,7 @@ public final class ConsoleMenu {
 
     /// Prints a horizontal divider line.
     public static void printDivider() {
-        System.out.println("  " + "─".repeat(50));
+        System.out.println("  " + "#".repeat(55));
     }
 
     /// Shows a numbered list and lets the user pick one item.

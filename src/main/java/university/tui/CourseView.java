@@ -51,7 +51,10 @@ class CourseView {
 
             Course selected = courses.get(choice - 1);
             ConsoleMenu.printSection(selected.getCourseCode() + " - " + selected.getTitle());
-            System.out.println(selected.viewSyllabus());
+            String syllabus = selected.viewSyllabus();
+            for (String line : syllabus.split("\n")) {
+                System.out.println("  " + line);
+            }
             ConsoleInput.waitForEnter();
         }
     }

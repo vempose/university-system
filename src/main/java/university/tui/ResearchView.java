@@ -122,7 +122,7 @@ class ResearchView {
             ConsoleMenu.printInfo(Messages.get("research.no_papers"));
         } else {
             for (int i = 0; i < papers.size(); i++) {
-                System.out.printf("  [%d]  %s%n", i + 1,
+                System.out.printf("  %d. %s%n", i + 1,
                         papers.get(i).getCitation(CitationFormat.PLAIN_TEXT));
             }
         }
@@ -198,9 +198,10 @@ class ResearchView {
         if (projects.isEmpty()) {
             ConsoleMenu.printInfo(Messages.get("research.no_projects"));
         } else {
-            for (ResearchProject p : projects) {
-                System.out.printf("  [%s] %s | Participants: %d | Papers: %d%n",
-                        p.getId(), p.getTopic(), p.getParticipants().size(), p.getPublishedPapers().size());
+            for (int i = 0; i < projects.size(); i++) {
+                ResearchProject p = projects.get(i);
+                System.out.printf("  %d. %s [%s] | Participants: %d | Papers: %d%n",
+                        i + 1, p.getTopic(), p.getId(), p.getParticipants().size(), p.getPublishedPapers().size());
             }
         }
         ConsoleInput.waitForEnter();
@@ -248,9 +249,9 @@ class ResearchView {
         } else {
             ConsoleMenu.printDivider();
             for (int i = 0; i < papers.size(); i++) {
-                System.out.printf("  %d. [%d] %s%n", i + 1,
-                        papers.get(i).citations(),
-                        papers.get(i).getCitation(CitationFormat.PLAIN_TEXT));
+                ResearchPaper p = papers.get(i);
+                System.out.printf("  %d. %s | Citations: %d%n", i + 1,
+                        p.getCitation(CitationFormat.PLAIN_TEXT), p.citations());
             }
         }
         ConsoleInput.waitForEnter();
@@ -268,11 +269,11 @@ class ResearchView {
         if (researchers.isEmpty()) {
             ConsoleMenu.printInfo(Messages.get("research.top_school_none", school.getName()));
         } else {
-            System.out.printf("  %s (h-index)%n", school.getName());
+            System.out.printf("  %s | h-index%n", school.getName());
             ConsoleMenu.printDivider();
             for (int i = 0; i < researchers.size(); i++) {
                 ResearcherInfo ri = researchers.get(i);
-                System.out.printf("  %d. %-20s h-index=%d%n", i + 1,
+                System.out.printf("  %d. %-20s %d%n", i + 1,
                         ri.name(), ri.profile().calculateHIndex());
             }
         }
