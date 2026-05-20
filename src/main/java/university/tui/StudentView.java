@@ -175,14 +175,74 @@ class StudentView {
         while (true) {
             LinkedHashMap<Integer, String> options = new LinkedHashMap<>();
             options.put(1, Messages.get("student.org_view"));
-            options.put(2, Messages.get("student.org_create"));
+            options.put(2, Messages.get("student.org_browse"));
+            options.put(3, Messages.get("student.org_join"));
+            options.put(4, Messages.get("student.org_create"));
             int choice = ConsoleMenu.showMenu(Messages.get("student.org_title"), options, true, false);
             switch (choice) {
                 case 0 -> { return; }
                 case 1 -> viewMyOrganizations(student);
-                case 2 -> createOrganization(student);
+                case 2 -> browseOrganizations(student);
+                case 3 -> joinOrganization(student);
+                case 4 -> createOrganization(student);
             }
         }
+    }
+
+    private void browseOrganizations(Student student) {
+        ConsoleMenu.printSection(Messages.get("student.org_browse"));
+        List<StudentOrganization> allOrgs = new java.util.ArrayList<>();
+        for (User u : session.getSystem().getUsers()) {
+            if (u instanceof Student s) {
+                for (OrganizationMembership m : s.getMemberships()) {
+                    StudentOrganization org = m.getOrganization();
+                    if (!allOrgs.contains(org)) allOrgs.add(org);
+                }
+            }
+        }
+        if (allOrgs.isEmpty()) {
+            ConsoleMenu.printInfo(Messages.get("student.org_no_orgs"));
+        } else {
+            for (StudentOrganization org : allOrgs) {
+                long memberCount = 0, headCount = 0;
+                for (OrganizationMembership m : org.getMembers()) {
+                    if (m.getRole() == OrganizationRole.HEAD) headCount++;
+                    else memberCount++;
+                }
+                System.out.printf("  %s | %s | Heads: %d | Members: %d%n",
+                        org.getName(), org.getDescription(), headCount, memberCount);
+            }
+        }
+        ConsoleInput.waitForEnter();
+    }
+
+    private void joinOrganization(Student student) {
+        ConsoleMenu.printSection(Messages.get("student.org_join"));
+        List<StudentOrganization> allOrgs = new java.util.ArrayList<>();
+        for (User u : session.getSystem().getUsers()) {
+            if (u instanceof Student s) {
+                for (OrganizationMembership m : s.getMemberships()) {
+                    StudentOrganization org = m.getOrganization();
+                    if (!allOrgs.contains(org)) allOrgs.add(org);
+                }
+            }
+        }
+        List<StudentOrganization> available = allOrgs.stream()
+                .filter(org -> student.getMemberships().stream()
+                        .noneMatch(m -> m.getOrganization().equals(org)))
+                .toList();
+        if (available.isEmpty()) {
+            ConsoleMenu.printInfo(Messages.get("student.org_no_orgs"));
+            ConsoleInput.waitForEnter();
+            return;
+        }
+        StudentOrganization selected = ConsoleMenu.pickFromList(available,
+                StudentOrganization::getName, Messages.get("student.org_join"));
+        OrganizationMembership membership = new OrganizationMembership(student, selected, OrganizationRole.MEMBER);
+        selected.addMembership(membership);
+        student.addMembership(membership);
+        ConsoleMenu.printSuccess(Messages.get("student.org_joined", selected.getName()));
+        ConsoleInput.waitForEnter();
     }
 
     private void viewMyOrganizations(Student student) {

@@ -5,6 +5,7 @@ import university.domain.communication.Complaint;
 import university.domain.student.TeacherRating;
 import university.domain.user.*;
 import university.enums.*;
+import university.enums.ManagerType;
 import university.service.NewsService;
 import university.service.ResearchService;
 
@@ -36,12 +37,14 @@ class TeacherView {
         while (true) {
             LinkedHashMap<Integer, String> options = new LinkedHashMap<>();
             options.put(1, Messages.get("teacher.view_courses"));
-            options.put(2, Messages.get("teacher.put_mark"));
-            options.put(3, Messages.get("teacher.view_students"));
-            options.put(4, Messages.get("teacher.send_message"));
-            options.put(5, Messages.get("teacher.send_complaint"));
-            options.put(6, Messages.get("teacher.view_messages"));
-            options.put(7, Messages.get("teacher.view_ratings"));
+            options.put(2, Messages.get("teacher.manage_course"));
+            options.put(3, Messages.get("teacher.put_mark"));
+            options.put(4, Messages.get("teacher.view_students"));
+            options.put(5, Messages.get("teacher.send_message"));
+            options.put(6, Messages.get("teacher.send_complaint"));
+            options.put(7, Messages.get("teacher.view_messages"));
+            options.put(8, Messages.get("teacher.view_ratings"));
+            int researchOpt = 9;
             if (teacher.getResearchProfile() != null) {
                 options.put(8, Messages.get("main.research"));
             }
@@ -50,13 +53,14 @@ class TeacherView {
             switch (choice) {
                 case 0 -> { return; }
                 case 1 -> viewMyCourses(teacher);
-                case 2 -> putMark(teacher);
-                case 3 -> viewStudents(teacher);
-                case 4 -> sendMessage(teacher);
-                case 5 -> sendComplaint(teacher);
-                case 6 -> messageView.show(teacher);
-                case 7 -> viewMyRatings(teacher);
-                case 8 -> {
+                case 2 -> manageCourse(teacher);
+                case 3 -> putMark(teacher);
+                case 4 -> viewStudents(teacher);
+                case 5 -> sendMessage(teacher);
+                case 6 -> sendComplaint(teacher);
+                case 7 -> messageView.show(teacher);
+                case 8 -> viewMyRatings(teacher);
+                case 9 -> {
                     if (teacher.getResearchProfile() != null) researchView.show();
                 }
             }
@@ -72,6 +76,36 @@ class TeacherView {
             for (Course c : courses) {
                 System.out.println("  " + c);
             }
+        }
+        ConsoleInput.waitForEnter();
+    }
+
+    private void manageCourse(Teacher teacher) {
+        ConsoleMenu.printSection(Messages.get("teacher.manage_course"));
+        List<Course> courses = teacher.viewCourses();
+        if (courses.isEmpty()) {
+            ConsoleMenu.printInfo(Messages.get("teacher.no_courses"));
+            ConsoleInput.waitForEnter();
+            return;
+        }
+        Course course = ConsoleMenu.pickFromList(courses,
+                c -> c.getCourseCode() + " - " + c.getTitle(),
+                Messages.get("teacher.select_course"));
+
+        List<Student> students = session.getSystem().getAllStudents().stream()
+                .filter(s -> s.getEnrollments().stream().anyMatch(e -> e.getCourse().equals(course)))
+                .toList();
+
+        System.out.println("  " + course);
+        System.out.println("  " + Messages.get("student.credits_word") + ": " + course.getCredits());
+        List<Lesson> lessons = course.getLessons();
+        System.out.println("  " + Messages.get("manager.lesson_type") + " (" + lessons.size() + "):");
+        for (Lesson l : lessons) {
+            System.out.println("    " + l.getId() + " | " + l.getType() + " | " + l.getRoom());
+        }
+        System.out.println("  " + Messages.get("teacher.view_students") + " (" + students.size() + "):");
+        for (Student s : students) {
+            System.out.println("    " + s.getId() + " | " + s.getName());
         }
         ConsoleInput.waitForEnter();
     }
@@ -167,19 +201,40 @@ class TeacherView {
 
     private void sendComplaint(Teacher teacher) {
         ConsoleMenu.printSection(Messages.get("teacher.send_complaint"));
-        List<Manager> managers = session.getSystem().getUsers().stream()
+        List<Manager> allManagers = session.getSystem().getUsers().stream()
                 .filter(u -> u instanceof Manager)
                 .map(u -> (Manager) u)
                 .toList();
+        List<Manager> deans = allManagers.stream()
+                .filter(m -> m.getType() == ManagerType.DEAN)
+                .toList();
 
-        if (managers.isEmpty()) {
+        if (allManagers.isEmpty()) {
             ConsoleMenu.printInfo(Messages.get("teacher.no_managers"));
             ConsoleInput.waitForEnter();
             return;
         }
-        Manager receiver = ConsoleMenu.pickFromList(managers,
-                m -> m.getName() + " (" + m.getType() + ")",
-                Messages.get("teacher.select_receiver"));
+
+        Manager receiver;
+        if (!deans.isEmpty()) {
+            LinkedHashMap<Integer, String> mgrOptions = new LinkedHashMap<>();
+            mgrOptions.put(1, Messages.get("teacher.send_to_dean"));
+            mgrOptions.put(2, Messages.get("teacher.select_receiver"));
+            int mc = ConsoleMenu.showMenu(Messages.get("teacher.select_receiver"), mgrOptions, false, false);
+            if (mc == 1) {
+                receiver = ConsoleMenu.pickFromList(deans,
+                        m -> m.getName() + " (" + m.getType() + ")",
+                        Messages.get("teacher.select_receiver"));
+            } else {
+                receiver = ConsoleMenu.pickFromList(allManagers,
+                        m -> m.getName() + " (" + m.getType() + ")",
+                        Messages.get("teacher.select_receiver"));
+            }
+        } else {
+            receiver = ConsoleMenu.pickFromList(allManagers,
+                    m -> m.getName() + " (" + m.getType() + ")",
+                    Messages.get("teacher.select_receiver"));
+        }
 
         List<Student> students = session.getSystem().getAllStudents();
         if (students.isEmpty()) {

@@ -6,6 +6,7 @@ import university.domain.news.NewsComment;
 import university.domain.user.User;
 import university.system.UniversitySystem;
 
+import java.util.Comparator;
 import java.util.List;
 
 /// News menu — browse, read, pin, and comment on news posts
@@ -23,7 +24,9 @@ class NewsView {
         UniversitySystem system = session.getSystem();
 
         while (true) {
-            List<News> allNews = system.getNewsList();
+            List<News> allNews = system.getNewsList().stream()
+                    .sorted(Comparator.comparing(News::isPinned).reversed())
+                    .toList();
             ConsoleMenu.printHeader(Messages.get("news.title"));
 
             if (allNews.isEmpty()) {

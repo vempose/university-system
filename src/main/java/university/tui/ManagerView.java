@@ -2,7 +2,9 @@ package university.tui;
 
 import university.comparator.*;
 import university.domain.academic.*;
+import university.domain.communication.EmployeeRequest;
 import university.domain.news.News;
+import university.domain.support.AcademicReport;
 import university.domain.user.*;
 import university.enums.*;
 import university.service.NewsService;
@@ -45,9 +47,11 @@ class ManagerView {
             options.put(4, Messages.get("manager.view_students"));
             options.put(5, Messages.get("manager.view_teachers"));
             options.put(6, Messages.get("manager.manage_news"));
-            options.put(7, Messages.get("manager.view_messages"));
-            options.put(8, Messages.get("manager.statistics"));
-            options.put(9, Messages.get("manager.browse_courses"));
+            options.put(7, Messages.get("manager.employee_requests"));
+            options.put(8, Messages.get("manager.reports"));
+            options.put(9, Messages.get("manager.view_messages"));
+            options.put(10, Messages.get("manager.statistics"));
+            options.put(11, Messages.get("manager.browse_courses"));
 
             int choice = ConsoleMenu.showMenu(Messages.get("manager.title"), options, true, false);
             switch (choice) {
@@ -58,9 +62,11 @@ class ManagerView {
                 case 4 -> viewStudentsSorted(manager, system);
                 case 5 -> viewTeachersSorted(manager, system);
                 case 6 -> manageNews(manager);
-                case 7 -> messageView.show(manager);
-                case 8 -> viewStatistics(system);
-                case 9 -> courseView.show();
+                case 7 -> manageEmployeeRequests(manager);
+                case 8 -> manageReports(manager);
+                case 9 -> messageView.show(manager);
+                case 10 -> viewStatistics(system);
+                case 11 -> courseView.show();
             }
         }
     }
@@ -147,7 +153,40 @@ class ManagerView {
         Course course = new Course(code, title, credits);
         session.getSystem().addCourse(course);
 
-        ConsoleMenu.printSuccess(Messages.get("manager.course_added", code, title));
+        List<School> schools = new java.util.ArrayList<>();
+        for (User u : session.getSystem().getUsers()) {
+            if (u instanceof Student s && s.getSchool() != null && !schools.contains(s.getSchool()))
+                schools.add(s.getSchool());
+            if (u instanceof Employee e && e.getSchool() != null && !schools.contains(e.getSchool()))
+                schools.add(e.getSchool());
+        }
+
+        if (!schools.isEmpty()) {
+            School school = ConsoleMenu.pickFromList(schools, School::getName,
+                    Messages.get("admin.select_school"));
+
+            Major major = ConsoleMenu.pickFromList(school.getMajors(), Major::getName,
+                    Messages.get("manager.select_major"));
+
+            int year = ConsoleInput.readInt("  " + Messages.get("manager.select_year") + ": ", 1, 6);
+
+            LinkedHashMap<Integer, String> catOptions = new LinkedHashMap<>();
+            catOptions.put(1, "MAJOR");
+            catOptions.put(2, "MINOR");
+            catOptions.put(3, "FREE_ELECTIVE");
+            int cc = ConsoleMenu.showMenu(Messages.get("manager.select_category"), catOptions, false, false);
+            CourseCategory category = switch (cc) {
+                case 2 -> CourseCategory.MINOR;
+                case 3 -> CourseCategory.FREE_ELECTIVE;
+                default -> CourseCategory.MAJOR;
+            };
+
+            manager.addCourseForRegistration(course, major, year, category);
+            ConsoleMenu.printSuccess(Messages.get("manager.course_requirement_added",
+                    major.getName(), String.valueOf(year), category.name()));
+        } else {
+            ConsoleMenu.printInfo(Messages.get("manager.course_added", code, title));
+        }
         ConsoleInput.waitForEnter();
     }
 
@@ -239,7 +278,9 @@ class ManagerView {
             newsService.publishNews(news);
             ConsoleMenu.printSuccess(Messages.get("manager.news_published"));
         } else if (choice == 2) {
-            List<News> allNews = session.getSystem().getNewsList();
+            List<News> allNews = session.getSystem().getNewsList().stream()
+                    .sorted(Comparator.comparing(News::isPinned).reversed())
+                    .toList();
             ConsoleMenu.printSection(Messages.get("manager.view_all_news"));
             if (allNews.isEmpty()) {
                 ConsoleMenu.printInfo(Messages.get("news.no_news"));
@@ -251,6 +292,101 @@ class ManagerView {
                     System.out.println("    " + n.getContent());
                     System.out.println("    " + Messages.get("news.comments_header", String.valueOf(n.getComments().size())));
                     System.out.println();
+                }
+            }
+        }
+        ConsoleInput.waitForEnter();
+    }
+
+    private void manageEmployeeRequests(Manager manager) {
+        ConsoleMenu.printSection(Messages.get("manager.employee_requests"));
+        List<Manager> allMgrs = session.getSystem().getUsers().stream()
+                .filter(u -> u instanceof Manager)
+                .map(u -> (Manager) u)
+                .toList();
+        List<EmployeeRequest> requests = allMgrs.stream()
+                .flatMap(m -> m.viewEmployeeRequests().stream())
+                .toList();
+
+        if (requests.isEmpty()) {
+            ConsoleMenu.printInfo(Messages.get("manager.no_requests"));
+            ConsoleInput.waitForEnter();
+            return;
+        }
+
+        for (int i = 0; i < requests.size(); i++) {
+            EmployeeRequest r = requests.get(i);
+            String signed = r.getSignedBy() != null ? " | Signed by: " + r.getSignedBy().getName() : "";
+            System.out.printf("  [%d]  %s | %s | %s%s%n", i + 1,
+                    r.getSender().getName(), r.getStatus(), r.getDescription(), signed);
+        }
+
+        int ri = ConsoleInput.readInt("\n  " + Messages.get("menu.choose") + ": ", 0, requests.size());
+        if (ri == 0) return;
+        EmployeeRequest selected = requests.get(ri - 1);
+
+        LinkedHashMap<Integer, String> actOptions = new LinkedHashMap<>();
+        actOptions.put(1, Messages.get("manager.sign_request"));
+        actOptions.put(2, Messages.get("techsupport.accept"));
+        actOptions.put(3, Messages.get("techsupport.reject"));
+        int ac = ConsoleMenu.showMenu(Messages.get("menu.choose"), actOptions, true, false);
+        if (ac == 1) {
+            try {
+                selected.view();
+                selected.sign(manager);
+                ConsoleMenu.printSuccess(Messages.get("manager.request_signed"));
+            } catch (IllegalStateException ex) {
+                ConsoleMenu.printError(ex.getMessage());
+            }
+        } else if (ac == 2) {
+            try {
+                selected.view();
+                selected.accept();
+                ConsoleMenu.printSuccess(Messages.get("manager.request_accepted"));
+            } catch (IllegalStateException ex) {
+                ConsoleMenu.printError(ex.getMessage());
+            }
+        } else if (ac == 3) {
+            try {
+                selected.view();
+                selected.reject();
+                ConsoleMenu.printSuccess(Messages.get("manager.request_rejected"));
+            } catch (IllegalStateException ex) {
+                ConsoleMenu.printError(ex.getMessage());
+            }
+        }
+        ConsoleInput.waitForEnter();
+    }
+
+    private void manageReports(Manager manager) {
+        ConsoleMenu.printSection(Messages.get("manager.reports"));
+        LinkedHashMap<Integer, String> options = new LinkedHashMap<>();
+        options.put(1, Messages.get("manager.create_report"));
+        options.put(2, Messages.get("manager.view_reports"));
+        int choice = ConsoleMenu.showMenu(Messages.get("manager.reports"), options, true, false);
+
+        if (choice == 1) {
+            AcademicReport report = manager.createAcademicReport();
+            List<Student> allStudents = session.getSystem().getAllStudents();
+            for (Student s : allStudents) {
+                for (Enrollment e : s.getEnrollments()) {
+                    e.getMark().ifPresent(m ->
+                            report.addEntry("%s | %s | %s: %.0f".formatted(
+                                    s.getName(), e.getCourse().getCourseCode(),
+                                    Messages.get("student.mark_label"), m.getTotal())));
+                }
+            }
+            System.out.println(report.generateMarksReport());
+            ConsoleMenu.printSuccess(Messages.get("manager.report_created", report.getId()));
+        } else if (choice == 2) {
+            List<AcademicReport> reports = manager.getCreatedReports();
+            if (reports.isEmpty()) {
+                ConsoleMenu.printInfo(Messages.get("manager.no_reports"));
+            } else {
+                for (AcademicReport r : reports) {
+                    System.out.println(r);
+                    System.out.println(r.generateStatistics());
+                    ConsoleMenu.printDivider();
                 }
             }
         }
