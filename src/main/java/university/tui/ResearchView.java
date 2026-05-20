@@ -2,11 +2,15 @@ package university.tui;
 
 import university.comparator.*;
 import university.domain.academic.School;
+import university.domain.news.UniversityJournal;
 import university.domain.research.*;
 import university.domain.user.*;
 import university.enums.CitationFormat;
 import university.exception.NonResearcherJoinProjectException;
+import university.service.NewsService;
 import university.service.ResearchService;
+import university.service.ResearchService.ResearcherInfo;
+import university.system.UniversitySystem;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -19,10 +23,12 @@ class ResearchView {
 
     private final Session session;
     private final ResearchService researchService;
+    private final NewsService newsService;
 
-    ResearchView(Session session, ResearchService researchService) {
+    ResearchView(Session session, ResearchService researchService, NewsService newsService) {
         this.session = session;
         this.researchService = researchService;
+        this.newsService = newsService;
     }
 
     /// Shows the research menu and handles user choices.
@@ -40,7 +46,8 @@ class ResearchView {
             options.put(6, Messages.get("research.view_projects"));
             options.put(7, Messages.get("research.view_all"));
             options.put(8, Messages.get("research.top_year"));
-            if (user instanceof Student s && s.getSchool() != null) {
+            School userSchool = getSchool(user);
+            if (userSchool != null) {
                 options.put(9, Messages.get("research.top_school"));
             }
 
@@ -56,9 +63,8 @@ class ResearchView {
                 case 7 -> viewAllPapers();
                 case 8 -> topCitedOfYear();
                 case 9 -> {
-                    if (user instanceof Student s && s.getSchool() != null) {
-                        topCitedBySchool(s.getSchool());
-                    }
+                    School s = getSchool(user);
+                    if (s != null) topCitedBySchool(s);
                 }
             }
         }
@@ -66,17 +72,44 @@ class ResearchView {
 
     private void publishPaper(ResearchProfile profile) {
         ConsoleMenu.printSection(Messages.get("research.publish"));
+
+        UniversitySystem system = session.getSystem();
+        List<UniversityJournal> journals = system.getJournals();
+        if (journals.isEmpty()) {
+            ConsoleMenu.printInfo(Messages.get("journal.no_journals"));
+            ConsoleInput.waitForEnter();
+            return;
+        }
+
         String title = ConsoleInput.readLine("  " + Messages.get("research.paper_title") + ": ");
         String authors = ConsoleInput.readLine("  " + Messages.get("research.authors") + ": ");
-        String journal = ConsoleInput.readLine("  " + Messages.get("research.journal") + ": ");
-        String pages = ConsoleInput.readLine("  " + Messages.get("research.pages") + ": ");
+
+        UniversityJournal selectedJournal = ConsoleMenu.pickFromList(journals,
+                UniversityJournal::getName, Messages.get("research.journal"));
+        if (selectedJournal == null) return;
+
+        String pages;
+        while (true) {
+            pages = ConsoleInput.readLine("  " + Messages.get("research.pages") + ": ");
+            if (pages.matches(".*\\d.*")) break;
+            ConsoleMenu.printError(Messages.get("msg.invalid_pages"));
+        }
         int pageCount = ConsoleInput.readInt("  " + Messages.get("research.page_count") + ": ", 1, 1000);
         LocalDate date = ConsoleInput.readDate("  " + Messages.get("research.publish_date"));
-        String doi = ConsoleInput.readLine("  " + Messages.get("research.doi") + ": ");
+
+        String doi;
+        while (true) {
+            doi = ConsoleInput.readLine("  " + Messages.get("research.doi") + ": ");
+            if (doi.startsWith("10.")) break;
+            ConsoleMenu.printError(Messages.get("msg.invalid_doi"));
+        }
         int citations = ConsoleInput.readInt("  " + Messages.get("research.citations") + ": ", 0, 1000000);
 
-        ResearchPaper paper = new ResearchPaper(title, authors, journal, pages, pageCount, date, doi, citations);
+        String journalName = selectedJournal.getName();
+        ResearchPaper paper = new ResearchPaper(title, authors, journalName, pages, pageCount, date, doi, citations);
         profile.publishPaper(paper);
+        selectedJournal.publishPaper(paper);
+        newsService.announcePaperPublication(paper);
         ConsoleMenu.printSuccess(Messages.get("research.paper_published",
                 paper.getCitation(CitationFormat.PLAIN_TEXT)));
         ConsoleInput.waitForEnter();
@@ -209,29 +242,40 @@ class ResearchView {
     private void topCitedOfYear() {
         ConsoleMenu.printSection(Messages.get("research.top_year"));
         int year = ConsoleInput.readInt("  " + Messages.get("research.year") + ": ", 2000, 2100);
-        researchService.getTopCitedResearcherOfYear(year).ifPresentOrElse(
-                profile -> {
-                    System.out.println("  " + Messages.get("research.top_year_result",
-                            String.valueOf(year), String.valueOf(profile.getHIndex()),
-                            String.valueOf(profile.getPapers().size())));
-                    List<ResearchPaper> topPapers = profile.getSortedPapers(
-                            Comparator.comparingInt(ResearchPaper::citations).reversed());
-                    for (ResearchPaper p : topPapers) {
-                        System.out.println("  " + p.getCitation(CitationFormat.PLAIN_TEXT));
-                    }
-                },
-                () -> ConsoleMenu.printInfo(Messages.get("research.top_year_none", String.valueOf(year)))
-        );
+        List<ResearchPaper> papers = researchService.getPapersByYearSorted(year);
+        if (papers.isEmpty()) {
+            ConsoleMenu.printInfo(Messages.get("research.top_year_none", String.valueOf(year)));
+        } else {
+            ConsoleMenu.printDivider();
+            for (int i = 0; i < papers.size(); i++) {
+                System.out.printf("  %d. [%d] %s%n", i + 1,
+                        papers.get(i).citations(),
+                        papers.get(i).getCitation(CitationFormat.PLAIN_TEXT));
+            }
+        }
         ConsoleInput.waitForEnter();
+    }
+
+    private static School getSchool(User user) {
+        if (user instanceof Student s) return s.getSchool();
+        if (user instanceof Employee e) return e.getSchool();
+        return null;
     }
 
     private void topCitedBySchool(School school) {
         ConsoleMenu.printSection(Messages.get("research.top_school"));
-        researchService.getTopCitedResearcherBySchool(school).ifPresentOrElse(
-                profile -> System.out.println("  " + Messages.get("research.top_school_result",
-                        school.getName(), String.valueOf(profile.calculateHIndex()))),
-                () -> ConsoleMenu.printInfo(Messages.get("research.top_school_none", school.getName()))
-        );
+        List<ResearcherInfo> researchers = researchService.getResearchersBySchoolSorted(school);
+        if (researchers.isEmpty()) {
+            ConsoleMenu.printInfo(Messages.get("research.top_school_none", school.getName()));
+        } else {
+            System.out.printf("  %s (h-index)%n", school.getName());
+            ConsoleMenu.printDivider();
+            for (int i = 0; i < researchers.size(); i++) {
+                ResearcherInfo ri = researchers.get(i);
+                System.out.printf("  %d. %-20s h-index=%d%n", i + 1,
+                        ri.name(), ri.profile().calculateHIndex());
+            }
+        }
         ConsoleInput.waitForEnter();
     }
 }

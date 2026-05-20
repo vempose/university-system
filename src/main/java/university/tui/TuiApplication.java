@@ -54,10 +54,10 @@ public final class TuiApplication {
         this.authView = new AuthView(session);
         this.adminView = new AdminView(session);
         this.teacherView = new TeacherView(session, researchService, newsService);
-        this.studentView = new StudentView(session, researchService);
+        this.studentView = new StudentView(session, researchService, newsService);
         this.managerView = new ManagerView(session, newsService, researchService);
         this.techSupportView = new TechSupportView(session);
-        this.researchView = new ResearchView(session, researchService);
+        this.researchView = new ResearchView(session, researchService, newsService);
         this.newsView = new NewsView(session);
         this.journalView = new JournalView(session);
         this.messageView = new MessageView(session);

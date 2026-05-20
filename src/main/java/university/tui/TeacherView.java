@@ -25,7 +25,7 @@ class TeacherView {
         this.session = session;
         this.researchService = researchService;
         this.newsService = newsService;
-        this.researchView = new ResearchView(session, researchService);
+        this.researchView = new ResearchView(session, researchService, newsService);
         this.messageView = new MessageView(session);
     }
 

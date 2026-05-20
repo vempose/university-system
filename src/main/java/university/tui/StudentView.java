@@ -7,6 +7,7 @@ import university.domain.user.*;
 import university.enums.*;
 import university.exception.CreditLimitExceededException;
 import university.exception.RetakeLimitExceededException;
+import university.service.NewsService;
 import university.service.ResearchService;
 
 import java.util.LinkedHashMap;
@@ -18,13 +19,15 @@ class StudentView {
 
     private final Session session;
     private final ResearchService researchService;
+    private final NewsService newsService;
     private final ResearchView researchView;
     private final CourseView courseView;
 
-    StudentView(Session session, ResearchService researchService) {
+    StudentView(Session session, ResearchService researchService, NewsService newsService) {
         this.session = session;
         this.researchService = researchService;
-        this.researchView = new ResearchView(session, researchService);
+        this.newsService = newsService;
+        this.researchView = new ResearchView(session, researchService, newsService);
         this.courseView = new CourseView(session);
     }
 

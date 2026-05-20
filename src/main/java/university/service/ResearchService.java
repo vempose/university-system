@@ -5,6 +5,7 @@ import university.domain.news.News;
 import university.domain.research.ResearchPaper;
 import university.domain.research.ResearchProfile;
 import university.domain.research.ResearchProject;
+import university.domain.user.Employee;
 import university.domain.user.Student;
 import university.domain.user.User;
 import university.enums.NewsTopic;
@@ -45,25 +46,60 @@ public class ResearchService {
                 .toList();
     }
 
-    /// Finds the researcher with the highest h-index in a specific school.
+    /// Returns all research papers from a given year, sorted by citations descending.
     ///
-    /// Only looks at students for now.
+    /// @param year the publication year to filter by
+    /// @return sorted list of papers
+    public List<ResearchPaper> getPapersByYearSorted(int year) {
+        return system
+                .getUsers()
+                .stream()
+                .map(User::getResearchProfile)
+                .filter(Objects::nonNull)
+                .flatMap(p -> p.getPapers().stream())
+                .filter(p -> p.publishDate().getYear() == year)
+                .sorted(Comparator.comparingInt(ResearchPaper::citations).reversed())
+                .toList();
+    }
+
+    /// Holds a researcher's name and profile for display.
+    public record ResearcherInfo(String name, ResearchProfile profile) {}
+
+    /// Returns all researchers in a school, sorted by h-index descending.
+    ///
+    /// Checks both students and employees for school membership.
+    ///
+    /// @param school the school to search in
+    /// @return sorted list of researcher info
+    public List<ResearcherInfo> getResearchersBySchoolSorted(School school) {
+        return system
+                .getUsers()
+                .stream()
+                .filter(u -> {
+                    if (u instanceof Student s) return school.equals(s.getSchool());
+                    if (u instanceof Employee e) return school.equals(e.getSchool());
+                    return false;
+                })
+                .map(u -> {
+                    ResearchProfile p = u.getResearchProfile();
+                    if (p == null) return null;
+                    return new ResearcherInfo(u.getName(), p);
+                })
+                .filter(Objects::nonNull)
+                .sorted(Comparator.comparingInt((ResearcherInfo ri) -> ri.profile().calculateHIndex()).reversed())
+                .toList();
+    }
+
+    /// Finds the researcher with the highest h-index in a specific school.
     ///
     /// @param school the school to search in
     /// @return the top research profile, if any
     public Optional<ResearchProfile> getTopCitedResearcherBySchool(
             School school
     ) {
-        return system
-                .getUsers()
-                .stream()
-                .filter(u -> {
-                    if (u instanceof Student s) return school.equals(s.getSchool());
-                    return false;
-                })
-                .map(User::getResearchProfile)
-                .filter(Objects::nonNull)
-                .max(Comparator.comparingInt(ResearchProfile::calculateHIndex));
+        return getResearchersBySchoolSorted(school).stream()
+                .findFirst()
+                .map(ResearcherInfo::profile);
     }
 
     /// Finds the researcher with the most citations in a given year.
@@ -76,6 +112,8 @@ public class ResearchService {
                 .stream()
                 .map(User::getResearchProfile)
                 .filter(Objects::nonNull)
+                .filter(profile -> profile.getPapers().stream()
+                        .anyMatch(p -> p.publishDate().getYear() == year))
                 .max(
                         Comparator.comparingInt(profile ->
                                 profile
