@@ -26,7 +26,12 @@ public class StudentOrganization implements Serializable {
 
     /// Adds a membership record to this org.
     public void addMembership(OrganizationMembership membership) {
-        memberships.add(membership);
+        boolean alreadyMember = memberships
+                .stream()
+                .anyMatch(m -> m.getStudent().equals(membership.getStudent()));
+        if (!alreadyMember) {
+            memberships.add(membership);
+        }
     }
 
     public List<OrganizationMembership> getMembers() {

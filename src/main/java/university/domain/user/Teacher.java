@@ -184,11 +184,12 @@ public class Teacher extends Employee {
 
     public void setPosition(TeacherPosition position) {
         this.position = position;
-        if (
-            position == TeacherPosition.PROFESSOR &&
-            getResearchProfile() == null
-        ) {
+        if (position == TeacherPosition.PROFESSOR && getResearchProfile() == null) {
             setResearchProfile(new ResearchProfile());
+        } else if (position != TeacherPosition.PROFESSOR && getResearchProfile() != null
+                && getResearchProfile().getPapers().isEmpty()
+                && getResearchProfile().getProjects().isEmpty()) {
+            setResearchProfile(null);
         }
     }
 

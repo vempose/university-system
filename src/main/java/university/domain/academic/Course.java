@@ -63,7 +63,12 @@ public final class Course implements Comparable<Course>, Serializable {
         if (lesson == null) throw new IllegalArgumentException(
                 "lesson must not be null"
         );
-        lessons.add(lesson);
+        boolean duplicateId = lessons
+                .stream()
+                .anyMatch(l -> l.getId().equals(lesson.getId()));
+        if (!duplicateId) {
+            lessons.add(lesson);
+        }
     }
 
     public List<Lesson> getLessons() {

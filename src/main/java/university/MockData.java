@@ -7,6 +7,7 @@ import university.domain.news.News;
 import university.domain.news.NewsComment;
 import university.domain.news.UniversityJournal;
 import university.domain.research.ResearchPaper;
+import university.domain.research.ResearchProfile;
 import university.domain.research.ResearchProject;
 import university.domain.student.OrganizationMembership;
 import university.domain.student.StudentOrganization;
@@ -119,12 +120,14 @@ public final class MockData {
         GraduateStudent kate = new GraduateStudent(UUID.randomUUID().toString(),
                 "Kate Master", "kate@uni.edu", "student123", Language.EN,
                 DegreeType.MASTER, csMajor);
+        kate.setResearchProfile(new ResearchProfile());
         kate.setSchool(seds);
         system.addUser(kate);
 
         GraduateStudent leo = new GraduateStudent(UUID.randomUUID().toString(),
                 "Leo PhD", "leo@uni.edu", "student123", Language.EN,
                 DegreeType.PHD, eeMajor);
+        leo.setResearchProfile(new ResearchProfile());
         leo.setSchool(seds);
         system.addUser(leo);
 
@@ -566,6 +569,7 @@ public final class MockData {
         OfficialMessage officialMsg = new OfficialMessage(bob, eva,
                 "Exam room booking confirmed for CS101 final exam on January 30, 2025, Room 301.",
                 "Exam Room Booking");
+        bob.sendOfficialMessage(officialMsg);
     }
 
     private static void createComplaints(UniversitySystem system) {

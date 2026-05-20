@@ -46,6 +46,14 @@ public abstract class Employee extends User {
         return message;
     }
 
+    /// Sends an official message (or any pre-built Message) to another employee.
+    ///
+    /// The message gets added to both the sender's and receiver's lists.
+    public void sendOfficialMessage(Message message) {
+        sentMessages.add(message);
+        message.getReceiver().receivedMessages.add(message);
+    }
+
     public double getSalary() {
         return salary;
     }

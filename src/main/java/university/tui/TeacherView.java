@@ -44,9 +44,8 @@ class TeacherView {
             options.put(6, Messages.get("teacher.send_complaint"));
             options.put(7, Messages.get("teacher.view_messages"));
             options.put(8, Messages.get("teacher.view_ratings"));
-            int researchOpt = 9;
             if (teacher.getResearchProfile() != null) {
-                options.put(8, Messages.get("main.research"));
+                options.put(9, Messages.get("main.research"));
             }
 
             int choice = ConsoleMenu.showMenu(Messages.get("teacher.title"), options, true, false);

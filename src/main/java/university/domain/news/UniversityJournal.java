@@ -34,7 +34,12 @@ public class UniversityJournal implements Serializable {
 
     /// Subscribes a user to this journal.
     public void subscribe(User user) {
-        subscriptions.add(new JournalSubscription(user, this));
+        boolean alreadySubscribed = subscriptions
+                .stream()
+                .anyMatch(s -> s.getSubscriber().equals(user));
+        if (!alreadySubscribed) {
+            subscriptions.add(new JournalSubscription(user, this));
+        }
     }
 
     /// Removes a user's subscription.

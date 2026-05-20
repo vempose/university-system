@@ -33,10 +33,12 @@ public class ResearchProfile implements Researcher, Serializable {
         if (paper != null) papers.add(paper);
     }
 
-    /// Joins a project if it's not null.
+    /// Joins a project if it's not null and not already joined.
     @Override
     public void joinProject(ResearchProject project) {
-        if (project != null) projects.add(project);
+        if (project != null && !projects.contains(project)) {
+            projects.add(project);
+        }
     }
 
     /// Recalculates the h-index from all papers and returns it.

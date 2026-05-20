@@ -38,18 +38,6 @@ On first launch, the system seeds itself with mock data (users, courses, researc
 | Grad Student | leo@uni.edu | student123 |
 | Tech Support | nick@uni.edu | tech123 |
 
-## Features
-
-- **Authentication** — all users log in via email + password
-- **Course management** — registration, approvals, grading, transcripts
-- **Research** — publish papers, calculate h-index, join projects
-- **Messaging** — employees send messages and complaints
-- **News & Journals** — subscribe to university journals, comment on news
-- **Tech Support** — create, accept, reject, and complete support requests
-- **Admin panel** — full user CRUD, system logs
-- **Manager panel** — approve enrollments, assign teachers, statistics
-- **i18n** — switch between English, Russian, and Kazakh at any time
-
 ## Persistence
 
 Data is saved to `university_system.dat` on every logout or menu exit. Delete this file to reset to fresh mock data.

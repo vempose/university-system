@@ -112,17 +112,14 @@ public class Enrollment implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Enrollment other)) return false;
-        return (
-                attemptNo == other.attemptNo &&
-                        Objects.equals(student, other.student) &&
-                        Objects.equals(course, other.course) &&
-                        Objects.equals(semesterLabel, other.semesterLabel)
-        );
+        return attemptNo == other.attemptNo
+                && Objects.equals(student, other.student)
+                && Objects.equals(course, other.course);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(student, course, semesterLabel, attemptNo);
+        return Objects.hash(student, course, attemptNo);
     }
 
     @Override

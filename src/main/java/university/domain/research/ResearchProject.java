@@ -40,7 +40,9 @@ public final class ResearchProject implements Serializable {
                     "Cannot add a null participant to project '%s'.".formatted(id)
             );
         }
-        participants.add(researcher);
+        if (!participants.contains(researcher)) {
+            participants.add(researcher);
+        }
     }
 
     /// Adds a paper that was produced by this project (if not null).

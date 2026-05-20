@@ -26,8 +26,6 @@ public class GraduateStudent extends Student {
     private Researcher supervisor;
 
     /// Creates a graduate student.
-    ///
-    /// Automatically gets a ResearchProfile if they're MASTER or PHD.
     public GraduateStudent(
         String id,
         String name,
@@ -38,9 +36,6 @@ public class GraduateStudent extends Student {
         Major major
     ) {
         super(id, name, email, password, language, degreeType, major);
-        if (degreeType == DegreeType.MASTER || degreeType == DegreeType.PHD) {
-            setResearchProfile(new ResearchProfile());
-        }
     }
 
     public Researcher getSupervisor() {

@@ -9,6 +9,7 @@ import university.domain.academic.*;
 import university.domain.student.OrganizationMembership;
 import university.domain.student.TeacherRating;
 import university.enums.DegreeType;
+import university.enums.EnrollmentStatus;
 import university.enums.Language;
 import university.exception.CreditLimitExceededException;
 import university.exception.RetakeLimitExceededException;
@@ -30,7 +31,6 @@ public class Student extends User {
     private final List<OrganizationMembership> memberships = new ArrayList<>();
     private double gpa;
     private int yearOfStudy;
-    private int totalCredits;
     private int failCount;
     private DegreeType degreeType;
     private Major major;
@@ -58,7 +58,7 @@ public class Student extends User {
     /// Throws if the credit limit (21) or retry limit (3) is exceeded.
     public Enrollment registerForCourse(Course course)
         throws CreditLimitExceededException, RetakeLimitExceededException {
-        if (totalCredits + course.getCredits() > MAX_CREDITS) {
+        if (getCurrentCredits() + course.getCredits() > MAX_CREDITS) {
             throw new CreditLimitExceededException(
                 "Credit limit exceeded: cannot register for " +
                     course.getCourseCode()
@@ -81,7 +81,6 @@ public class Student extends User {
             attemptNo
         );
         enrollments.add(enrollment);
-        totalCredits += course.getCredits();
         return enrollment;
     }
 
@@ -169,7 +168,7 @@ public class Student extends User {
             degreeType,
             major.getName(),
             gpa,
-            totalCredits,
+            getTotalCredits(),
             divider,
             enrollmentSection,
             divider
@@ -200,12 +199,17 @@ public class Student extends User {
         this.yearOfStudy = yearOfStudy;
     }
 
+    /// Returns the current semester credits from non-rejected enrollments.
     public int getTotalCredits() {
-        return totalCredits;
+        return getCurrentCredits();
     }
 
-    public void setTotalCredits(int totalCredits) {
-        this.totalCredits = totalCredits;
+    private int getCurrentCredits() {
+        return enrollments
+            .stream()
+            .filter(e -> e.getStatus() != EnrollmentStatus.REJECTED)
+            .mapToInt(e -> e.getCourse().getCredits())
+            .sum();
     }
 
     public int getFailCount() {
